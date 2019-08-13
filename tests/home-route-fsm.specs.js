@@ -1,5 +1,5 @@
 import QUnit from "qunit"
-import { NO_OUTPUT } from "kingly"
+import { NO_OUTPUT, fsmContracts } from "kingly"
 import { commands, events, fsmFactory } from "../src/fsm"
 import { loadingStates, routes } from "../src/constants"
 import { articlesErrorFixture, articlesFixture } from "./fixtures/articles"
@@ -121,8 +121,8 @@ const fsmMapping = [
   [`Failed loading - articles`, HOME_ROUTE_LOADING_NOK_$A_SEQ, HOME_ROUTE_LOADING_NOK_$A_SEQ_COMMANDS],
 ];
 
-// const fsmSettings = { debug: { console, checkContracts: fsmContracts } };
-const fsmSettings = { debug: { console } };
+const fsmSettings = { debug: { console, checkContracts: fsmContracts } };
+// const fsmSettings = { debug: { console } };
 
 fsmMapping.forEach(([scenario, inputSeq, outputsSeq]) => {
   QUnit.test(`Home route: ${scenario}`, function exec_test(assert) {

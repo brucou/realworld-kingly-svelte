@@ -21,7 +21,9 @@ const { home } = routes;
 
 const INIT = 'start';
 const initialControlState = INIT;
-const initialExtendedState = {};
+const initialExtendedState = {
+  currentPage: 0
+};
 const states = {
   [INIT]: "",
   'routing': "",
@@ -66,15 +68,16 @@ function updateState(extendedState, extendedStateUpdates) {
 
 // Guards
 function isHomeRoute(extendedState, eventData, settings){
-  return eventData === home
+  return eventData.hash === home
 }
 
 // Action factories
 function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settings) {
+  const {currentPage} = extendedState;
   return {
     updates: [],
     outputs: [
-      { command: FETCH_GLOBAL_FEED, params: void 0 },
+      { command: FETCH_GLOBAL_FEED, params: {page: currentPage} },
       {
         command: RENDER,
         params: { tags: TAGS_ARE_LOADING, articles: ARTICLES_ARE_LOADING }

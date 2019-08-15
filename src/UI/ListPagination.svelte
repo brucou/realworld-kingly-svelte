@@ -2,6 +2,9 @@
 export let articlesCount
 export let currentPage
 
+// We can leave that here instead of moving it to a helpers kind of file
+// Per Svelte docs:
+// "Svelte will hoist any functions that don't depend on local state out of the component definition
 function getPageList({ articlesCount, currentPage }) {
   const range = [];
   for (let i = 0; i < Math.ceil(articlesCount / 10); ++i) {
@@ -14,11 +17,10 @@ $: pages = getPageList({ articlesCount, currentPage })
 
 </script>
 
-{ #if (articlesCount <= 10 }
-{ :else }
+{ #if (articlesCount > 10) }
   <nav>
     <ul class="pagination">
-      { # each pages as page (String(page.number)) }
+      { #each pages as page (String(page.number)) }
           <li
             class={page.isCurrent ? "page-item active" : "page-item"}
           >
@@ -26,7 +28,7 @@ $: pages = getPageList({ articlesCount, currentPage })
               {page.number + 1}
             </a>
           </li>
-      { /each
+      { /each }
     </ul>
   </nav>
 { /if }

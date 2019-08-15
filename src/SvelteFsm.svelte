@@ -1,6 +1,5 @@
 <script>
-import {NO_OUTPUT, createStateMachine, COMMAND_RENDER} from "kingly"
-import {commands, events, fsmFactory, fsmDef, properties} from "suspense-fsm"
+import {NO_OUTPUT} from "kingly"
 
 // props
 export let eventHandler;
@@ -8,38 +7,21 @@ export let fsmFactory;
 export let commandHandlers;
 export let effectHandlers;
 export let env;
+export let initEvent;
 
-const next = eventHandler;
-let data;
-
-const defaultCommandHandlers = {}
+const defaultCommandHandlers = {};
 const defaultEffectHandlers = {	};
 const noop = () => {};
-// const initEvent = {[START]: void 0}
 
-
-// TODO: to refactor later, should force Svelte user to provide a render function
-// Special handling of render command: compose default and custom processing
-const customRender = commandHandlers && commandHandlers[COMMAND_RENDER] || noop;
-const defaultRender = defaultCommandHandlers[COMMAND_RENDER] || noop;
-let finalRenderHandler={};
-if (customRender){
-  finalRenderHandler = {
-    [COMMAND_RENDER]: function compose(dispatch, params, effectHandlers){
-    defaultRender(dispatch, params, effectHandlers);
-    customRender (dispatch, params, effectHandlers);
-    }
-  }
-}
-
-const finalCommandHandlers = Object.assign({}, defaultCommandHandlers, commandHandlers, finalRenderHandler);
+const finalCommandHandlers = commandHandlers;
 const finalEffectHandlers = Object.assign({}, defaultEffectHandlers, effectHandlers);
 
 // Create the machine
 const fsm = fsmFactory(Object.assign({}, env, {}));
+const next = eventHandler.next.bind(eventHandler);
 
 // Subscribing to machine events
-next.subscribe({
+eventHandler.subscribe({
 	next: event => {
           // 1. Run the input on the machine to obtain the actions to perform
           const actions = fsm(event);
@@ -76,7 +58,7 @@ next.subscribe({
         }
 });
 
-	// initEvent && next(initEvent)
+initEvent && next(initEvent);
 
 </script>
 

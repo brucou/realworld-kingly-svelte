@@ -1,4 +1,4 @@
-<Fsm {fsmFactory} {env} eventHandler="{next}" {commandHandlers} {effectHandlers}>
+<Fsm {fsmFactory} {env} eventHandler="{eventEmitter}" {commandHandlers} {effectHandlers} {initEvent}>
   <RealWorld {tags} {articles} {page} ></RealWorld>
 </Fsm>
 
@@ -73,7 +73,7 @@ const updateProps = {
       tags = {data: void 0, fetchStatus: LOADING};
     }
     else if (typeof _tags === 'object'){
-      tags = {data: _tags, fetchStatus: OK};
+      tags = {data: _tags.tags, fetchStatus: OK};
     }
   },
   articles: _articles => {
@@ -90,7 +90,7 @@ const updateProps = {
 };
 
 function render(props){
-    const propList = Object.key(props);
+    const propList = Object.keys(props);
     propList.forEach(prop => {
       if (!updateProps[prop]) console.warn(`App > commandHandlers: Unknown prop ${prop}!`)
       else updateProps[prop](props[prop])
@@ -124,7 +124,7 @@ const effectHandlers = {
 };
 
 // kick start the app with the routing event corresponding to the current route
-next({[ROUTE_CHANGED]: {hash: getCurrentHash()}})
+const initEvent = {[ROUTE_CHANGED]: {hash: getCurrentHash()}};
 
 </script>
 

@@ -16,9 +16,9 @@ const {fetchStatus: [LOADING, NOK, OK]} = viewModel;
   <div class="article-preview">Loading...</div>
 { :else if  fetchStatus === NOK}
   <div class="article-preview">Was unable to fetch articles for the global feed!</div>
-{ :else if articles.length === 0}
+{ :else if (articles && articles.length === 0)}
   <div class="article-preview">No articles are here... yet.</div>;
-{ :else }
+{ :else if articles }
   <div>
   {#each articles as article (article.slug)}
        <ArticlePreview

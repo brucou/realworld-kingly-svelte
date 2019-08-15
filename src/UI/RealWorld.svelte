@@ -5,17 +5,22 @@ import ArticleList from './ArticleList.svelte'
 import Tags from './Tags.svelte'
 import GlobalFeedTab from './GlobalFeedTab.svelte'
 
-// TODO: Tags UI component
 // TODO: run the UI first then review the tests and the branch
 export let tags;
 export let articles;
 export let page;
 
-$: articleList = articles.data;
-$: articlesCount = articles.count;
-$: tagList = tags.data;
-$: tagsFetchStatus = tags.fetchStatus;
-$: articlesFetchStatus = articles.fetchStatus;
+// NOTE: we have to guard against undefined values!
+// Because the SvelteFsm renders its slot content, at initialization time, that slot will be
+// with empty props...
+// That could be worked around by adding a `isInitialized` state variable but then that logic
+// is tricky to define in the general case, so we keep it simple
+// NOTE: it seems like Svelte does not currently allows destructuring in reactive statements!
+$: articleList = articles && articles.data;
+$: articlesCount = articles && articles.count || 0;
+$: tagList = tags && tags.data;
+$: tagsFetchStatus = tags && tags.fetchStatus;
+$: articlesFetchStatus = articles && articles.fetchStatus;
 $: currentPage = page;
 
 </script>

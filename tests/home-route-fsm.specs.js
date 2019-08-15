@@ -27,7 +27,7 @@ const { home } = routes;
 const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 
 const HOME_ROUTE_LOADING_SEQ = [
-  { [ROUTE_CHANGED]: home }
+  { [ROUTE_CHANGED]: {hash:home} }
 ];
 
 const HOME_ROUTE_LOADED_OK_TA_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
@@ -72,7 +72,7 @@ const HOME_ROUTE_LOADING_NOK_$A_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
 
 const HOME_ROUTE_LOADING_SEQ_COMMANDS = [
   [
-    { command: FETCH_GLOBAL_FEED, params: void 0 },
+    { command: FETCH_GLOBAL_FEED, params: {page: 0} },
     { command: RENDER, params: { tags: TAGS_ARE_LOADING, articles: ARTICLES_ARE_LOADING } }
   ]
 ];
@@ -90,7 +90,7 @@ const HOME_ROUTE_LOADING_NOK_TA_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.c
 ]);
 const HOME_ROUTE_LOADING_NOK_AT_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
   [{ command: RENDER, params: { articles: articlesErrorFixture } }],
-    [{ command: RENDER, params: { tags: tagsErrorFixture } }],
+  [{ command: RENDER, params: { tags: tagsErrorFixture } }],
 ]);
 const HOME_ROUTE_LOADING_NOK_T$_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
   [{ command: RENDER, params: { tags: tagsErrorFixture } }],
@@ -98,11 +98,11 @@ const HOME_ROUTE_LOADING_NOK_T$_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.c
 ]);
 const HOME_ROUTE_LOADING_NOK_$T_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
   [{ command: RENDER, params: { articles: articlesFixture } }],
-    [{ command: RENDER, params: { tags: tagsErrorFixture } }],
+  [{ command: RENDER, params: { tags: tagsErrorFixture } }],
 ]);
 const HOME_ROUTE_LOADING_NOK_A$_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
   [{ command: RENDER, params: { articles: articlesErrorFixture } }],
-    [{ command: RENDER, params: { tags: tagsFixture } }],
+  [{ command: RENDER, params: { tags: tagsFixture } }],
 ]);
 const HOME_ROUTE_LOADING_NOK_$A_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
   [{ command: RENDER, params: { tags: tagsFixture } }],

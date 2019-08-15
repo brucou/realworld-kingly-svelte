@@ -4,10 +4,7 @@ const isJson = response =>
   response.headers.get("content-type").indexOf("application/json") !== -1;
 
 const configureFetch = (fetch, sessionRepository) => (url, options = {}) => {
-  return fetch(
-    API_ROOT + url,
-    options
-  ).then(response => {
+  return fetch(API_ROOT + url, options).then(response => {
     if (isJson(response)) {
       if (response.status === 200) {
         return response.json();
@@ -31,7 +28,7 @@ const apiGateway = (fetch, sessionRepository) => {
 
   return {
     fetchGlobalFeed,
-    fetchTags,
+    fetchTags
   };
 };
 

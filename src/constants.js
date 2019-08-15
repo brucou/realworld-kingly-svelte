@@ -1,15 +1,10 @@
 export const routes = {
   // Home route will be empty strings. Cf. apiRouter
-  home: ''
+  home: ""
 };
 
-export const loadingStates = [
-  "TAGS_ARE_LOADING",
-  "ARTICLES_ARE_LOADING"
-];
+export const loadingStates = ["TAGS_ARE_LOADING", "ARTICLES_ARE_LOADING"];
 
 export const viewModel = {
-  fetchStatus: ['LOADING', 'NOK', 'OK'],
+  fetchStatus: ["LOADING", "NOK", "OK"]
 };
-
-

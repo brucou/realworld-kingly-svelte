@@ -1,7 +1,7 @@
 <script>
   import { NO_OUTPUT } from "kingly";
 
-  // props
+  // Svelte defines props for a component with the `export let` proprietary syntax
   export let eventHandler;
   export let fsmFactory;
   export let commandHandlers;
@@ -9,19 +9,8 @@
   export let env;
   export let initEvent;
 
-  const defaultCommandHandlers = {};
-  const defaultEffectHandlers = {};
-  const noop = () => {};
-
-  const finalCommandHandlers = commandHandlers;
-  const finalEffectHandlers = Object.assign(
-    {},
-    defaultEffectHandlers,
-    effectHandlers
-  );
-
   // Create the machine
-  const fsm = fsmFactory(Object.assign({}, env, {}));
+  const fsm = fsmFactory(Object.assign({}, env));
   const next = eventHandler.next.bind(eventHandler);
 
   // Subscribing to machine events
@@ -38,14 +27,14 @@
         filteredActions.forEach(action => {
           const { command, params } = action;
 
-          const commandHandler = finalCommandHandlers[command];
+          const commandHandler = commandHandlers[command];
           if (!commandHandler || typeof commandHandler !== "function") {
             throw new Error(
               `Machine: Could not find command handler for command ${command}!`
             );
           }
 
-          commandHandler(next, params, finalEffectHandlers);
+          commandHandler(next, params, effectHandlers);
         });
 
         return void 0;
@@ -55,7 +44,8 @@
       // We may get there for instance if there was a preprocessor throwing an exception
       console.error(
         `<Machine/>: an error in the event processing chain! The machine will not process
-            any additional events. Remember that command handlers ought never throw, but should pass errors as events back to the mediator.`,
+            any additional events. Remember that command handlers ought never throw,
+            but should pass errors as events.`,
         error
       );
     },

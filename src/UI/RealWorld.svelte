@@ -5,7 +5,7 @@
   import Tags from "./Tags.svelte";
   import GlobalFeedTab from "./GlobalFeedTab.svelte";
 
-  // TODO: run the UI first then review the tests and the branch
+  // Props
   export let tags;
   export let articles;
   export let page;
@@ -28,33 +28,26 @@
   <Header />
   <div class="home-page" data-testId="home-page">
     <Banner />
-
     <div class="container page">
       <div class="row">
         <div class="col-md-9">
-
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
               <GlobalFeedTab />
             </ul>
           </div>
-
           <ArticleList
             articles={articleList}
             {articlesCount}
             {currentPage}
             fetchStatus={articlesFetchStatus} />
-
         </div>
-
         <div class="col-md-3">
           <div class="sidebar">
             <p>Popular Tags</p>
-
             <Tags tags={tagList} fetchStatus={tagsFetchStatus} />
           </div>
         </div>
-
       </div>
     </div>
   </div>

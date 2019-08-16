@@ -12,9 +12,6 @@
 
   // props
   let page = 0;
-  let articlesFetchStatus;
-  let tagsFetchStatus;
-  let articlesCount;
   let tags;
   let articles;
 
@@ -66,8 +63,9 @@
   );
   hashChangeSubscribe(hashChangeHandler);
 
-  // Render handler: we update props one by one
-  // Svelte would probably not detect the assignment if we would use Object.assign? open question
+ // Render handler: we update props one by one to allow for some preprocessing
+  // Svelte would probably not detect the assignment
+  // if we would use Object.assign? open question
   // TODO: the logic in tags and articles can be DRYed up
   const DEFAULT_PAGE = 0;
   const updateProps = {

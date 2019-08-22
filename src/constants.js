@@ -6,5 +6,6 @@ export const routes = {
 export const loadingStates = ["TAGS_ARE_LOADING", "ARTICLES_ARE_LOADING"];
 
 export const viewModel = {
-  fetchStatus: ["LOADING", "NOK", "OK"]
+  fetchStatus: ["LOADING", "NOK", "OK"],
+  tabs: ["USER_FEED", "GLOBAL_FEED", "TAG_FILTER_FEED"]
 };

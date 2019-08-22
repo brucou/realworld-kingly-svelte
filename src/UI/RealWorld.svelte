@@ -4,11 +4,22 @@
   import ArticleList from "./ArticleList.svelte";
   import Tags from "./Tags.svelte";
   import GlobalFeedTab from "./GlobalFeedTab.svelte";
+  import UserFeedTab from "./UserFeedTab.svelte";
+  import TagFilterTab from "./TagFilterTab.svelte";
+  import { viewModel } from "../constants";
 
   // Props
   export let tags;
   export let articles;
-  export let page;
+  export let page = 0;
+  export let activeFeed;
+  export let user;
+  export let selectedTag;
+  export let onClickTag = () => {};
+
+   const {
+    tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED]
+    } = viewModel;
 
   // NOTE: we have to guard against undefined values!
   // Because the SvelteFsm renders its slot content, at initialization time, that slot will be
@@ -21,19 +32,29 @@
   $: tagList = tags && tags.data;
   $: tagsFetchStatus = tags && tags.fetchStatus;
   $: articlesFetchStatus = articles && articles.fetchStatus;
-  $: currentPage = page;
+  $: currentPage = page || 0;
+  $: isUserFeed = activeFeed === USER_FEED;
+  $: isFilterTagFeed = activeFeed === TAG_FILTER_FEED;
 </script>
 
 <div>
-  <Header />
-  <div class="home-page" data-testId="home-page">
-    <Banner />
+  <Header {user} />
+  <div class="home-page">
+    {#if !user}
+      <Banner />
+    {/if}
     <div class="container page">
       <div class="row">
         <div class="col-md-9">
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
-              <GlobalFeedTab />
+            { #if isUserFeed }
+              <UserFeedTab tab={activeFeed} {user} />
+            { /if}
+              <GlobalFeedTab tab={activeFeed} />
+            { #if isFilterTagFeed }
+              <TagFilterTab tab={activeFeed} tag={selectedTag} />
+            { /if}
             </ul>
           </div>
           <ArticleList
@@ -45,7 +66,7 @@
         <div class="col-md-3">
           <div class="sidebar">
             <p>Popular Tags</p>
-            <Tags tags={tagList} fetchStatus={tagsFetchStatus} />
+            <Tags tags={tagList} fetchStatus={tagsFetchStatus} {onClickTag} />
           </div>
         </div>
       </div>

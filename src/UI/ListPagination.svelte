@@ -21,7 +21,7 @@
     <ul class="pagination">
       {#each pages as page (String(page.number))}
         <li class={page.isCurrent ? 'page-item active' : 'page-item'}>
-          <a class="page-link" href="">{page.number + 1}</a>
+          <a class="page-link" href="/">{page.number + 1}</a>
         </li>
       {/each}
     </ul>

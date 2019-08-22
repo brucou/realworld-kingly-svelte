@@ -1,10 +1,18 @@
+<script>
+  import LoggedInView from "./LoggedInView.svelte";
+  import LoggedOutView from "./LoggedOutView.svelte";
+  import { HOME } from "../links";
+
+  export let user;
+</script>
+
 <nav class="navbar navbar-light">
   <div class="container">
-    <a class="navbar-brand">conduit</a>
-    <ul class="nav navbar-nav pull-xs-right">
-      <li class="nav-item">Home</li>
-      <li class="nav-item">Sign in</li>
-      <li class="nav-item">Sign up</li>
-    </ul>
+    <a class="navbar-brand" href={HOME}>conduit</a>
+    {#if user}
+      <LoggedInView {user} />
+    {:else}
+      <LoggedOutView />
+    {/if}
   </div>
 </nav>

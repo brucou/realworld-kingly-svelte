@@ -14,6 +14,9 @@
   let page = 0;
   let tags;
   let articles;
+  let activeFeed;
+  let user;
+  let selectedTag;
 
   // This is to prevent some compiling errors from Svelte
   // Apparently directly using the import does not compile correctly
@@ -21,7 +24,8 @@
 
   //
   const {
-    fetchStatus: [LOADING, NOK, OK]
+    fetchStatus: [LOADING, NOK, OK],
+  tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
   } = viewModel;
 
   // Commands
@@ -39,8 +43,6 @@
   const eventEmitter = eventEmitterFactory(emitonoff);
   const next = eventEmitter.next.bind(eventEmitter);
 
-  // Infrastructure layer
-  //
   // We set in place the API for storing authentication data
   const sessionRepository = sessionRepositoryFactory(
     window.localStorage,
@@ -63,10 +65,11 @@
   );
   hashChangeSubscribe(hashChangeHandler);
 
- // Render handler: we update props one by one to allow for some preprocessing
+  // Render handler: we update props one by one to allow for some preprocessing
   // Svelte would probably not detect the assignment
   // if we would use Object.assign? open question
   // TODO: the logic in tags and articles can be DRYed up
+  // TODO: DRY up also _x => prop = _x
   const DEFAULT_PAGE = 0;
   const updateProps = {
     page: _page => (page = _page || DEFAULT_PAGE),
@@ -91,7 +94,10 @@
           count: _articles.articlesCount
         };
       }
-    }
+    },
+    activeFeed: _activeFeed => { activeFeed = _activeFeed },
+     user: _user => { user = _user },
+     selectedTag: _selectedTag=> { selectedTag = _selectedTag},
   };
 
   function render(props) {
@@ -140,5 +146,5 @@
   {commandHandlers}
   {effectHandlers}
   {initEvent}>
-  <RealWorld {tags} {articles} {page} />
+  <RealWorld {tags} {articles} {page} {activeFeed} {user} {selectedTag} />
 </Fsm>

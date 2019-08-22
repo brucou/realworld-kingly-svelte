@@ -5,7 +5,7 @@
 
   export let articles;
   export let articlesCount;
-  export let currentPage;
+  export let currentPage = 0;
   export let fetchStatus;
 
   const {

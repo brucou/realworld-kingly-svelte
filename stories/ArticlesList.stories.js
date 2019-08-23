@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/svelte';
 import { articlesErrorFixture, articlesFixture } from "../tests/fixtures/articles"
+import { action } from '@storybook/addon-actions';
 
 import ArticleList from '../src/UI/ArticleList.svelte';
 import { viewModel } from "../src/constants"
@@ -17,6 +18,8 @@ const userFixture = {
   "image": null
 };
 const { articles, articlesCount } = articlesFixture;
+const onClickPage = action('onClickPage');
+const onClickFavorite = action('onClickFavorite');
 
 storiesOf('ArticleList', module)
   .add('ArticleList list loading - undefined articles', () => ({
@@ -26,7 +29,7 @@ storiesOf('ArticleList', module)
   }))
   .add('ArticleList list loading - null articles', () => ({
     Component: ArticleList,
-    props: { articles: null, articlesCount: 99, currentPage: 0, fetchStatus: LOADING },
+    props: { articles: null, articlesCount: 99, currentPage: 0, fetchStatus: LOADING},
     on: {},
   }))
   .add('ArticleList list loading - fetched articles', () => ({
@@ -36,17 +39,17 @@ storiesOf('ArticleList', module)
   }))
   .add('ArticleList fetched - non empty article list', () => ({
     Component: ArticleList,
-    props: { articles, articlesCount, currentPage: 0, fetchStatus: OK },
+    props: { articles, articlesCount, currentPage: 0, fetchStatus: OK, onClickPage, onClickFavorite },
     on: {},
   }))
   .add('ArticleList fetched - empty article list', () => ({
     Component: ArticleList,
-    props: { articles: [], articlesCount, currentPage: 0, fetchStatus: OK },
+    props: { articles: [], articlesCount, currentPage: 0, fetchStatus: OK , onClickPage, onClickFavorite},
     on: {},
   }))
   .add('ArticleList fetched - undefined article list', () => ({
     Component: ArticleList,
-    props: { articles: void 0, articlesCount, currentPage: 0, fetchStatus: OK },
+    props: { articles: void 0, articlesCount, currentPage: 0, fetchStatus: OK, onClickPage, onClickFavorite },
     on: {},
   }))
   .add('ArticleList fetch failed ', () => ({

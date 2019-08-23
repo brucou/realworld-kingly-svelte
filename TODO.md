@@ -1,3 +1,6 @@
+# TODO
+// TODO: in the docs when the scenarios (the first batch) draw a table with highlighted the path through the machine
+
 - README
   - **Use [realworld-starter-kit]()https://github.com/gothinkster/realworld-starter-kit)**
 

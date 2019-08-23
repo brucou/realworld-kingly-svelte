@@ -181,4 +181,9 @@ export const articlesFixture = {
   "articlesCount": 500
 };
 
+export const articlesEmptyFixture = {
+  "articles": [],
+  "articlesCount": 0
+};
+
 export const articlesErrorFixture = new Error("net::ERR_INTERNET_DISCONNECTED");

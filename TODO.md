@@ -6,6 +6,10 @@
 - then implement the machine
 
 # Lessons learnt
+## Dev cycle
+- write the doc after finishing dev and tests
+  - I started with a home-route-tag-filter, doc it, and then changed my mind to directly do the whole home-route-complete, so I wrote the doc parts for nothing... hours lost
+
 ## Storybook
 - I made lots of errors in the tests...
   - this comes in part to the combination of values which are hard to follow
@@ -19,3 +23,13 @@
   - but if activeFeed === TAG that belongs to Tags' parent component
 - Actions:
   - storybook display the list of arguments received by the handlers, i.e. an array 
+
+## Bug found in other versions
+- if I favorite an article
+- log out in another screen
+- then unfavorite the article in the first screen, the favorite stays on (no login screen) and an error is logged to the console (promise ... no article on data or something)
+```text
+Failed to load resource: the server responded with a status of 401 ()
+articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' of undefined
+    at articles.js:79
+```

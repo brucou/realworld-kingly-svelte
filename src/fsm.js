@@ -18,7 +18,15 @@ export const events = [
   "USER_FEED_FETCHED_NOK",
   "TAG_FILTERED_FEED_FETCHED_OK",
   "TAG_FILTERED_FEED_FETCHED_NOK",
-  "CLICKED_TAG"
+  "CLICKED_TAG",
+  "CLICKED_USER_FEED",
+  "CLICKED_GLOBAL_FEED",
+  "CLICKED_TAG_FILTER_FEED",
+  "CLICKED_NEW_ARTICLE",
+  "CLICKED_SETTINGS",
+  "CLICKED_USER_PROFILE",
+  "CLICKED_ARTICLE",
+  "CLICKED_AUTHOR",
 ];
 const [
   ROUTE_CHANGED,
@@ -31,20 +39,30 @@ const [
   USER_FEED_FETCHED_NOK,
   TAG_FILTERED_FEED_FETCHED_OK,
   TAG_FILTERED_FEED_FETCHED_NOK,
-  CLICKED_TAG
+  CLICKED_TAG,
+  CLICKED_USER_FEED,
+  CLICKED_GLOBAL_FEED,
+  CLICKED_TAG_FILTER_FEED,
+  CLICKED_NEW_ARTICLE,
+  CLICKED_SETTINGS,
+  CLICKED_USER_PROFILE,
+  CLICKED_ARTICLE,
+  CLICKED_AUTHOR,
 ] = events;
 
 export const commands = [
   "RENDER",
   "FETCH_GLOBAL_FEED",
   "FETCH_AUTHENTICATION",
-  "FETCH_USER_FEED"
+  "FETCH_USER_FEED",
+  "FETCH_TAG_FILTER_FEED",
 ];
 const [
   RENDER,
   FETCH_GLOBAL_FEED,
   FETCH_AUTHENTICATION,
-  FETCH_USER_FEED
+  FETCH_USER_FEED,
+  FETCH_TAG_FILTER_FEED,
 ] = commands;
 
 const { home } = routes;
@@ -58,7 +76,8 @@ const initialControlState = INIT;
 const initialExtendedState = {
   /** @type {Number} */
   currentPage: 0,
-  activeFeed: GLOBAL_FEED,
+  // TODO: check that actually I don't need to keep track of it in machine's state
+  // activeFeed: GLOBAL_FEED,
   /** @type {null | User} */
   user: null
 };

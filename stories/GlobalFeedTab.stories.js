@@ -19,11 +19,11 @@ const userFixture = {
 storiesOf('GlobalFeedTab', module)
   .add('GlobalFeed tab', () => ({
     Component: GlobalFeedTab,
-    props: { tab: GLOBAL_FEED },
+    props: { tab: GLOBAL_FEED, onClickTab: action('onClickGlobalFeedTab') },
     on: { },
   }))
   .add('Not GlobalFeed tab', () => ({
     Component: GlobalFeedTab,
-    props: { tab: USER_FEED},
+    props: { tab: USER_FEED, onClickTab: action('onClickGlobalFeedTab')},
     on: { },
   }))

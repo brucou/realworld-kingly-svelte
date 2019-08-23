@@ -16,9 +16,13 @@
   export let user;
   export let selectedTag;
   export let onClickTag = () => {};
+  export let onClickUserFeedTab = () => {};
+  export let onClickGlobalFeedTab = () => {};
+  export let onClickPage;
+  export let onClickFavorite;
 
    const {
-    tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED]
+    tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
     } = viewModel;
 
   // NOTE: we have to guard against undefined values!
@@ -33,8 +37,8 @@
   $: tagsFetchStatus = tags && tags.fetchStatus;
   $: articlesFetchStatus = articles && articles.fetchStatus;
   $: currentPage = page || 0;
-  $: isUserFeed = activeFeed === USER_FEED;
   $: isFilterTagFeed = activeFeed === TAG_FILTER_FEED;
+  $: token = user && user.token;
 </script>
 
 <div>
@@ -48,10 +52,10 @@
         <div class="col-md-9">
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
-            { #if isUserFeed }
-              <UserFeedTab tab={activeFeed} {user} />
+            { #if token }
+              <UserFeedTab tab={activeFeed} {user} onClickTab="{onClickUserFeedTab}"/>
             { /if}
-              <GlobalFeedTab tab={activeFeed} />
+              <GlobalFeedTab tab={activeFeed} onClickTab="{onClickGlobalFeedTab}" />
             { #if isFilterTagFeed }
               <TagFilterTab tab={activeFeed} tag={selectedTag} />
             { /if}
@@ -61,6 +65,8 @@
             articles={articleList}
             {articlesCount}
             {currentPage}
+            {onClickPage}
+            {onClickFavorite}
             fetchStatus={articlesFetchStatus} />
         </div>
         <div class="col-md-3">

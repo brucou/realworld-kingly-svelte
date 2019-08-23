@@ -7,6 +7,8 @@
   export let articlesCount;
   export let currentPage = 0;
   export let fetchStatus;
+  export let onClickPage;
+  export let onClickFavorite;
 
   const {
     fetchStatus: [LOADING, NOK, OK]
@@ -24,8 +26,8 @@
 {:else if articles}
   <div>
     {#each articles as article (article.slug)}
-      <ArticlePreview {article} />
+      <ArticlePreview {article} {onClickFavorite} />
     {/each}
-    <ListPagination {articlesCount} {currentPage} />
+    <ListPagination {articlesCount} {currentPage} {onClickPage} />
   </div>
 {/if}

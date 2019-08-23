@@ -1,5 +1,8 @@
 <script>
+  import { local } from "../shared/events";
+
   export let articlesCount;
+  export let onClickPage;
   export let currentPage = 0;
 
   // We can leave that here instead of moving it to a helpers kind of file
@@ -13,6 +16,8 @@
     return range;
   }
 
+  const onClick = page => local(() => onClickPage(page.number));
+
   $: pages = getPageList({ articlesCount, currentPage });
 </script>
 
@@ -20,7 +25,7 @@
   <nav>
     <ul class="pagination">
       {#each pages as page (String(page.number))}
-        <li class={page.isCurrent ? 'page-item active' : 'page-item'}>
+        <li class={page.isCurrent ? 'page-item active' : 'page-item'} on:click={onClick(page)}>
           <a class="page-link" href="/">{page.number + 1}</a>
         </li>
       {/each}

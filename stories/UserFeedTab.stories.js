@@ -17,13 +17,8 @@ const userFixture = {
 };
 
 storiesOf('UserFeedTab', module)
-  .add('UserFeedTab tab', () => ({
+  .add('default', () => ({
     Component: UserFeedTab,
-    props: { tab: USER_FEED },
-    on: { },
-  }))
-  .add('Not UserFeedTab tab', () => ({
-    Component: UserFeedTab,
-    props: { tab: GLOBAL_FEED},
-    on: { },
+    props: { tab: USER_FEED, onClickTab: action('onClickUserFeedTab') },
+    on: {},
   }))

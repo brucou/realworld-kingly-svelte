@@ -16,7 +16,7 @@ function removeNoOutputs(arr){
   return arr.filter(x => x !== NO_OUTPUT)
 }
 function computeCleanedActualOutputs(fsm, inputSeq) {
-  return inputSeq.map(fsm).map(removeNoOutputs);
+  return inputSeq.map(fsm).filter(Boolean).map(removeNoOutputs);
 }
 
 QUnit.module("Testing home route fsm", {});

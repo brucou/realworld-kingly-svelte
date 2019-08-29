@@ -23,19 +23,32 @@
 
    const {
     tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
+  fetchStatus: [LOADING, NOK, OK]
     } = viewModel;
 
-  // NOTE: we have to guard against undefined values!
-  // Because the SvelteFsm renders its slot content, at initialization time, that slot will be
+   function computeFetchStatus(obj){
+      if (obj instanceof Error) {
+        return NOK;
+      } else if (typeof obj === "string") {
+        return LOADING
+      } else if (typeof obj === "object") {
+        return OK
+      } else {
+        throw `computeFetchStatus: invalid parameter!`
+      }
+   }
+
+  // We have to guard against undefined values!
+  // SvelteFsm renders its slot content and at initialization time, that slot will be
   // with empty props...
-  // That could be worked around by adding a `isInitialized` state variable but then that logic
-  // is tricky to define in the general case, so we keep it simple
+  // That can be worked around with an extra variable but we keep it simple
   // NOTE: it seems like Svelte does not currently allows destructuring in reactive statements!
-  $: articleList = articles && articles.data;
-  $: articlesCount = (articles && articles.count) || 0;
-  $: tagList = tags && tags.data;
-  $: tagsFetchStatus = tags && tags.fetchStatus;
-  $: articlesFetchStatus = articles && articles.fetchStatus;
+  // also you can't reuse a left side on the right side, hence the dup typeof tags
+  $: articleList = typeof articles === 'object' ? articles.articles: void 0;
+  $: articlesCount = typeof articles === 'object' ? articles.articlesCount: 0;
+  $: tagList = typeof tags === 'object' ? tags.tags : void 0;
+  $: tagsFetchStatus = computeFetchStatus(tags);
+  $: articlesFetchStatus = computeFetchStatus(articles);
   $: currentPage = page || 0;
   $: isFilterTagFeed = activeFeed === TAG_FILTER_FEED;
   $: token = user && user.token;

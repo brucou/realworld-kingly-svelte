@@ -18,17 +18,15 @@ const userFixture = {
   "bio": "I work at statefarm",
   "image": null
 };
-const tagsFixture = {data: _tF.tags, fetchStatus: OK};
-const tagsLoadingFixture = {data: void 0, fetchStatus: LOADING};
-const tagsErrorFixture = {data: _tEF, fetchStatus: NOK};
+const tagsFixture = _tF;
+const tagsLoadingFixture = LOADING;
+const tagsErrorFixture = _tEF;
 const tagFixture = "min";
-const articlesFixture = {data: _aF.articles, count:_aF.articlesCount, fetchStatus: OK};
-const articlesLoadingFixture = {data: _aF.articles, count:_aF.articlesCount, fetchStatus: LOADING};
-const articlesErrorFixture = {data: _aEF, fetchStatus: NOK};
-const articlesEmptyFixture = {data: _aEmF.articles, count: _aEmF.articlesCount, fetchStatus: OK};
+const articlesFixture = _aF;
+const articlesLoadingFixture = LOADING;
+const articlesErrorFixture = _aEF;
+const articlesEmptyFixture = _aEmF;
 
-const {articles, articlesCount} = articlesFixture;
-const allPropsUndefined = { };
 const onClickUserFeedTab = action('onClickUserFeedTab');
 const onClickGlobalFeedTab = action('onClickGlobalFeedTab ');
 const onClickPage = action('onClickPage');

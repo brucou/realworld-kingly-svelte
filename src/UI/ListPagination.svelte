@@ -19,6 +19,9 @@
   const onClick = page => local(() => onClickPage(page.number));
 
   $: pages = getPageList({ articlesCount, currentPage });
+  $: {
+    console.log(`articlesCount`, articlesCount)
+  }
 </script>
 
 {#if articlesCount > 10}

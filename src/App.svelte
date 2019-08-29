@@ -72,29 +72,9 @@
   // TODO: DRY up also _x => prop = _x
   const DEFAULT_PAGE = 0;
   const updateProps = {
-    page: _page => (page = _page || DEFAULT_PAGE),
-    tags: _tags => {
-      if (_tags instanceof Error) {
-        tags = { data: void 0, fetchStatus: NOK };
-      } else if (typeof _tags === "string") {
-        tags = { data: void 0, fetchStatus: LOADING };
-      } else if (typeof _tags === "object") {
-        tags = { data: _tags.tags, fetchStatus: OK };
-      }
-    },
-    articles: _articles => {
-      if (_articles instanceof Error) {
-        articles = { data: void 0, fetchStatus: NOK, count: void 0 };
-      } else if (typeof _articles === "string") {
-        articles = { data: void 0, fetchStatus: LOADING, count: void 0 };
-      } else if (typeof _articles === "object") {
-        articles = {
-          data: _articles.articles,
-          fetchStatus: OK,
-          count: _articles.articlesCount
-        };
-      }
-    },
+    page: _page => ( page = _page ),
+    tags: _tags => { tags = _tags },
+    articles: _articles => { articles = _articles },
     activeFeed: _activeFeed => { activeFeed = _activeFeed },
      user: _user => { user = _user },
      selectedTag: _selectedTag=> { selectedTag = _selectedTag},

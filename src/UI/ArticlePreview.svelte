@@ -6,7 +6,7 @@
   export let article;
   export let onClickFavorite;
 
-  // NOTE: it seems like Svelte does not currently allows destructuring in reactive statements!
+  // It seems like Svelte does not currently allows destructuring in reactive statements!
   $: authorUserName = article.author.username;
   $: authorImage = article.author.image;
   $: createdAt = article.createdAt;

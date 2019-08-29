@@ -1,5 +1,5 @@
 import './home-route-fsm.specs'
-import './home-route-with-tags-filter-fsm.specs'
+// import './home-route-with-tags-filter-fsm.specs'
 
 QUnit.dump.maxDepth = 50;
 

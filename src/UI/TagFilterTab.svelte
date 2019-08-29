@@ -5,7 +5,7 @@
 
 {#if tag}
   <li class="nav-item">
-    <a href="/" class="nav-link active" on:click="{e => e.preventDefault()}">
+    <a href="/" class="nav-link active" on:click={e => e.preventDefault()}>
       <i class="ion-pound" />
       {tag}
     </a>

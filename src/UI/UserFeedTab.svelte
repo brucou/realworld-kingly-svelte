@@ -15,5 +15,10 @@
 </script>
 
 <li class="nav-item">
-  <a href="/" class={isUserFeed ? 'nav-link active' : 'nav-link'} on:click={clickHandler}> Your Feed </a>
+  <a
+    href="/"
+    class={isUserFeed ? 'nav-link active' : 'nav-link'}
+    on:click={clickHandler}>
+    Your Feed
+  </a>
 </li>

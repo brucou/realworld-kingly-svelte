@@ -1,6 +1,13 @@
-import { ACTION_IDENTITY, createStateMachine, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
+import {
+  ACTION_IDENTITY,
+  createStateMachine,
+  DEEP,
+  historyState,
+  INIT_EVENT,
+  NO_OUTPUT
+} from "kingly";
 import { loadingStates, routes, viewModel } from "./constants";
-import { not } from "./shared/hof"
+import { not } from "./shared/hof";
 
 export const events = [
   "ROUTE_CHANGED",
@@ -12,7 +19,7 @@ export const events = [
   "CLICKED_TAG",
   "CLICKED_PAGE",
   "CLICKED_USER_FEED",
-  "CLICKED_GLOBAL_FEED",
+  "CLICKED_GLOBAL_FEED"
 ];
 const [
   ROUTE_CHANGED,
@@ -24,7 +31,7 @@ const [
   CLICKED_TAG,
   CLICKED_PAGE,
   CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED,
+  CLICKED_GLOBAL_FEED
 ] = events;
 
 export const commands = [
@@ -34,7 +41,7 @@ export const commands = [
   "FETCH_ARTICLES_USER_FEED",
   "FETCH_AUTHENTICATION",
   "FETCH_USER_FEED",
-  "FETCH_FILTERED_FEED",
+  "FETCH_FILTERED_FEED"
 ];
 const [
   RENDER,
@@ -43,7 +50,7 @@ const [
   FETCH_ARTICLES_USER_FEED,
   FETCH_AUTHENTICATION,
   FETCH_USER_FEED,
-  FETCH_FILTERED_FEED,
+  FETCH_FILTERED_FEED
 ] = commands;
 
 const { home } = routes;
@@ -76,7 +83,7 @@ const states = {
     },
     "fetching-user-feed": {
       "pending-user-feed": "",
-      "pending-user-feed-articles": "",
+      "pending-user-feed-articles": ""
     },
     "fetching-filtered-articles": {
       "pending-filtered-articles": "",
@@ -92,13 +99,26 @@ const transitions = [
     event: void 0,
     guards: [{ predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY }]
   },
-  { from: "home", event: INIT_EVENT, to: "fetching-authentication", action: fetchAuthentication },
+  {
+    from: "home",
+    event: INIT_EVENT,
+    to: "fetching-authentication",
+    action: fetchAuthentication
+  },
   {
     from: "fetching-authentication",
     event: AUTH_CHECKED,
     guards: [
-      { predicate: isNotAuthenticated, to: "fetching-global-feed", action: updateAuthAndResetPage },
-      { predicate: isAuthenticated, to: "fetching-user-feed", action: updateAuthAndResetPage }
+      {
+        predicate: isNotAuthenticated,
+        to: "fetching-global-feed",
+        action: updateAuthAndResetPage
+      },
+      {
+        predicate: isAuthenticated,
+        to: "fetching-user-feed",
+        action: updateAuthAndResetPage
+      }
     ]
   },
   {
@@ -110,11 +130,25 @@ const transitions = [
         to: "pending-global-feed-articles",
         action: fetchGlobalFeedArticlesAndRenderLoading
       },
-      { predicate: not(areTagsFetched), to: "pending-global-feed", action: fetchGlobalFeedAndRenderLoading },
+      {
+        predicate: not(areTagsFetched),
+        to: "pending-global-feed",
+        action: fetchGlobalFeedAndRenderLoading
+      }
     ]
   },
-  { from: "pending-global-feed", event: TAGS_FETCHED_OK, to: "pending-global-feed", action: renderTags },
-  { from: "pending-global-feed", event: TAGS_FETCHED_NOK, to: "pending-global-feed", action: renderTagsFetchError },
+  {
+    from: "pending-global-feed",
+    event: TAGS_FETCHED_OK,
+    to: "pending-global-feed",
+    action: renderTags
+  },
+  {
+    from: "pending-global-feed",
+    event: TAGS_FETCHED_NOK,
+    to: "pending-global-feed",
+    action: renderTagsFetchError
+  },
   {
     from: "fetching-global-feed",
     event: ARTICLES_FETCHED_OK,
@@ -127,17 +161,40 @@ const transitions = [
     to: historyState(DEEP, "fetching-global-feed"),
     action: renderGlobalFeedArticlesFetchError
   },
-  { from: "fetching-global-feed", event: CLICKED_PAGE, to: "fetching-global-feed", action: updatePage },
+  {
+    from: "fetching-global-feed",
+    event: CLICKED_PAGE,
+    to: "fetching-global-feed",
+    action: updatePage
+  },
   {
     from: "fetching-user-feed",
     event: INIT_EVENT,
     guards: [
-      { predicate: areTagsFetched, to: "pending-user-feed-articles", action: fetchUserFeedArticlesAndRenderLoading },
-      { predicate: not(areTagsFetched), to: "pending-user-feed", action: fetchUserFeedAndRenderLoading },
+      {
+        predicate: areTagsFetched,
+        to: "pending-user-feed-articles",
+        action: fetchUserFeedArticlesAndRenderLoading
+      },
+      {
+        predicate: not(areTagsFetched),
+        to: "pending-user-feed",
+        action: fetchUserFeedAndRenderLoading
+      }
     ]
   },
-  { from: "pending-user-feed", event: TAGS_FETCHED_OK, to: "pending-user-feed", action: renderTags },
-  { from: "pending-user-feed", event: TAGS_FETCHED_NOK, to: "pending-user-feed", action: renderTagsFetchError },
+  {
+    from: "pending-user-feed",
+    event: TAGS_FETCHED_OK,
+    to: "pending-user-feed",
+    action: renderTags
+  },
+  {
+    from: "pending-user-feed",
+    event: TAGS_FETCHED_NOK,
+    to: "pending-user-feed",
+    action: renderTagsFetchError
+  },
   {
     from: "fetching-user-feed",
     event: ARTICLES_FETCHED_OK,
@@ -150,7 +207,12 @@ const transitions = [
     to: historyState(DEEP, "fetching-user-feed"),
     action: renderUserFeedArticlesFetchError
   },
-  { from: "fetching-user-feed", event: CLICKED_PAGE, to: "fetching-authentication", action: updatePage },
+  {
+    from: "fetching-user-feed",
+    event: CLICKED_PAGE,
+    to: "fetching-authentication",
+    action: updatePage
+  },
   {
     from: "fetching-filtered-articles",
     event: INIT_EVENT,
@@ -169,17 +231,29 @@ const transitions = [
     to: "failed-fetch-filtered-articles",
     action: renderFilteredArticlesFetchError
   },
-  { from: "fetching-filtered-articles", event: CLICKED_PAGE, to: "fetching-filtered-articles", action: updatePage },
-  { from: "home", event: CLICKED_TAG, to: "fetching-filtered-articles", action: resetPage },
-  { from: "home", event: CLICKED_GLOBAL_FEED, to: "fetching-global-feed", action: resetPage },
+  {
+    from: "fetching-filtered-articles",
+    event: CLICKED_PAGE,
+    to: "fetching-filtered-articles",
+    action: updatePage
+  },
+  {
+    from: "home",
+    event: CLICKED_TAG,
+    to: "fetching-filtered-articles",
+    action: resetPage
+  },
+  {
+    from: "home",
+    event: CLICKED_GLOBAL_FEED,
+    to: "fetching-global-feed",
+    action: resetPage
+  },
   { from: "home", event: CLICKED_USER_FEED, to: "home", action: resetPage },
-  { from: "home", event: ROUTE_CHANGED, to: "routing", action: ACTION_IDENTITY },
+  { from: "home", event: ROUTE_CHANGED, to: "routing", action: ACTION_IDENTITY }
 ];
 
 // TODO: check official demo. Is the pagination reset when feed/page 2/feed ? YES
-// TODO: best practice. Factorize thr latest possible. pagination is good example
-// and then only factorize when great certainty that requirements will not change
-// as is the case when it is intrinsic property of the specs
 
 // State update
 // Basically {a, b: {c, d}}, [{b:{e}]} -> {a, b:{e}}
@@ -213,7 +287,7 @@ function isNotAuthenticated(extendedState, eventData, settings) {
 function areTagsFetched(extendedState, eventData, settings) {
   const { areTagsFetched } = extendedState;
 
-  return areTagsFetched
+  return areTagsFetched;
 }
 
 // Action factories
@@ -237,7 +311,11 @@ function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settings) {
   };
 }
 
-function fetchGlobalFeedArticlesAndRenderLoading(extendedState, eventData, settings) {
+function fetchGlobalFeedArticlesAndRenderLoading(
+  extendedState,
+  eventData,
+  settings
+) {
   const { currentPage, user } = extendedState;
 
   return {
@@ -314,14 +392,21 @@ function updateAuthAndResetPage(extendedState, eventData, settings) {
   };
 }
 
-function fetchUserFeedArticlesAndRenderLoading(extendedState, eventData, settings) {
+function fetchUserFeedArticlesAndRenderLoading(
+  extendedState,
+  eventData,
+  settings
+) {
   const { currentPage, user } = extendedState;
   const username = user && user.username;
 
   return {
     updates: [],
     outputs: [
-      { command: FETCH_ARTICLES_USER_FEED, params: { page: currentPage, username } },
+      {
+        command: FETCH_ARTICLES_USER_FEED,
+        params: { page: currentPage, username }
+      },
       {
         command: RENDER,
         params: {
@@ -344,7 +429,12 @@ function fetchUserFeedAndRenderLoading(extendedState, eventData, settings) {
       { command: FETCH_USER_FEED, params: { page: currentPage, username } },
       {
         command: RENDER,
-        params: { tags: TAGS_ARE_LOADING, articles: ARTICLES_ARE_LOADING, activeFeed: USER_FEED, user }
+        params: {
+          tags: TAGS_ARE_LOADING,
+          articles: ARTICLES_ARE_LOADING,
+          activeFeed: USER_FEED,
+          user
+        }
       }
     ]
   };
@@ -354,11 +444,9 @@ function updatePage(extendedState, eventData, settings) {
   const currentPage = eventData;
 
   return {
-    updates: [
-      { currentPage }
-    ],
+    updates: [{ currentPage }],
     outputs: []
-  }
+  };
 }
 
 function renderUserFeedArticles(extendedState, eventData, settings) {
@@ -376,14 +464,20 @@ function renderUserFeedArticles(extendedState, eventData, settings) {
 function renderUserFeedArticlesFetchError(extendedState, eventData, settings) {
   return {
     updates: [],
-    outputs: [{
-      command: RENDER,
-      outputs: [{ command: RENDER, params: { articles: eventData } }]
-    }]
-  }
+    outputs: [
+      {
+        command: RENDER,
+        outputs: [{ command: RENDER, params: { articles: eventData } }]
+      }
+    ]
+  };
 }
 
-function fetchFilteredArticlesAndRenderLoading(extendedState, eventData, settings) {
+function fetchFilteredArticlesAndRenderLoading(
+  extendedState,
+  eventData,
+  settings
+) {
   const { currentPage, user } = extendedState;
   const { tag } = eventData;
 
@@ -393,37 +487,35 @@ function fetchFilteredArticlesAndRenderLoading(extendedState, eventData, setting
       { command: FETCH_FILTERED_FEED, params: { page: currentPage, tag } },
       { command: RENDER, params: { articles: ARTICLES_ARE_LOADING } }
     ]
-  }
+  };
 }
 
 function renderFilteredArticles(extendedState, eventData, settings) {
   return {
     updates: [],
-    outputs: [
-      { command: RENDER, params: { articles: eventData } }
-    ]
-  }
+    outputs: [{ command: RENDER, params: { articles: eventData } }]
+  };
 }
 
 function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
   return {
     updates: [],
-    outputs: [{
-      command: RENDER,
-      outputs: [{ command: RENDER, params: { articles: eventData } }]
-    }]
-  }
+    outputs: [
+      {
+        command: RENDER,
+        outputs: [{ command: RENDER, params: { articles: eventData } }]
+      }
+    ]
+  };
 }
 
 function resetPage(extendedState, eventData, settings) {
   const currentPage = eventData;
 
   return {
-    updates: [
-      { currentPage }
-    ],
+    updates: [{ currentPage }],
     outputs: []
-  }
+  };
 }
 
 export const fsmDef = {
@@ -437,7 +529,7 @@ export const fsmDef = {
 
 export const fsmFactory = settings => createStateMachine(fsmDef, settings);
 
-// TODO: remove duplication after checking everything works
-// renderFilteredArticles = renderFilteredArticlesFetchError = renderUserFeedArticles etc.
-// TODO: test slowly but surely. Scenario that are getting longer but identify key scenarios first
-// TODO: write helper functions : only updates, only render. Problem is we loose the function name in the trace...
+// TODO: refactor
+// - remove duplication after checking everything works
+//   renderFilteredArticles = renderFilteredArticlesFetchError = renderUserFeedArticles etc.
+// - write helper functions : only updates, only render. Problem is we loose the function name in the trace...

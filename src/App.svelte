@@ -1,8 +1,6 @@
 <script>
   import emitonoff from "emitonoff";
   import { COMMAND_RENDER, createStateMachine, fsmContracts } from "kingly";
-  import RealWorld from "./UI/RealWorld.svelte";
-  import Fsm from "./SvelteFsm.svelte";
   import sessionRepositoryFactory from "./sessionRepository";
   import apiGatewayFactory from "./apiGateway";
   import apiRouterFactory from "./apiRouter";
@@ -22,10 +20,15 @@
   // Apparently directly using the import does not compile correctly
   let fsmFactory = f;
 
-  //
+  // helpers
+  function set(prop) {
+    return x => (prop = x);
+  }
+
+  // view model constants
   const {
     fetchStatus: [LOADING, NOK, OK],
-  tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
+    tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED]
   } = viewModel;
 
   // Commands
@@ -72,12 +75,12 @@
   // TODO: DRY up also _x => prop = _x
   const DEFAULT_PAGE = 0;
   const updateProps = {
-    page: _page => ( page = _page ),
-    tags: _tags => { tags = _tags },
-    articles: _articles => { articles = _articles },
-    activeFeed: _activeFeed => { activeFeed = _activeFeed },
-     user: _user => { user = _user },
-     selectedTag: _selectedTag=> { selectedTag = _selectedTag},
+    page: set(page),
+    tags: set(tags),
+    articles: set(articles),
+    activeFeed: set(activeFeed),
+    user: set(user),
+    selectedTag: set(selectedTag)
   };
 
   function render(props) {

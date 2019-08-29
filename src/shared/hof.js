@@ -1,5 +1,5 @@
-export function not(f){
-  return function(...args){
-    return !f(...args)
-  }
+export function not(f) {
+  return function(...args) {
+    return !f(...args);
+  };
 }

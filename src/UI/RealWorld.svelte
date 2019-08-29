@@ -21,32 +21,33 @@
   export let onClickPage;
   export let onClickFavorite;
 
-   const {
+  const {
     tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
-  fetchStatus: [LOADING, NOK, OK]
-    } = viewModel;
+    fetchStatus: [LOADING, NOK, OK]
+  } = viewModel;
 
-   function computeFetchStatus(obj){
-      if (obj instanceof Error) {
-        return NOK;
-      } else if (typeof obj === "string") {
-        return LOADING
-      } else if (typeof obj === "object") {
-        return OK
-      } else {
-        throw `computeFetchStatus: invalid parameter!`
-      }
-   }
+  function computeFetchStatus(obj) {
+    if (obj instanceof Error) {
+      return NOK;
+    } else if (typeof obj === "string") {
+      return LOADING;
+    } else if (typeof obj === "object") {
+      return OK;
+    } else {
+      throw `computeFetchStatus: invalid parameter!`;
+    }
+  }
 
-  // We have to guard against undefined values!
-  // SvelteFsm renders its slot content and at initialization time, that slot will be
-  // with empty props...
-  // That can be worked around with an extra variable but we keep it simple
-  // NOTE: it seems like Svelte does not currently allows destructuring in reactive statements!
-  // also you can't reuse a left side on the right side, hence the dup typeof tags
-  $: articleList = typeof articles === 'object' ? articles.articles: void 0;
-  $: articlesCount = typeof articles === 'object' ? articles.articlesCount: 0;
-  $: tagList = typeof tags === 'object' ? tags.tags : void 0;
+  // Several notes related to Svelte
+  // - We have to guard against undefined values!
+  //   SvelteFsm renders its slot content and at initialization time, that slot will be
+  //   with empty props...
+  //   That can be worked around with an extra variable but we keep it simple
+  // - It seems like Svelte does not currently allows destructuring in reactive statements!
+  // - Also you can't reuse a left side on the right side, hence the dup typeof tags
+  $: articleList = typeof articles === "object" ? articles.articles : void 0;
+  $: articlesCount = typeof articles === "object" ? articles.articlesCount : 0;
+  $: tagList = typeof tags === "object" ? tags.tags : void 0;
   $: tagsFetchStatus = computeFetchStatus(tags);
   $: articlesFetchStatus = computeFetchStatus(articles);
   $: currentPage = page || 0;
@@ -65,13 +66,18 @@
         <div class="col-md-9">
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
-            { #if token }
-              <UserFeedTab tab={activeFeed} {user} onClickTab="{onClickUserFeedTab}"/>
-            { /if}
-              <GlobalFeedTab tab={activeFeed} onClickTab="{onClickGlobalFeedTab}" />
-            { #if isFilterTagFeed }
-              <TagFilterTab tab={activeFeed} tag={selectedTag} />
-            { /if}
+              {#if token}
+                <UserFeedTab
+                  tab={activeFeed}
+                  {user}
+                  onClickTab={onClickUserFeedTab} />
+              {/if}
+              <GlobalFeedTab
+                tab={activeFeed}
+                onClickTab={onClickGlobalFeedTab} />
+              {#if isFilterTagFeed}
+                <TagFilterTab tab={activeFeed} tag={selectedTag} />
+              {/if}
             </ul>
           </div>
           <ArticleList

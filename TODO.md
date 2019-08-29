@@ -1,12 +1,11 @@
 # TODO
 // TODO: in the docs when the scenarios (the first batch) draw a table with highlighted the path through the machine
+- write the machine tests left!
+- then implement the machine
 
 - README
   - **Use [realworld-starter-kit]()https://github.com/gothinkster/realworld-starter-kit)**
 
-- be careful of different data format for view and machine!! to harmonize in App.render
-- write the machine tests!
-- then implement the machine
 
 # Lessons learnt
 ## Dev cycle

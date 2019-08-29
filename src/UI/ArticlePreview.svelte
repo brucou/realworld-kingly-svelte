@@ -19,7 +19,7 @@
 <div class="article-preview">
   <div class="article-meta">
     <a href={profileLink(authorUserName)}>
-      <img src={authorImage} alt="post's author image"/>
+      <img src={authorImage} alt="post's author image" />
     </a>
     <div class="info">
       <a class="author" href={profileLink(authorUserName)}>{authorUserName}</a>

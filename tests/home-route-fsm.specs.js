@@ -1,14 +1,19 @@
 import QUnit from "qunit"
 import prettyFormat from 'pretty-format'
+import {equals as deepEqual} from "ramda"
 import { fsmContracts, NO_OUTPUT } from "kingly"
 import { commands, events, fsmFactory } from "../src/fsm"
 import { loadingStates, routes, viewModel } from "../src/constants"
-import { articlesErrorFixture, articlesFixture } from "./fixtures/articles"
-import { tagsErrorFixture, tagsFixture } from "./fixtures/tags"
+import {
+  articlesErrorFixture, articlesFilteredErrorFixture, articlesFilteredFixture, articlesFixture, articlesPage1Fixture
+} from "./fixtures/articles"
+import { tagFixture, tagsFixture } from "./fixtures/tags"
+import { userFixture } from "./fixtures/user"
+import { formatIndex, processRenderCommands } from "./common"
 
 // Cheapest deep equal possible
 // Bit beware of caveats of JSON.stringify and the JSON format!
-const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+// const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 // Remove the NO_OUTPUT from the sequence of actions for comparison
 // (NO_OUTPUT is an implementation detail that is not part of the specifications)
@@ -52,93 +57,16 @@ const [
 const { home } = routes;
 const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 
-const HOME_ROUTE_LOADING_SEQ = [
-  { [ROUTE_CHANGED]: { hash: home } }
-];
-
-const HOME_ROUTE_LOADED_OK_TA_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [TAGS_FETCHED_OK]: tagsFixture },
-  { [ARTICLES_FETCHED_OK]: articlesFixture },
-]);
-
-const HOME_ROUTE_LOADED_OK_AT_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [ARTICLES_FETCHED_OK]: articlesFixture },
-  { [TAGS_FETCHED_OK]: tagsFixture },
-]);
-
-const HOME_ROUTE_LOADING_NOK_TA_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [TAGS_FETCHED_NOK]: tagsErrorFixture },
-  { [ARTICLES_FETCHED_NOK]: articlesErrorFixture },
-]);
-
-const HOME_ROUTE_LOADING_NOK_AT_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [ARTICLES_FETCHED_NOK]: articlesErrorFixture },
-  { [TAGS_FETCHED_NOK]: tagsErrorFixture },
-]);
-
-const HOME_ROUTE_LOADING_NOK_T$_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [TAGS_FETCHED_NOK]: tagsErrorFixture },
-  { [ARTICLES_FETCHED_OK]: articlesFixture },
-]);
-
-const HOME_ROUTE_LOADING_NOK_$T_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [ARTICLES_FETCHED_OK]: articlesFixture },
-  { [TAGS_FETCHED_NOK]: tagsErrorFixture },
-]);
-
-const HOME_ROUTE_LOADING_NOK_A$_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [ARTICLES_FETCHED_NOK]: articlesErrorFixture },
-  { [TAGS_FETCHED_OK]: tagsFixture },
-]);
-
-const HOME_ROUTE_LOADING_NOK_$A_SEQ = HOME_ROUTE_LOADING_SEQ.concat([
-  { [TAGS_FETCHED_OK]: tagsFixture },
-  { [ARTICLES_FETCHED_NOK]: articlesErrorFixture },
-]);
-
-const HOME_ROUTE_LOADING_SEQ_COMMANDS = [
-  [
-    { command: FETCH_GLOBAL_FEED, params: { page: 0 } },
-    { command: RENDER, params: { tags: TAGS_ARE_LOADING, articles: ARTICLES_ARE_LOADING } }
-  ]
-];
-const HOME_ROUTE_LOADED_OK_TA_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { tags: tagsFixture } }],
-  [{ command: RENDER, params: { articles: articlesFixture } }]
-]);
-const HOME_ROUTE_LOADED_OK_AT_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { articles: articlesFixture } }],
-  [{ command: RENDER, params: { tags: tagsFixture } }],
-]);
-const HOME_ROUTE_LOADING_NOK_TA_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { tags: tagsErrorFixture } }],
-  [{ command: RENDER, params: { articles: articlesErrorFixture } }]
-]);
-const HOME_ROUTE_LOADING_NOK_AT_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { articles: articlesErrorFixture } }],
-  [{ command: RENDER, params: { tags: tagsErrorFixture } }],
-]);
-const HOME_ROUTE_LOADING_NOK_T$_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { tags: tagsErrorFixture } }],
-  [{ command: RENDER, params: { articles: articlesFixture } }]
-]);
-const HOME_ROUTE_LOADING_NOK_$T_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { articles: articlesFixture } }],
-  [{ command: RENDER, params: { tags: tagsErrorFixture } }],
-]);
-const HOME_ROUTE_LOADING_NOK_A$_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { articles: articlesErrorFixture } }],
-  [{ command: RENDER, params: { tags: tagsFixture } }],
-]);
-const HOME_ROUTE_LOADING_NOK_$A_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.concat([
-  [{ command: RENDER, params: { tags: tagsFixture } }],
-  [{ command: RENDER, params: { articles: articlesErrorFixture } }]
-]);
-
+// NOTE DOC: for every expected commands, put the whole props for the <App /> as tested in Storybook
+// Note that it may not however be useful to include event handlers
 const UNAUTH_USER = null;
 const UNAUTH_USER_ON_HOME_INPUTS = [
   { [ROUTE_CHANGED]: { hash: home } },
   { [AUTH_CHECKED]: { user: UNAUTH_USER } }
+];
+const AUTH_USER_ON_HOME_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: home } },
+  { [AUTH_CHECKED]: { user: userFixture } }
 ];
 
 const UNAUTH_USER_ON_HOME_COMMANDS = page => ([
@@ -149,23 +77,141 @@ const UNAUTH_USER_ON_HOME_COMMANDS = page => ([
         tags: TAGS_ARE_LOADING,
         articles: ARTICLES_ARE_LOADING,
         activeFeed: GLOBAL_FEED,
-        user: UNAUTH_USER
+        user: UNAUTH_USER,
+        page: 0
       }
     },
     { [FETCH_GLOBAL_FEED]: { page } },
   ]
 ]);
+const AUTH_USER_ON_HOME_COMMANDS = page => ([
+  [{ [FETCH_AUTHENTICATION]: void 0 }],
+  [
+    {
+      [RENDER]: {
+        tags: TAGS_ARE_LOADING,
+        articles: ARTICLES_ARE_LOADING,
+        activeFeed: USER_FEED,
+        user: userFixture,
+        page
+      }
+    },
+    { [FETCH_USER_FEED]: { page, username: userFixture.username } },
+  ]
+]);
 
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED = `Unauthenticated user navigates to *Home* page and sees the full global feed`;
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS = [
-    UNAUTH_USER_ON_HOME_INPUTS,
-    { [TAGS_FETCHED_OK]: tagsFixture },
-    { [ARTICLES_FETCHED_OK]: articlesFixture }
-  ].flat()
-;
+  UNAUTH_USER_ON_HOME_INPUTS,
+  { [TAGS_FETCHED_OK]: tagsFixture },
+  { [ARTICLES_FETCHED_OK]: articlesFixture }
+].flat();
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS = UNAUTH_USER_ON_HOME_COMMANDS(0).concat([
-  [{ [RENDER]: { tags: tagsFixture } }],
-  [{ [RENDER]: { articles: articlesFixture} }],
+  [{ [RENDER]: { tags: tagsFixture, articles: ARTICLES_ARE_LOADING, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+  [{ [RENDER]: { articles: articlesFixture, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+]);
+
+const UNAUTH_USER_ON_HOME_SEES_PARTIAL_GLOBAL_FEED = `Unauthenticated user navigates to *Home* page and sees partial global feed`;
+const UNAUTH_USER_ON_HOME_SEES_PARTIAL_GLOBAL_FEED_INPUTS = [
+  UNAUTH_USER_ON_HOME_INPUTS,
+  { [TAGS_FETCHED_OK]: tagsFixture },
+  { [ARTICLES_FETCHED_OK]: articlesErrorFixture }
+].flat();
+const UNAUTH_USER_ON_HOME_SEES_PARTIAL_GLOBAL_FEED_COMMANDS = UNAUTH_USER_ON_HOME_COMMANDS(0).concat([
+  [{ [RENDER]: { tags: tagsFixture, articles: ARTICLES_ARE_LOADING, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+  [{ [RENDER]: { articles: articlesErrorFixture, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+]);
+
+const AUTH_USER_ON_HOME_SEES_USER_FEED = `Authenticated user navigates to *Home* page and sees the full user feed`;
+const AUTH_USER_ON_HOME_SEES_USER_FEED_INPUTS = [
+  AUTH_USER_ON_HOME_INPUTS,
+  { [TAGS_FETCHED_OK]: tagsFixture },
+  { [ARTICLES_FETCHED_OK]: articlesFixture }
+].flat();
+const AUTH_USER_ON_HOME_SEES_USER_FEED_COMMANDS = AUTH_USER_ON_HOME_COMMANDS(0).concat([
+  [{ [RENDER]: { tags: tagsFixture, articles: ARTICLES_ARE_LOADING, page: 0, user:userFixture, activeFeed: USER_FEED } }],
+  [{ [RENDER]: { articles: articlesFixture ,tags: tagsFixture, page: 0, user:userFixture, activeFeed: USER_FEED} }],
+]);
+
+const AUTH_USER_ON_HOME_SEES_PARTIAL_USER_FEED = `Authenticated user navigates to *Home* page and sees partial user feed`;
+const AUTH_USER_ON_HOME_SEES_PARTIAL_USER_FEED_INPUTS = [
+  AUTH_USER_ON_HOME_INPUTS,
+  { [TAGS_FETCHED_OK]: tagsFixture },
+  { [ARTICLES_FETCHED_OK]: articlesErrorFixture }
+].flat();
+const AUTH_USER_ON_HOME_SEES_PARTIAL_USER_FEED_COMMANDS = AUTH_USER_ON_HOME_COMMANDS(0).concat([
+  [{ [RENDER]: { tags: tagsFixture, articles: ARTICLES_ARE_LOADING, page: 0, user:userFixture, activeFeed: USER_FEED } }],
+  [{ [RENDER]: { articles: articlesErrorFixture, tags: tagsFixture, page: 0, user:userFixture, activeFeed: USER_FEED } }],
+]);
+
+const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED = `Unauthenticated user filters the global feed with a tag`;
+const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
+  UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
+  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [ARTICLES_FETCHED_OK]: articlesFilteredFixture }
+].flat();
+const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
+  [
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } },
+    { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
+  ],
+  [{ [RENDER]: { articles: articlesFilteredFixture , tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+]);
+
+const UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED = `Unauthenticated user filters the global feed with a tag, sees incomplete feed`;
+const UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
+  UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
+  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [ARTICLES_FETCHED_OK]: articlesFilteredErrorFixture }
+].flat();
+const UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
+  [
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } },
+    { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
+  ],
+  [{ [RENDER]: { articles: articlesFilteredErrorFixture , tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+]);
+
+const AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED = `Authenticated user filters the global feed with a tag`;
+const AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
+  AUTH_USER_ON_HOME_SEES_USER_FEED_INPUTS,
+  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [ARTICLES_FETCHED_OK]: articlesFilteredFixture }
+].flat();
+const AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_COMMANDS = AUTH_USER_ON_HOME_SEES_USER_FEED_COMMANDS.concat([
+  [
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:userFixture, activeFeed: USER_FEED } },
+    { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
+  ],
+  [{ [RENDER]: { articles: articlesFilteredFixture, tags: tagsFixture, page: 0, user: userFixture, activeFeed: USER_FEED} }],
+]);
+
+const AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED = `Authenticated user filters the global feed with a tag, sees incomplete feed`;
+const AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
+  AUTH_USER_ON_HOME_SEES_USER_FEED_INPUTS,
+  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [ARTICLES_FETCHED_OK]: articlesFilteredErrorFixture }
+].flat();
+const AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_COMMANDS = AUTH_USER_ON_HOME_SEES_USER_FEED_COMMANDS.concat([
+  [
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:userFixture, activeFeed: USER_FEED } },
+    { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
+  ],
+  [{ [RENDER]: { articles: articlesFilteredErrorFixture, tags: tagsFixture, page: 0, user: userFixture, activeFeed: USER_FEED} }],
+]);
+
+const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE = `Unauthenticated user sees the global feed and updates the page`;
+const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE_INPUTS = [
+  UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
+  { [CLICKED_PAGE]: 1 },
+  { [ARTICLES_FETCHED_OK]: articlesPage1Fixture }
+].flat();
+const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
+  [
+    { [FETCH_ARTICLES_GLOBAL_FEED]: { page: 1 } },
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, page: 1, activeFeed: GLOBAL_FEED, user: null, tags:tagsFixture } },
+  ],
+  [{ [RENDER]: { articles: articlesPage1Fixture,  page: 1, activeFeed: GLOBAL_FEED, user: null, tags:tagsFixture } }],
 ]);
 
 const userStories = [
@@ -174,24 +220,59 @@ const userStories = [
     UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
     UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS
   ],
-  // [`Successfully loading `, HOME_ROUTE_LOADED_OK_TA_SEQ, HOME_ROUTE_LOADED_OK_TA_SEQ_COMMANDS],
-  // [`Successfully loading `, HOME_ROUTE_LOADED_OK_AT_SEQ, HOME_ROUTE_LOADED_OK_AT_SEQ_COMMANDS],
-  // [`Failed loading - tags and articles`, HOME_ROUTE_LOADING_NOK_TA_SEQ, HOME_ROUTE_LOADING_NOK_TA_SEQ_COMMANDS],
-  // [`Failed loading - tags and articles`, HOME_ROUTE_LOADING_NOK_AT_SEQ, HOME_ROUTE_LOADING_NOK_AT_SEQ_COMMANDS],
-  // [`Failed loading - tags`, HOME_ROUTE_LOADING_NOK_T$_SEQ, HOME_ROUTE_LOADING_NOK_T$_SEQ_COMMANDS],
-  // [`Failed loading - tags`, HOME_ROUTE_LOADING_NOK_$T_SEQ, HOME_ROUTE_LOADING_NOK_$T_SEQ_COMMANDS],
-  // [`Failed loading - articles`, HOME_ROUTE_LOADING_NOK_A$_SEQ, HOME_ROUTE_LOADING_NOK_A$_SEQ_COMMANDS],
-  // [`Failed loading - articles`, HOME_ROUTE_LOADING_NOK_$A_SEQ, HOME_ROUTE_LOADING_NOK_$A_SEQ_COMMANDS],
+  [
+    UNAUTH_USER_ON_HOME_SEES_PARTIAL_GLOBAL_FEED,
+    UNAUTH_USER_ON_HOME_SEES_PARTIAL_GLOBAL_FEED_INPUTS,
+    UNAUTH_USER_ON_HOME_SEES_PARTIAL_GLOBAL_FEED_COMMANDS,
+  ],
+  [
+    AUTH_USER_ON_HOME_SEES_USER_FEED,
+    AUTH_USER_ON_HOME_SEES_USER_FEED_INPUTS,
+    AUTH_USER_ON_HOME_SEES_USER_FEED_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_HOME_SEES_PARTIAL_USER_FEED,
+    AUTH_USER_ON_HOME_SEES_PARTIAL_USER_FEED_INPUTS,
+    AUTH_USER_ON_HOME_SEES_PARTIAL_USER_FEED_COMMANDS,
+  ],
+  [
+    UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED,
+    UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_INPUTS,
+    UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_COMMANDS
+  ],
+  [
+    UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED,
+    UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_INPUTS,
+    UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED,
+    AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_INPUTS,
+    AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED,
+    AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_INPUTS,
+    AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_COMMANDS
+  ],
+  [
+    UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE,
+    UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE_INPUTS,
+    UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE_COMMANDS
+  ]
+
+
+// **TODO**: add 3 corresponding to pagination: OK
+
 ];
 
 const fsmSettings = { debug: { console, checkContracts: fsmContracts } };
-// const fsmSettings = { debug: { console } };
 
 userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
   QUnit.test(scenario, function exec_test(assert) {
     const fsm = fsmFactory(fsmSettings);
 
-    const actualOutputsSeq = computeCleanedActualOutputs(fsm, inputSeq);
+    const actualOutputsSeq = processRenderCommands(computeCleanedActualOutputs(fsm, inputSeq));
 
     const { isTestPassed, actualOutputsReorderedSeq, expectedOutputsUnfoldedSeq, indexWhenFailed } =
       inputSeq.reduce((acc, input, index) => {
@@ -211,14 +292,21 @@ userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
           }, {})
         ;
         // => Array < {command, params} >   with same order than expectedOutputsCollapsed
-        const actualOutputsReordered = expectedOutputsCollapsed.map(expectedOutputCollapsed => {
-          const command = Object.keys(expectedOutputCollapsed)[0];
-          const params = actualOutputsCollapsed[command];
+        const actualOutputsReordered = expectedOutputsCollapsed
+          .map(expectedOutputCollapsed => {
+            const command = Object.keys(expectedOutputCollapsed)[0];
+            const params = actualOutputsCollapsed[command];
 
-          return command in actualOutputsCollapsed
-            ? { command, params }
-            : void 0
-        });
+            return command in actualOutputsCollapsed
+              ? { command, params }
+              : `expected command ${command} not found in actual outputs!!`
+          }).concat(actualOutputs.filter(actualOutput => {
+            const { command, params } = actualOutput;
+
+            return expectedOutputsCollapsed
+              .map(expectedOutputCollapsed => Object.keys(expectedOutputCollapsed)[0])
+              .indexOf(command) === -1
+          }));
         // => Array < {command, params} >   with same order than expectedOutputsCollapsed
         const expectedOutputsUnfolded = expectedOutputsCollapsed.map(expectedOutputCollapsed => {
           const command = Object.keys(expectedOutputCollapsed)[0];
@@ -227,10 +315,10 @@ userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
           return { command, params }
         });
 
-        const passed = isTestPassed && deepEqual(actualOutputsReordered, expectedOutputsUnfolded);
+        const passed = deepEqual(actualOutputsReordered, expectedOutputsUnfolded);
 
         return {
-          isTestPassed: passed,
+          isTestPassed: isTestPassed && passed,
           actualOutputsReorderedSeq: actualOutputsReorderedSeq.concat([actualOutputsReordered]),
           expectedOutputsUnfoldedSeq: expectedOutputsUnfoldedSeq.concat([expectedOutputsUnfolded]),
           // Accumulate failing indices
@@ -238,7 +326,7 @@ userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
         }
       }, { isTestPassed: true, actualOutputsReorderedSeq: [], expectedOutputsUnfoldedSeq: [], indexWhenFailed: [] });
 
-    const errorMessage = `Actual outputs sequence differ from expected outputs sequence at index ${indexWhenFailed}`;
+    const errorMessage = `For a sequence of ${inputSeq.length} inputs, the actual outputs sequence differ from the expected outputs sequence at the ${formatIndex(indexWhenFailed)} value of the sequence`;
     const okMessage = prettyFormat(inputSeq);
     const message = isTestPassed ? okMessage : errorMessage;
 
@@ -250,3 +338,5 @@ userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
     assert.deepEqual(actualOutputsReorderedSeq, expectedOutputsUnfoldedSeq, message);
   });
 });
+
+

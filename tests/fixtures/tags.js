@@ -22,3 +22,5 @@ export const tagsFixture = {
   ]
 };
 export const tagsErrorFixture = new Error("net::ERR_INTERNET_DISCONNECTED");
+
+export const tagFixture = "min";

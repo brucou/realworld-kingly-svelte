@@ -1,4 +1,5 @@
 <script>
+  import Fsm from "./SvelteFsm.svelte";
   import emitonoff from "emitonoff";
   import { COMMAND_RENDER, createStateMachine, fsmContracts } from "kingly";
   import sessionRepositoryFactory from "./sessionRepository";
@@ -8,13 +9,18 @@
   import { commands, events, fsmFactory as f } from "./fsm";
   import { viewModel } from "./constants";
 
-  // props
+  let shouldRender = false;
   let page = 0;
   let tags;
   let articles;
   let activeFeed;
   let user;
   let selectedTag;
+  let onClickTag;
+  let onClickUserFeedTab;
+  let onClickGlobalFeedTab;
+  let onClickPage;
+  let onClickFavorite;
 
   // This is to prevent some compiling errors from Svelte
   // Apparently directly using the import does not compile correctly
@@ -32,13 +38,26 @@
   } = viewModel;
 
   // Commands
-  const [RENDER, FETCH_GLOBAL_FEED] = commands;
+  const [
+    RENDER,
+    FETCH_GLOBAL_FEED,
+    FETCH_ARTICLES_GLOBAL_FEED,
+    FETCH_ARTICLES_USER_FEED,
+    FETCH_AUTHENTICATION,
+    FETCH_USER_FEED,
+    FETCH_FILTERED_FEED
+  ] = commands;
   const [
     ROUTE_CHANGED,
     TAGS_FETCHED_OK,
     TAGS_FETCHED_NOK,
     ARTICLES_FETCHED_OK,
-    ARTICLES_FETCHED_NOK
+    ARTICLES_FETCHED_NOK,
+    AUTH_CHECKED,
+    CLICKED_TAG,
+    CLICKED_PAGE,
+    CLICKED_USER_FEED,
+    CLICKED_GLOBAL_FEED
   ] = events;
   const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -68,11 +87,7 @@
   );
   hashChangeSubscribe(hashChangeHandler);
 
-  // Render handler: we update props one by one to allow for some preprocessing
-  // Svelte would probably not detect the assignment
-  // if we would use Object.assign? open question
-  // TODO: the logic in tags and articles can be DRYed up
-  // TODO: DRY up also _x => prop = _x
+  // TODO: Svelte would probably not detect the assignment if we would use Object.assign? open question
   const DEFAULT_PAGE = 0;
   const updateProps = {
     page: set(page),
@@ -80,7 +95,12 @@
     articles: set(articles),
     activeFeed: set(activeFeed),
     user: set(user),
-    selectedTag: set(selectedTag)
+    selectedTag: set(selectedTag),
+    onClickTag: set(onClickTag),
+    onClickUserFeedTab: set(onClickUserFeedTab),
+    onClickGlobalFeedTab: set(onClickGlobalFeedTab),
+    onClickPage: set(onClickPage),
+    onClickFavorite: set(onClickFavorite)
   };
 
   function render(props) {
@@ -95,7 +115,8 @@
   // Command and effect handlers
   const commandHandlers = {
     [RENDER]: (dispatch, params, effectHandlers) => {
-      const { render } = effectHandlers;
+      const { render, enableRender } = effectHandlers;
+      enableRender();
       render(params);
     },
     [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
@@ -110,10 +131,19 @@
         .then(res => dispatch({ [TAGS_FETCHED_OK]: res }))
         .catch(err => dispatch({ [TAGS_FETCHED_NOK]: err }));
     }
+    // TODO: add command missing handlers
+    //   FETCH_ARTICLES_GLOBAL_FEED,
+    //   FETCH_ARTICLES_USER_FEED,
+    //   FETCH_AUTHENTICATION,
+    //   FETCH_USER_FEED,
+    //   FETCH_FILTERED_FEED
   };
 
   const effectHandlers = {
     render,
+    enableRender: () => {
+      shouldRender = true;
+    },
     fetchTags,
     fetchGlobalFeed
   };
@@ -129,5 +159,7 @@
   {commandHandlers}
   {effectHandlers}
   {initEvent}>
-  <RealWorld {tags} {articles} {page} {activeFeed} {user} {selectedTag} />
+  {#if shouldRender}
+    <RealWorld {tags} {articles} {page} {activeFeed} {user} {selectedTag} />
+  {/if}
 </Fsm>

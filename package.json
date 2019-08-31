@@ -20,6 +20,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^4.0.4",
+    "ramda": "^0.26.1",
     "svelte": "^3.8.1",
     "svelte-loader": "^2.13.6"
   },

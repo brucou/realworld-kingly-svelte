@@ -304,6 +304,7 @@ function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settings) {
           tags: TAGS_ARE_LOADING,
           articles: ARTICLES_ARE_LOADING,
           activeFeed: GLOBAL_FEED,
+          page: currentPage,
           user
         }
       }
@@ -327,7 +328,8 @@ function fetchGlobalFeedArticlesAndRenderLoading(
         params: {
           articles: ARTICLES_ARE_LOADING,
           activeFeed: GLOBAL_FEED,
-          user
+          user,
+          page: currentPage
         }
       }
     ]
@@ -336,7 +338,7 @@ function fetchGlobalFeedArticlesAndRenderLoading(
 
 function renderTags(extendedState, eventData, settings) {
   return {
-    updates: [],
+    updates: [{ areTagsFetched: true }],
     outputs: [
       {
         command: RENDER,
@@ -348,7 +350,7 @@ function renderTags(extendedState, eventData, settings) {
 
 function renderTagsFetchError(extendedState, eventData, settings) {
   return {
-    updates: [],
+    updates: [{ areTagsFetched: false }],
     outputs: [{ command: RENDER, params: { tags: eventData } }]
   };
 }
@@ -412,7 +414,8 @@ function fetchUserFeedArticlesAndRenderLoading(
         params: {
           articles: ARTICLES_ARE_LOADING,
           activeFeed: USER_FEED,
-          user
+          user,
+          page: currentPage
         }
       }
     ]
@@ -433,7 +436,8 @@ function fetchUserFeedAndRenderLoading(extendedState, eventData, settings) {
           tags: TAGS_ARE_LOADING,
           articles: ARTICLES_ARE_LOADING,
           activeFeed: USER_FEED,
-          user
+          user,
+          page: currentPage
         }
       }
     ]
@@ -510,10 +514,8 @@ function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
 }
 
 function resetPage(extendedState, eventData, settings) {
-  const currentPage = eventData;
-
   return {
-    updates: [{ currentPage }],
+    updates: [{ page: 0 }],
     outputs: []
   };
 }

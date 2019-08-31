@@ -11,7 +11,7 @@
   // Props
   export let tags;
   export let articles;
-  export let page = 0;
+  export let page;
   export let activeFeed;
   export let user;
   export let selectedTag;
@@ -45,9 +45,11 @@
   //   That can be worked around with an extra variable but we keep it simple
   // - It seems like Svelte does not currently allows destructuring in reactive statements!
   // - Also you can't reuse a left side on the right side, hence the dup typeof tags
-  $: articleList = typeof articles === "object" ? articles.articles : void 0;
-  $: articlesCount = typeof articles === "object" ? articles.articlesCount : 0;
-  $: tagList = typeof tags === "object" ? tags.tags : void 0;
+  $: articleList =
+    typeof articles === "object" ? articles && articles.articles : void 0;
+  $: articlesCount =
+    typeof articles === "object" ? articles && articles.articlesCount : 0;
+  $: tagList = typeof tags === "object" ? tags && tags.tags : void 0;
   $: tagsFetchStatus = computeFetchStatus(tags);
   $: articlesFetchStatus = computeFetchStatus(articles);
   $: currentPage = page || 0;

@@ -1,3 +1,4 @@
+import { NO_OUTPUT } from "kingly"
 import { commands } from "../src/fsm"
 
 const [
@@ -33,3 +34,15 @@ export function processRenderCommands(cleanedMachineOutputsSeq) {
     })
   })
 }
+
+// Remove the NO_OUTPUT from the sequence of actions for comparison
+// (NO_OUTPUT is an implementation detail that is not part of the specifications)
+// It can occur when the machine traverses transient states and takes a transition without actions
+export function removeNoOutputs(arr) {
+  return arr.filter(x => x !== NO_OUTPUT)
+}
+
+export function computeCleanedActualOutputs(fsm, inputSeq) {
+  return inputSeq.map(fsm).map(removeNoOutputs);
+}
+

@@ -117,7 +117,7 @@ const transitions = [
       {
         predicate: isAuthenticated,
         to: "fetching-user-feed",
-        action: updateAuthAndResetPage
+        action: updateAuth
       }
     ]
   },
@@ -211,7 +211,7 @@ const transitions = [
     from: "fetching-user-feed",
     event: CLICKED_PAGE,
     to: "fetching-authentication",
-    action: updatePage
+    action: updatePageAndFetchAuthentication
   },
   {
     from: "fetching-filtered-articles",
@@ -252,8 +252,6 @@ const transitions = [
   { from: "home", event: CLICKED_USER_FEED, to: "home", action: resetPage },
   { from: "home", event: ROUTE_CHANGED, to: "routing", action: ACTION_IDENTITY }
 ];
-
-// TODO: check official demo. Is the pagination reset when feed/page 2/feed ? YES
 
 // State update
 // Basically {a, b: {c, d}}, [{b:{e}]} -> {a, b:{e}}
@@ -393,6 +391,14 @@ function updateAuthAndResetPage(extendedState, eventData, settings) {
     outputs: NO_OUTPUT
   };
 }
+function updateAuth(extendedState, eventData, settings) {
+  const { user } = eventData;
+
+  return {
+    updates: [{ user }],
+    outputs: NO_OUTPUT
+  };
+}
 
 function fetchUserFeedArticlesAndRenderLoading(
   extendedState,
@@ -441,6 +447,15 @@ function fetchUserFeedAndRenderLoading(extendedState, eventData, settings) {
         }
       }
     ]
+  };
+}
+
+function updatePageAndFetchAuthentication(extendedState, eventData, settings) {
+  const currentPage = eventData;
+
+  return {
+    updates: [{ currentPage }],
+    outputs: [{command: FETCH_AUTHENTICATION, params: void 0}]
   };
 }
 

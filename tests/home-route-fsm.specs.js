@@ -9,22 +9,7 @@ import {
 } from "./fixtures/articles"
 import { tagFixture, tagsFixture } from "./fixtures/tags"
 import { userFixture } from "./fixtures/user"
-import { formatIndex, processRenderCommands } from "./common"
-
-// Cheapest deep equal possible
-// Bit beware of caveats of JSON.stringify and the JSON format!
-// const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-
-// Remove the NO_OUTPUT from the sequence of actions for comparison
-// (NO_OUTPUT is an implementation detail that is not part of the specifications)
-// It can occur when the machine traverses transient states and takes a transition without actions
-function removeNoOutputs(arr) {
-  return arr.filter(x => x !== NO_OUTPUT)
-}
-
-function computeCleanedActualOutputs(fsm, inputSeq) {
-  return inputSeq.map(fsm).map(removeNoOutputs);
-}
+import { computeCleanedActualOutputs, formatIndex, processRenderCommands } from "./common"
 
 QUnit.module("Testing home route fsm", {});
 
@@ -214,6 +199,22 @@ const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE_COMMANDS = UNAUTH_USER_O
   [{ [RENDER]: { articles: articlesPage1Fixture,  page: 1, activeFeed: GLOBAL_FEED, user: null, tags:tagsFixture } }],
 ]);
 
+const AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE = `Authenticated user sees the user feed and updates the page`;
+const AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE_INPUTS = [
+  AUTH_USER_ON_HOME_SEES_USER_FEED_INPUTS,
+  { [CLICKED_PAGE]: 1 },
+  { [AUTH_CHECKED]: {user : userFixture} },
+  { [ARTICLES_FETCHED_OK]: articlesPage1Fixture }
+].flat();
+const AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE_COMMANDS = AUTH_USER_ON_HOME_SEES_USER_FEED_COMMANDS.concat([
+  [{ [FETCH_AUTHENTICATION]: void 0 }],
+  [
+    { [FETCH_ARTICLES_USER_FEED]: { page: 1, username: userFixture.username } },
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, page: 1, activeFeed: USER_FEED, user: userFixture, tags:tagsFixture } },
+  ],
+  [{ [RENDER]: { articles: articlesPage1Fixture,  page: 1, activeFeed: USER_FEED, user: userFixture, tags:tagsFixture } }],
+]);
+
 const userStories = [
   [
     UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED,
@@ -259,7 +260,12 @@ const userStories = [
     UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE,
     UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE_INPUTS,
     UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE_COMMANDS
-  ]
+  ],
+  [
+    AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE,
+    AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE_INPUTS,
+    AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE_COMMANDS
+  ],
 
 
 // **TODO**: add 3 corresponding to pagination: OK
@@ -269,6 +275,7 @@ const userStories = [
 const fsmSettings = { debug: { console, checkContracts: fsmContracts } };
 
 userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
+  if (inputSeq.length !== outputsSeq.length) throw `Error in test scenario ${scenario}! Input sequences and ouputs sequences must have the same length!`
   QUnit.test(scenario, function exec_test(assert) {
     const fsm = fsmFactory(fsmSettings);
 

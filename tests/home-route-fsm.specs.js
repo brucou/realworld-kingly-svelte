@@ -132,57 +132,57 @@ const AUTH_USER_ON_HOME_SEES_PARTIAL_USER_FEED_COMMANDS = AUTH_USER_ON_HOME_COMM
 const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED = `Unauthenticated user filters the global feed with a tag`;
 const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
   UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
-  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [CLICKED_TAG]: tagFixture },
   { [ARTICLES_FETCHED_OK]: articlesFilteredFixture }
 ].flat();
 const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
   [
-    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } },
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:null, activeFeed: TAG_FILTER_FEED } },
     { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
   ],
-  [{ [RENDER]: { articles: articlesFilteredFixture , tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+  [{ [RENDER]: { articles: articlesFilteredFixture , tags: tagsFixture, page: 0, user:null, activeFeed: TAG_FILTER_FEED} }],
 ]);
 
 const UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED = `Unauthenticated user filters the global feed with a tag, sees incomplete feed`;
 const UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
   UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
-  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [CLICKED_TAG]: tagFixture },
   { [ARTICLES_FETCHED_OK]: articlesFilteredErrorFixture }
 ].flat();
 const UNAUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
   [
-    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } },
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:null, activeFeed: TAG_FILTER_FEED } },
     { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
   ],
-  [{ [RENDER]: { articles: articlesFilteredErrorFixture , tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED } }],
+  [{ [RENDER]: { articles: articlesFilteredErrorFixture , tags: tagsFixture, page: 0, user:null, activeFeed: TAG_FILTER_FEED } }],
 ]);
 
 const AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED = `Authenticated user filters the global feed with a tag`;
 const AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
   AUTH_USER_ON_HOME_SEES_USER_FEED_INPUTS,
-  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [CLICKED_TAG]: tagFixture },
   { [ARTICLES_FETCHED_OK]: articlesFilteredFixture }
 ].flat();
 const AUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_COMMANDS = AUTH_USER_ON_HOME_SEES_USER_FEED_COMMANDS.concat([
   [
-    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:userFixture, activeFeed: USER_FEED } },
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:userFixture, activeFeed: TAG_FILTER_FEED } },
     { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
   ],
-  [{ [RENDER]: { articles: articlesFilteredFixture, tags: tagsFixture, page: 0, user: userFixture, activeFeed: USER_FEED} }],
+  [{ [RENDER]: { articles: articlesFilteredFixture, tags: tagsFixture, page: 0, user: userFixture, activeFeed: TAG_FILTER_FEED} }],
 ]);
 
 const AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED = `Authenticated user filters the global feed with a tag, sees incomplete feed`;
 const AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_INPUTS = [
   AUTH_USER_ON_HOME_SEES_USER_FEED_INPUTS,
-  { [CLICKED_TAG]: { tag: tagFixture } },
+  { [CLICKED_TAG]: tagFixture},
   { [ARTICLES_FETCHED_OK]: articlesFilteredErrorFixture }
 ].flat();
 const AUTH_USER_ON_HOME_SEES_PARTIAL_TAG_FILTERED_GLOBAL_FEED_COMMANDS = AUTH_USER_ON_HOME_SEES_USER_FEED_COMMANDS.concat([
   [
-    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:userFixture, activeFeed: USER_FEED } },
+    { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 0, user:userFixture, activeFeed: TAG_FILTER_FEED } },
     { [FETCH_FILTERED_FEED]: { page: 0, tag: tagFixture } }
   ],
-  [{ [RENDER]: { articles: articlesFilteredErrorFixture, tags: tagsFixture, page: 0, user: userFixture, activeFeed: USER_FEED} }],
+  [{ [RENDER]: { articles: articlesFilteredErrorFixture, tags: tagsFixture, page: 0, user: userFixture, activeFeed: TAG_FILTER_FEED} }],
 ]);
 
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_CHANGES_PAGE = `Unauthenticated user sees the global feed and updates the page`;
@@ -214,6 +214,21 @@ const AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE_COMMANDS = AUTH_USER_ON_HOME
   ],
   [{ [RENDER]: { articles: articlesPage1Fixture,  page: 1, activeFeed: USER_FEED, user: userFixture, tags:tagsFixture } }],
 ]);
+
+const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_CHANGES_PAGE = `Unauthenticated user filters the global feed with a tag and changes page`;
+const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_CHANGES_PAGE_INPUTS = [
+  UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_INPUTS,
+  { [CLICKED_PAGE]: 1 },
+  { [ARTICLES_FETCHED_OK]: articlesPage1Fixture }
+].flat();
+const UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_CHANGES_PAGE_COMMANDS =
+  UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_COMMANDS.concat([
+    [
+      { [RENDER]: { articles: ARTICLES_ARE_LOADING, tags: tagsFixture, page: 1, user:null, activeFeed: TAG_FILTER_FEED} },
+      { [FETCH_FILTERED_FEED]: { page: 1, tag: tagFixture } }
+    ],
+    [{ [RENDER]: { articles: articlesPage1Fixture, tags: tagsFixture, page: 1, user:null, activeFeed: TAG_FILTER_FEED } }]
+  ]);
 
 const userStories = [
   [
@@ -266,9 +281,16 @@ const userStories = [
     AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE_INPUTS,
     AUTH_USER_ON_HOME_SEES_USER_FEED_CHANGES_PAGE_COMMANDS
   ],
+  [
+    UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_CHANGES_PAGE,
+    UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_CHANGES_PAGE_INPUTS,
+    UNAUTH_USER_ON_HOME_SEES_TAG_FILTERED_GLOBAL_FEED_CHANGES_PAGE_COMMANDS
+  ]
 
 
-// **TODO**: add 3 corresponding to pagination: OK
+//   **TODO**: add 2 corresponding to clicking same feed than the active one (should reset page)): OK
+// **TODO**: add 2 corresponding to clicking another feed than the active one
+// **TODO**: add 1 corresponding to route changed in any of the feed state
 
 ];
 

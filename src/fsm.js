@@ -66,11 +66,17 @@ const initialControlState = INIT;
  * @property {Number} currentPage
  * @property {User} user
  * @property {Boolean} areTagsFetched
+ * @property {Null | String} filterTag
+ * @property {FetchedArticles} articles
+ * @property {FetchedTags} tags
  * */
 const initialExtendedState = {
   currentPage: 0,
   user: null,
-  areTagsFetched: false
+  areTagsFetched: false,
+  filterTag: null,
+  articles: null,
+  tags: null
 };
 const states = {
   [INIT]: "",
@@ -241,7 +247,7 @@ const transitions = [
     from: "home",
     event: CLICKED_TAG,
     to: "fetching-filtered-articles",
-    action: resetPage
+    action: resetPageAndSetTag
   },
   {
     from: "home",
@@ -315,7 +321,7 @@ function fetchGlobalFeedArticlesAndRenderLoading(
   eventData,
   settings
 ) {
-  const { currentPage, user } = extendedState;
+  const { currentPage, user, tags } = extendedState;
 
   return {
     updates: [],
@@ -325,6 +331,7 @@ function fetchGlobalFeedArticlesAndRenderLoading(
         command: RENDER,
         params: {
           articles: ARTICLES_ARE_LOADING,
+          tags,
           activeFeed: GLOBAL_FEED,
           user,
           page: currentPage
@@ -336,7 +343,7 @@ function fetchGlobalFeedArticlesAndRenderLoading(
 
 function renderTags(extendedState, eventData, settings) {
   return {
-    updates: [{ areTagsFetched: true }],
+    updates: [{ areTagsFetched: true, tags: eventData}],
     outputs: [
       {
         command: RENDER,
@@ -348,14 +355,14 @@ function renderTags(extendedState, eventData, settings) {
 
 function renderTagsFetchError(extendedState, eventData, settings) {
   return {
-    updates: [{ areTagsFetched: false }],
+    updates: [{ areTagsFetched: false, tags: eventData }],
     outputs: [{ command: RENDER, params: { tags: eventData } }]
   };
 }
 
 function renderGlobalFeedArticles(extendedState, eventData, settings) {
   return {
-    updates: [],
+    updates: [{articles: eventData}],
     outputs: [
       {
         command: RENDER,
@@ -371,7 +378,7 @@ function renderGlobalFeedArticlesFetchError(
   settings
 ) {
   return {
-    updates: [],
+    updates: [{articles: eventData}],
     outputs: [{ command: RENDER, params: { articles: eventData } }]
   };
 }
@@ -405,7 +412,7 @@ function fetchUserFeedArticlesAndRenderLoading(
   eventData,
   settings
 ) {
-  const { currentPage, user } = extendedState;
+  const { currentPage, user, tags } = extendedState;
   const username = user && user.username;
 
   return {
@@ -419,6 +426,7 @@ function fetchUserFeedArticlesAndRenderLoading(
         command: RENDER,
         params: {
           articles: ARTICLES_ARE_LOADING,
+          tags,
           activeFeed: USER_FEED,
           user,
           page: currentPage
@@ -470,7 +478,7 @@ function updatePage(extendedState, eventData, settings) {
 
 function renderUserFeedArticles(extendedState, eventData, settings) {
   return {
-    updates: [],
+    updates: [{articles:eventData}],
     outputs: [
       {
         command: RENDER,
@@ -482,7 +490,7 @@ function renderUserFeedArticles(extendedState, eventData, settings) {
 
 function renderUserFeedArticlesFetchError(extendedState, eventData, settings) {
   return {
-    updates: [],
+    updates: [{articles: eventData}],
     outputs: [
       {
         command: RENDER,
@@ -497,28 +505,27 @@ function fetchFilteredArticlesAndRenderLoading(
   eventData,
   settings
 ) {
-  const { currentPage, user } = extendedState;
-  const { tag } = eventData;
+  const { currentPage, filterTag, user, tags } = extendedState;
 
   return {
     updates: [],
     outputs: [
-      { command: FETCH_FILTERED_FEED, params: { page: currentPage, tag } },
-      { command: RENDER, params: { articles: ARTICLES_ARE_LOADING } }
+      { command: FETCH_FILTERED_FEED, params: { page: currentPage, tag: filterTag } },
+      { command: RENDER, params: { articles: ARTICLES_ARE_LOADING, tags, activeFeed: TAG_FILTER_FEED, page: currentPage, user } }
     ]
   };
 }
 
 function renderFilteredArticles(extendedState, eventData, settings) {
   return {
-    updates: [],
-    outputs: [{ command: RENDER, params: { articles: eventData } }]
+    updates: [{articles: eventData}],
+    outputs: [{ command: RENDER, params: { articles: eventData} }]
   };
 }
 
 function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
   return {
-    updates: [],
+    updates: [{articles:eventData}],
     outputs: [
       {
         command: RENDER,
@@ -530,7 +537,14 @@ function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
 
 function resetPage(extendedState, eventData, settings) {
   return {
-    updates: [{ page: 0 }],
+    updates: [{ currentPage: 0 }],
+    outputs: []
+  };
+}
+function resetPageAndSetTag(extendedState, eventData, settings) {
+  const tag = eventData;
+  return {
+    updates: [{ currentPage: 0, filterTag: tag }],
     outputs: []
   };
 }

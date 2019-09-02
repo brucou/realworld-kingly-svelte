@@ -494,7 +494,7 @@ function renderUserFeedArticlesFetchError(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER,
-        outputs: [{ command: RENDER, params: { articles: eventData } }]
+        params: { articles: eventData }
       }
     ]
   };
@@ -529,7 +529,7 @@ function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER,
-        outputs: [{ command: RENDER, params: { articles: eventData } }]
+        params: { articles: eventData }
       }
     ]
   };

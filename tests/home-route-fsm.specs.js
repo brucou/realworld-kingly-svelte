@@ -29,6 +29,7 @@ const [
   CLICKED_PAGE,
   CLICKED_USER_FEED,
   CLICKED_GLOBAL_FEED,
+  TOGGLED_FAVORITE
 ] = events;
 const [
   RENDER,

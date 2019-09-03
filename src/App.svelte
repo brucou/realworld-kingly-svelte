@@ -137,6 +137,24 @@
     //   FETCH_AUTHENTICATION,
     //   FETCH_USER_FEED,
     //   FETCH_FILTERED_FEED
+    // TODO: pass the event handlers in fsm.js... they are constant so pass them in the first loading everywhere?
+    // TODO: or pass them in the APP here directly?
+    // ! pass the dispatcher to the view, and have the view compute the handlers
+    //   - this is easier to test with storybook
+    //   - this couples the view to the machine (the events more precisely)
+    //   - BUT THAT'S OK. That's coupling through interface or through parameters
+    //     - just like the machine computes props which are the props of the machine!! so coupling too
+    //     - easy to decouple with an adapter (machine props -> view props)
+    //     - or view events -> machine events
+    // - compute the handlers in the machine through the init event
+    //   - put in in extended state and use it in actions
+    //   - this complicates testing the machine (can't test the functions!!)
+    //   - thus would have to resort to integration tests? not optimal!
+    // - compute the handlers in the machine when needed
+    //   - may trigger unnecessary update as the handlers may change while still being the same
+    //   - but maybe not a big problem? and can also memoize
+    //   - TOO COMPLICATED!!
+
   };
 
   const effectHandlers = {
@@ -160,6 +178,6 @@
   {effectHandlers}
   {initEvent}>
   {#if shouldRender}
-    <RealWorld {tags} {articles} {page} {activeFeed} {user} {selectedTag} />
+    <RealWorld {tags} {articles} {page} {activeFeed} {user} {selectedTag} dispatch="{next}"/>
   {/if}
 </Fsm>

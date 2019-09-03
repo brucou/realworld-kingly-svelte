@@ -19,7 +19,8 @@ export const events = [
   "CLICKED_TAG",
   "CLICKED_PAGE",
   "CLICKED_USER_FEED",
-  "CLICKED_GLOBAL_FEED"
+  "CLICKED_GLOBAL_FEED",
+  "TOGGLED_FAVORITE"
 ];
 const [
   ROUTE_CHANGED,
@@ -31,7 +32,8 @@ const [
   CLICKED_TAG,
   CLICKED_PAGE,
   CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED
+  CLICKED_GLOBAL_FEED,
+  TOGGLED_FAVORITE
 ] = events;
 
 export const commands = [

@@ -7,19 +7,37 @@
   import UserFeedTab from "./UserFeedTab.svelte";
   import TagFilterTab from "./TagFilterTab.svelte";
   import { viewModel } from "../constants";
+  import { events } from "../fsm";
 
   // Props
+  export let dispatch;
   export let tags;
   export let articles;
   export let page;
   export let activeFeed;
   export let user;
   export let selectedTag;
-  export let onClickTag = () => {};
-  export let onClickUserFeedTab = () => {};
-  export let onClickGlobalFeedTab = () => {};
-  export let onClickPage;
-  export let onClickFavorite;
+
+  const [
+    ROUTE_CHANGED,
+    TAGS_FETCHED_OK,
+    TAGS_FETCHED_NOK,
+    ARTICLES_FETCHED_OK,
+    ARTICLES_FETCHED_NOK,
+    AUTH_CHECKED,
+    CLICKED_TAG,
+    CLICKED_PAGE,
+    CLICKED_USER_FEED,
+    CLICKED_GLOBAL_FEED,
+    TOGGLED_FAVORITE
+  ] = events;
+
+  const onClickTag = tag => {dispatch({[CLICKED_TAG]: tag})};
+  const onClickUserFeedTab = e => {dispatch({[CLICKED_USER_FEED]: void 0})};
+  const onClickGlobalFeedTab = e => {dispatch({[CLICKED_GLOBAL_FEED]: void 0})};
+  const onClickPage = page => {dispatch({[CLICKED_PAGE]: page})};
+  // TODO: compute the event handlers when the machine is implemented
+  const onClickFavorite = slug => {dispatch({[TOGGLED_FAVORITE]: slug})};
 
   const {
     tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],

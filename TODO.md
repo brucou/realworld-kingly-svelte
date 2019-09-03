@@ -6,6 +6,45 @@
 - README
   - **Use [realworld-starter-kit]()https://github.com/gothinkster/realworld-starter-kit)**
 
+- IMPLE
+  - add the favorite click to the machine!!! HOW COULD I FORGET!!
+  - write tests for it too!
+  - write the handlers for the view
+  - write the App.svelte with the command handlers
+  - quick test manually
+  - then write the properties
+- examples of properties:
+  - user navigating to a route leads to displaying the corresponding screen
+  - user clicking on a page leads to displaying the current tab with the new page 
+  - tags are only fetched once in the home route
+  - every fetch is matched with a corresponding click event
+ - basically this is
+   - .*[ROUTE_CHANGED=home].* => ...
+ - No I need something more general, this is just repeating the specs i.e. the machine
+   - CLICK_PAGE => null | check auth | render (full global feed | filter global feed) with new page
+   - CLICK_GLOBAL_FEED => not check auth && (null | render global feed with page 0)
+- safety
+  - only auth users can see user feed
+    - look for index i with render with active feed user feed
+    - look back in input backwards from i, find the first CHECK_AUTHENTICATION
+    - there MUST be one
+    - it must return a user
+  - existing users must have been authenticated prior
+    - look for any command with user not null
+    - backtrack in input to find a CHECK_AUTHENTICATION
+- correctness (fixtures hypothesis)
+  - if render some articles, with some tags, i.e. some page, must be the right page
+    - check tags map to fixtures
+    - identify articles query parameters (page, global) or (page, user)
+    - backtrack to find in inputs those params in the closest fetch 
+
+- probably a good practice is to start from reality (= commands) and 
+  - check that inputs is in set of generating inputs for that command
+  - choose tests that are simple and do not involve state (otherwise I am redoing the machine) 
+- but probably it is necessary to do it the other way too??
+
+NOTE: this is PBT, not stateful PBT as we seek to avoid state here
+NOTE: once the machine confidently works, it cn be used with stateful PBT to test the other implementations!
 
 # Lessons learnt
 ## Dev cycle

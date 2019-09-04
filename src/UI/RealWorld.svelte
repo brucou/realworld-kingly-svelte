@@ -45,9 +45,10 @@
   } = viewModel;
 
   function computeFetchStatus(obj) {
+    console.log(`computeFetchStatus`, obj)
     if (obj instanceof Error) {
       return NOK;
-    } else if (typeof obj === "string") {
+    } else if (typeof obj === "string" || typeof  obj ==='undefined') {
       return LOADING;
     } else if (typeof obj === "object") {
       return OK;

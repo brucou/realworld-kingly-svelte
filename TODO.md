@@ -7,10 +7,10 @@
   - **Use [realworld-starter-kit]()https://github.com/gothinkster/realworld-starter-kit)**
 
 - IMPLE
+  - write the App.svelte with the command handlers
   - add the favorite click to the machine!!! HOW COULD I FORGET!!
   - write tests for it too!
   - write the handlers for the view
-  - write the App.svelte with the command handlers
   - quick test manually
   - then write the properties
 - examples of properties:

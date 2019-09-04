@@ -1,5 +1,6 @@
 <script>
   import Fsm from "./SvelteFsm.svelte";
+  import RealWorld from "./UI/RealWorld.svelte";
   import emitonoff from "emitonoff";
   import { COMMAND_RENDER, createStateMachine, fsmContracts } from "kingly";
   import sessionRepositoryFactory from "./sessionRepository";
@@ -72,7 +73,7 @@
   );
 
   // We set in place the APIs for fetching domain objects
-  const { fetchGlobalFeed, fetchTags } = apiGatewayFactory(
+  const { fetchGlobalFeed, fetchTags, fetchAuthentication } = apiGatewayFactory(
     fetch,
     sessionRepository
   );
@@ -90,17 +91,17 @@
   // TODO: Svelte would probably not detect the assignment if we would use Object.assign? open question
   const DEFAULT_PAGE = 0;
   const updateProps = {
-    page: set(page),
-    tags: set(tags),
-    articles: set(articles),
-    activeFeed: set(activeFeed),
-    user: set(user),
-    selectedTag: set(selectedTag),
-    onClickTag: set(onClickTag),
-    onClickUserFeedTab: set(onClickUserFeedTab),
-    onClickGlobalFeedTab: set(onClickGlobalFeedTab),
-    onClickPage: set(onClickPage),
-    onClickFavorite: set(onClickFavorite)
+    page: x => page = x,
+    tags: x => tags = x,
+    articles: x => articles = x,
+    activeFeed: x => activeFeed = x,
+    user: x => user = x,
+    selectedTag: x => selectedTag = x,
+    onClickTag: x => onClickTag = x,
+    onClickUserFeedTab: x => onClickUserFeedTab = x,
+    onClickGlobalFeedTab: x => onClickGlobalFeedTab = x,
+    onClickPage: x => onClickPage = x,
+    onClickFavorite: x => onClickFavorite = x,
   };
 
   function render(props) {
@@ -116,8 +117,8 @@
   const commandHandlers = {
     [RENDER]: (dispatch, params, effectHandlers) => {
       const { render, enableRender } = effectHandlers;
-      enableRender();
       render(params);
+      setTimeout(() => enableRender(), 0);
     },
     [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
       const { page } = params;
@@ -130,11 +131,15 @@
       fetchTags()
         .then(res => dispatch({ [TAGS_FETCHED_OK]: res }))
         .catch(err => dispatch({ [TAGS_FETCHED_NOK]: err }));
+    },
+    [FETCH_AUTHENTICATION]: (dispatch, params, effectHandlers) => {
+      const {fetchAuthentication} = effectHandlers;
+      const user = fetchAuthentication();
+      dispatch({[AUTH_CHECKED]: user})
     }
     // TODO: add command missing handlers
     //   FETCH_ARTICLES_GLOBAL_FEED,
     //   FETCH_ARTICLES_USER_FEED,
-    //   FETCH_AUTHENTICATION,
     //   FETCH_USER_FEED,
     //   FETCH_FILTERED_FEED
     // TODO: pass the event handlers in fsm.js... they are constant so pass them in the first loading everywhere?
@@ -163,7 +168,8 @@
       shouldRender = true;
     },
     fetchTags,
-    fetchGlobalFeed
+    fetchGlobalFeed,
+    fetchAuthentication
   };
 
   // kick start the app with the routing event corresponding to the current route

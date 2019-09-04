@@ -20,7 +20,7 @@ export const events = [
   "CLICKED_PAGE",
   "CLICKED_USER_FEED",
   "CLICKED_GLOBAL_FEED",
-  "TOGGLED_FAVORITE"
+  // "TOGGLED_FAVORITE"
 ];
 const [
   ROUTE_CHANGED,
@@ -33,7 +33,7 @@ const [
   CLICKED_PAGE,
   CLICKED_USER_FEED,
   CLICKED_GLOBAL_FEED,
-  TOGGLED_FAVORITE
+  // TOGGLED_FAVORITE
 ] = events;
 
 export const commands = [
@@ -279,15 +279,15 @@ function isHomeRoute(extendedState, eventData, settings) {
 }
 
 function isAuthenticated(extendedState, eventData, settings) {
-  const { user } = eventData;
+  const user = eventData;
 
-  return Boolean(user);
+  return user != null;
 }
 
 function isNotAuthenticated(extendedState, eventData, settings) {
-  const { user } = eventData;
+  const user = eventData;
 
-  return !Boolean(user);
+  return user == null;
 }
 
 function areTagsFetched(extendedState, eventData, settings) {
@@ -393,7 +393,7 @@ function fetchAuthentication(extendedState, eventData, settings) {
 }
 
 function updateAuthAndResetPage(extendedState, eventData, settings) {
-  const { user } = eventData;
+  const user= eventData;
 
   return {
     updates: [{ user }, { currentPage: 0 }],
@@ -401,7 +401,7 @@ function updateAuthAndResetPage(extendedState, eventData, settings) {
   };
 }
 function updateAuth(extendedState, eventData, settings) {
-  const { user } = eventData;
+  const user = eventData;
 
   return {
     updates: [{ user }],

@@ -7,8 +7,11 @@
   - **Use [realworld-starter-kit]()https://github.com/gothinkster/realworld-starter-kit)**
 
 - IMPLE
-  - write the App.svelte with the command handlers
+  - the routing guards must be fulfilled otherwise it stays there forever
+    - define a catchall guard which redirects to an existing default screen or a 404 screen 
+      - with links to get back to home?? 
   - add the favorite click to the machine!!! HOW COULD I FORGET!!
+    - implement optimistic updates for the UI even if it is not done in the Conduit demo app
   - write tests for it too!
   - write the handlers for the view
   - quick test manually

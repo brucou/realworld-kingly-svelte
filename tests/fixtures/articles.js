@@ -31,7 +31,7 @@ export const articlesFixture = {
         "image": "https://static.productionready.io/images/smiley-cyrus.jpg",
         "following": false
       },
-      "favorited": false,
+      "favorited": true,
       "favoritesCount": 1
     },
     {

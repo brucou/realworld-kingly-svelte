@@ -2,19 +2,19 @@
   import { NO_OUTPUT } from "kingly";
 
   // Svelte defines props for a component with the `export let` proprietary syntax
-  export let eventHandler;
+  export let eventBus;
   export let fsmFactory;
   export let commandHandlers;
   export let effectHandlers;
   export let env;
-  export let initEvent;
+  export let initEvent = null;
 
   // Create the machine
   const fsm = fsmFactory(Object.assign({}, env));
-  const next = eventHandler.next.bind(eventHandler);
+  const next = eventBus.next.bind(eventBus);
 
   // Subscribing to machine events
-  eventHandler.subscribe({
+  eventBus.subscribe({
     next: event => {
       // 1. Run the input on the machine to obtain the actions to perform
       const actions = fsm(event);

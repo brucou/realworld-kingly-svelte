@@ -9,10 +9,13 @@
   export let fetchStatus;
   export let onClickPage;
   export let onClickFavorite;
+  export let favoriteStatus;
 
   const {
     fetchStatus: [LOADING, NOK, OK]
   } = viewModel;
+
+  $: favoritedSlug = favoriteStatus;
 </script>
 
 {#if fetchStatus === LOADING}
@@ -26,7 +29,7 @@
 {:else if articles}
   <div>
     {#each articles as article (article.slug)}
-      <ArticlePreview {article} {onClickFavorite} />
+      <ArticlePreview {article} {onClickFavorite} isDisabled="{article.slug === favoritedSlug}" />
     {/each}
     <ListPagination {articlesCount} {currentPage} {onClickPage} />
   </div>

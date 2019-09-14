@@ -7,7 +7,7 @@
   import UserFeedTab from "./UserFeedTab.svelte";
   import TagFilterTab from "./TagFilterTab.svelte";
   import { viewModel } from "../constants";
-  import { events } from "../fsm";
+  import { events } from "../constants";
 
   // Props
   export let dispatch;
@@ -17,6 +17,7 @@
   export let activeFeed;
   export let user;
   export let selectedTag;
+  export let favoriteStatus;
 
   const [
     ROUTE_CHANGED,
@@ -32,12 +33,21 @@
     TOGGLED_FAVORITE
   ] = events;
 
-  const onClickTag = tag => {dispatch({[CLICKED_TAG]: tag})};
-  const onClickUserFeedTab = e => {dispatch({[CLICKED_USER_FEED]: void 0})};
-  const onClickGlobalFeedTab = e => {dispatch({[CLICKED_GLOBAL_FEED]: void 0})};
-  const onClickPage = page => {dispatch({[CLICKED_PAGE]: page})};
-  // TODO: compute the event handlers when the machine is implemented
-  const onClickFavorite = slug => {dispatch({[TOGGLED_FAVORITE]: slug})};
+  const onClickTag = tag => {
+    dispatch({ [CLICKED_TAG]: tag });
+  };
+  const onClickUserFeedTab = e => {
+    dispatch({ [CLICKED_USER_FEED]: void 0 });
+  };
+  const onClickGlobalFeedTab = e => {
+    dispatch({ [CLICKED_GLOBAL_FEED]: void 0 });
+  };
+  const onClickPage = page => {
+    dispatch({ [CLICKED_PAGE]: page });
+  };
+  const onClickFavorite = ({slug, article}) => {
+    dispatch({ [TOGGLED_FAVORITE]: {slug, isFavorited: article.favorited} });
+  };
 
   const {
     tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
@@ -45,10 +55,9 @@
   } = viewModel;
 
   function computeFetchStatus(obj) {
-    console.log(`computeFetchStatus`, obj)
     if (obj instanceof Error) {
       return NOK;
-    } else if (typeof obj === "string" || typeof  obj ==='undefined') {
+    } else if (typeof obj === "string") {
       return LOADING;
     } else if (typeof obj === "object") {
       return OK;
@@ -57,13 +66,8 @@
     }
   }
 
-  // Several notes related to Svelte
-  // - We have to guard against undefined values!
-  //   SvelteFsm renders its slot content and at initialization time, that slot will be
-  //   with empty props...
-  //   That can be worked around with an extra variable but we keep it simple
   // - It seems like Svelte does not currently allows destructuring in reactive statements!
-  // - Also you can't reuse a left side on the right side, hence the dup typeof tags
+  // - It seems you can't reuse a reactive assignment's left side on the right side, hence the dup typeof tags
   $: articleList =
     typeof articles === "object" ? articles && articles.articles : void 0;
   $: articlesCount =
@@ -107,7 +111,9 @@
             {currentPage}
             {onClickPage}
             {onClickFavorite}
-            fetchStatus={articlesFetchStatus} />
+            fetchStatus={articlesFetchStatus}
+            {favoriteStatus}
+            />
         </div>
         <div class="col-md-3">
           <div class="sidebar">

@@ -25,7 +25,8 @@ const articlesFixture = _aF;
 const articlesLoadingFixture = LOADING;
 const articlesErrorFixture = _aEF;
 const articlesEmptyFixture = _aEmF;
-
+const favoriteStatus = null;
+const favoriteStatusFixture= articlesFixture.articles[0].slug;
 const dispatch = action('HomeRouteHandlers');
 
 storiesOf('RealWorld - not authenticated', module)
@@ -91,6 +92,11 @@ storiesOf('RealWorld - authenticated - global feed', module)
     props: { articles: articlesFixture, tags:tagsFixture, page: 1, activeFeed: GLOBAL_FEED, user: userFixture, dispatch  },
     on: { },
   }))
+  .add('RealWorld - user authenticated, no tag filter, GLOBAL_FEED, page 1, fetched tags, fetched articles, like article', () => ({
+    Component: RealWorld,
+    props: { articles: articlesFixture, tags:tagsFixture, page: 1, activeFeed: GLOBAL_FEED, user: userFixture, dispatch, favoriteStatus: favoriteStatusFixture  },
+    on: { },
+  }))
   .add('RealWorld - user authenticated, no tag filter, GLOBAL_FEED, page 1, fetched tags, failed fetched articles', () => ({
     Component: RealWorld,
     props: { articles: articlesErrorFixture, tags:tagsFixture, page: 1, activeFeed: GLOBAL_FEED, user: userFixture, dispatch  },
@@ -146,6 +152,11 @@ storiesOf('RealWorld - authenticated - user feed', module)
   .add('RealWorld - user authenticated, tag filter, TAG_FILTER_FEED active, page 0, fetched tags, fetched articles, onClickTag', () => ({
     Component: RealWorld,
     props: { articles: articlesFixture, tags:tagsFixture, page: 0, activeFeed: TAG_FILTER_FEED, user: userFixture, selectedTag: tagFixture, dispatch  },
+    on: { },
+  }))
+  .add('RealWorld - user authenticated, tag filter, TAG_FILTER_FEED active, page 0, fetched tags, fetched articles, clicked article', () => ({
+    Component: RealWorld,
+    props: { articles: articlesFixture, tags:tagsFixture, page: 0, activeFeed: TAG_FILTER_FEED, user: userFixture, selectedTag: tagFixture, dispatch, favoriteStatus: favoriteStatusFixture  },
     on: { },
   }))
 

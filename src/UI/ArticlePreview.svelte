@@ -5,6 +5,7 @@
 
   export let article;
   export let onClickFavorite;
+  export let isDisabled;
 
   // It seems like Svelte does not currently allows destructuring in reactive statements!
   $: authorUserName = article.author.username;
@@ -25,7 +26,7 @@
       <a class="author" href={profileLink(authorUserName)}>{authorUserName}</a>
       <span class="date">{format(createdAt)}</span>
     </div>
-    <FavoriteButton {article} {onClickFavorite} />
+    <FavoriteButton {article} {onClickFavorite} {isDisabled} />
   </div>
   <a href={articleLink(article.slug)} class="preview-link">
     <h1>{title}</h1>

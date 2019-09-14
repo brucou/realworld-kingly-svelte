@@ -1,7 +1,7 @@
 import QUnit from "qunit"
 import { NO_OUTPUT, fsmContracts } from "kingly"
-import { commands, events, fsmFactory } from "../src/fsm"
-import { loadingStates, routes } from "../src/constants"
+import { commands, fsmFactory } from "../src/fsm"
+import { events, loadingStates, routes } from "../src/constants"
 import { articlesErrorFixture, articlesFixture } from "./fixtures/articles"
 import { tagsErrorFixture, tagsFixture } from "./fixtures/tags"
 

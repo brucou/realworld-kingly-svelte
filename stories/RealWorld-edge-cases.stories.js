@@ -26,6 +26,8 @@ const articlesFixture = {data: _aF.articles, count:_aF.articlesCount, fetchStatu
 const articlesLoadingFixture = {data: _aF.articles, count:_aF.articlesCount, fetchStatus: LOADING};
 const articlesErrorFixture = {data: _aEF, fetchStatus: NOK};
 const articlesEmptyFixture = {data: _aEmF.articles, count: _aEmF.articlesCount, fetchStatus: OK};
+const favoriteStatusFixture = "someslug";
+const dispatch = action('HomeRouteHandlers');
 
 const {articles, articlesCount} = articlesFixture;
 const allPropsUndefined = { };
@@ -86,5 +88,11 @@ storiesOf('RealWorld - edge cases', module)
   .add('RealWorld - user authenticated, no tag filter, correct activeFeed, page 1, loading tags, loading articles', () => ({
     Component: RealWorld,
     props: { articles: articlesLoadingFixture, tags:tagsLoadingFixture, page: 1, activeFeed: GLOBAL_FEED, user: userFixture, onClickUserFeedTab, onClickGlobalFeedTab, onClickPage, onClickFavorite  },
+    on: { },
+  }))
+  // clicked on articles but no articles
+  .add('RealWorld - user authenticated, tag filter, TAG_FILTER_FEED, page 0, fetched tags, no articles, clicked on article', () => ({
+    Component: RealWorld,
+    props: { articles: articlesEmptyFixture, tags:tagsFixture, page: 0, activeFeed: TAG_FILTER_FEED, user: userFixture, dispatch, selectedTag: tagFixture, favoriteStatus : favoriteStatusFixture },
     on: { },
   }))

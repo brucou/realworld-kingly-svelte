@@ -31,7 +31,7 @@ export const articlesFixture = {
         "image": "https://static.productionready.io/images/smiley-cyrus.jpg",
         "following": false
       },
-      "favorited": false,
+      "favorited": true,
       "favoritesCount": 1
     },
     {
@@ -179,6 +179,11 @@ export const articlesFixture = {
     }
   ],
   "articlesCount": 500
+};
+
+export const articlesEmptyFixture = {
+  "articles": [],
+  "articlesCount": 0
 };
 
 export const articlesErrorFixture = new Error("net::ERR_INTERNET_DISCONNECTED");

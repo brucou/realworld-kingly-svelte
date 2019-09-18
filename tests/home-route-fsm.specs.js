@@ -109,10 +109,10 @@ const HOME_ROUTE_LOADING_NOK_$A_SEQ_COMMANDS = HOME_ROUTE_LOADING_SEQ_COMMANDS.c
   [{ command: RENDER, params: { articles: articlesErrorFixture } }]
 ]);
 
-const fsmMapping = [
+const userStories = [
   [`Loading `, HOME_ROUTE_LOADING_SEQ, HOME_ROUTE_LOADING_SEQ_COMMANDS],
-  [`Successfully loading `, HOME_ROUTE_LOADED_OK_TA_SEQ, HOME_ROUTE_LOADED_OK_TA_SEQ_COMMANDS],
-  [`Successfully loading `, HOME_ROUTE_LOADED_OK_AT_SEQ, HOME_ROUTE_LOADED_OK_AT_SEQ_COMMANDS],
+  [`Successfully loaded`, HOME_ROUTE_LOADED_OK_TA_SEQ, HOME_ROUTE_LOADED_OK_TA_SEQ_COMMANDS],
+  [`Successfully loaded`, HOME_ROUTE_LOADED_OK_AT_SEQ, HOME_ROUTE_LOADED_OK_AT_SEQ_COMMANDS],
   [`Failed loading - tags and articles`, HOME_ROUTE_LOADING_NOK_TA_SEQ, HOME_ROUTE_LOADING_NOK_TA_SEQ_COMMANDS],
   [`Failed loading - tags and articles`, HOME_ROUTE_LOADING_NOK_AT_SEQ, HOME_ROUTE_LOADING_NOK_AT_SEQ_COMMANDS],
   [`Failed loading - tags`, HOME_ROUTE_LOADING_NOK_T$_SEQ, HOME_ROUTE_LOADING_NOK_T$_SEQ_COMMANDS],
@@ -124,7 +124,7 @@ const fsmMapping = [
 const fsmSettings = { debug: { console, checkContracts: fsmContracts } };
 // const fsmSettings = { debug: { console } };
 
-fsmMapping.forEach(([scenario, inputSeq, outputsSeq]) => {
+userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
   QUnit.test(`Home route: ${scenario}`, function exec_test(assert) {
     const fsm = fsmFactory(fsmSettings);
 

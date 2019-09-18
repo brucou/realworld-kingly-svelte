@@ -6,19 +6,16 @@ import apiGatewayFactory from "./apiGateway";
 import apiRouterFactory from "./apiRouter";
 import eventEmitterFactory from "./eventEmitter";
 import { commands, fsmFactory } from "./fsm";
-import { events } from "./constants"
+import { events } from "./constants";
 
 // Commands
-const [
-  RENDER,
-  FETCH_GLOBAL_FEED,
-] = commands;
+const [RENDER, FETCH_GLOBAL_FEED] = commands;
 const [
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,
   TAGS_FETCHED_NOK,
   ARTICLES_FETCHED_OK,
-  ARTICLES_FETCHED_NOK,
+  ARTICLES_FETCHED_NOK
 ] = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -32,7 +29,7 @@ const sessionRepository = sessionRepositoryFactory(
   window.addEventListener
 );
 
-// We set in place the APIs for fetching domain objects
+// We set in place the APIs for executing domain methods
 const { fetchGlobalFeed, fetchTags } = apiGatewayFactory(
   fetch,
   sessionRepository
@@ -71,13 +68,13 @@ const commandHandlers = {
     fetchTags()
       .then(res => dispatch({ [TAGS_FETCHED_OK]: res }))
       .catch(err => dispatch({ [TAGS_FETCHED_NOK]: err }));
-  },
+  }
 };
 
 const effectHandlers = {
   render,
   fetchTags,
-  fetchGlobalFeed,
+  fetchGlobalFeed
 };
 
 const app = new App({
@@ -89,7 +86,7 @@ const app = new App({
       env,
       eventBus,
       commandHandlers,
-      effectHandlers,
+      effectHandlers
     },
     tags: void 0,
     articles: void 0,

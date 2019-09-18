@@ -40,7 +40,6 @@
   $: tagsFetchStatus = computeFetchStatus(tags);
   $: articlesFetchStatus = computeFetchStatus(articles);
   $: currentPage = page || 0;
-
 </script>
 
 <div>

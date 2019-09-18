@@ -1,6 +1,6 @@
 export const routes = {
   // Home route will be empty strings. Cf. apiRouter
-  home: "",
+  home: ""
 };
 
 export const loadingStates = ["TAGS_ARE_LOADING", "ARTICLES_ARE_LOADING"];
@@ -14,5 +14,5 @@ export const events = [
   "TAGS_FETCHED_OK",
   "TAGS_FETCHED_NOK",
   "ARTICLES_FETCHED_OK",
-  "ARTICLES_FETCHED_NOK",
+  "ARTICLES_FETCHED_NOK"
 ];

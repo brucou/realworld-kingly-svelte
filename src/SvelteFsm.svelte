@@ -23,29 +23,27 @@
       if (actions === NO_OUTPUT) {
         return void 0;
       } else {
-        const filteredActions = actions.filter(action => action !== NO_OUTPUT);
-        filteredActions.forEach(action => {
-          const { command, params } = action;
+        actions
+          .filter(action => action !== NO_OUTPUT)
+          .forEach(action => {
+            const { command, params } = action;
 
-          const commandHandler = commandHandlers[command];
-          if (!commandHandler || typeof commandHandler !== "function") {
-            throw new Error(
-              `Machine: Could not find command handler for command ${command}!`
-            );
-          }
+            const commandHandler = commandHandlers[command];
+            if (!commandHandler || typeof commandHandler !== "function") {
+              throw new Error(
+                `Machine: Could not find command handler for command ${command}!`
+              );
+            }
 
-          commandHandler(next, params, effectHandlers);
-        });
+            commandHandler(next, params, effectHandlers);
+          });
 
         return void 0;
       }
     },
     error: error => {
-      // We may get there for instance if there was a preprocessor throwing an exception
       console.error(
-        `<Machine/>: an error in the event processing chain! The machine will not process
-            any additional events. Remember that command handlers ought never throw,
-            but should pass errors as events.`,
+        `<SvelteFsm />: an error occurred in the event sources the event bus is subscribed to!`,
         error
       );
     },

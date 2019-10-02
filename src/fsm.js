@@ -83,6 +83,7 @@ const states = {
   [INIT]: "",
   routing: "",
   home: {
+  feeds: {
     "fetching-authentication": "",
     "fetching-global-feed": {
       "pending-global-feed": "",
@@ -99,6 +100,7 @@ const states = {
     }
   },
   "fetch-auth-for-favorite": ""
+  }
 };
 
 /** @type {Array<Transition>} */
@@ -111,6 +113,12 @@ const transitions = [
   },
   {
     from: "home",
+    event: INIT_EVENT,
+    to: "feeds",
+    action: ACTION_IDENTITY
+  },
+  {
+    from: "feeds",
     event: INIT_EVENT,
     to: "fetching-authentication",
     action: fetchAuthentication
@@ -248,34 +256,34 @@ const transitions = [
     action: updatePage
   },
   {
-    from: "home",
+    from: "feeds",
     event: CLICKED_TAG,
     to: "fetching-filtered-articles",
     action: resetPageAndSetTag
   },
   {
-    from: "home",
+    from: "feeds",
     event: CLICKED_GLOBAL_FEED,
     to: "fetching-global-feed",
     action: resetPage
   },
-  { from: "home", event: CLICKED_USER_FEED, to: "home", action: resetPage },
+  { from: "feeds", event: CLICKED_USER_FEED, to: "feeds", action: resetPage },
   { from: "home", event: ROUTE_CHANGED, to: "routing", action: updateURL },
-  { from: "home", event: TOGGLED_FAVORITE, guards: [{
+  { from: "feeds", event: TOGGLED_FAVORITE, guards: [{
       predicate: areArticlesFetched, to: "fetch-auth-for-favorite", action: fetchAuthenticationAndUpdateFavoriteStatus
     }]},
   {
     from: "fetch-auth-for-favorite", event: AUTH_CHECKED, guards: [
       // TODO: I need to change the location without reemitting a ROUTE_CHANGED event. How??
       {predicate: isNotAuthenticated, to: "routing", action: updateUrlToSignUp },
-      { predicate: isAuthenticatedAndArticleLiked, to: historyState(DEEP, "home"), action: unlikeArticleAndRender },
-      { predicate: isAuthenticatedAndArticleNotLiked, to: historyState(DEEP, "home"), action: likeArticleAndRender }
+      { predicate: isAuthenticatedAndArticleLiked, to: historyState(DEEP, "feeds"), action: unlikeArticleAndRender },
+      { predicate: isAuthenticatedAndArticleNotLiked, to: historyState(DEEP, "feeds"), action: likeArticleAndRender }
     ]
   },
-  { from: "home", event: FAVORITE_OK, to: historyState(DEEP, "home"), action: updateFavoritedAndRender },
-  { from: "home", event: FAVORITE_NOK, to: historyState(DEEP, "home"), action: renderFavoritedNOK },
-  { from: "home", event: UNFAVORITE_OK, to: historyState(DEEP, "home"), action: renderUnfavoritedAndRender },
-  { from: "home", event: UNFAVORITE_NOK, to: historyState(DEEP, "home"), action: renderUnfavoritedNOK },
+  { from: "feeds", event: FAVORITE_OK, to: historyState(DEEP, "feeds"), action: updateFavoritedAndRender },
+  { from: "feeds", event: FAVORITE_NOK, to: historyState(DEEP, "feeds"), action: renderFavoritedNOK },
+  { from: "feeds", event: UNFAVORITE_OK, to: historyState(DEEP, "feeds"), action: renderUnfavoritedAndRender },
+  { from: "feeds", event: UNFAVORITE_NOK, to: historyState(DEEP, "feeds"), action: renderUnfavoritedNOK },
 ];
 
 // State update
@@ -318,7 +326,6 @@ function isAuthenticatedAndArticleLiked(extendedState, eventData, settings){
   const {favoriteStatus} = extendedState;
   const {slug, isFavorited} = favoriteStatus;
 
-  // TODO: I have to put isFavorited in extended state, coming from clickedLike -> fetchAuth
   return user && isFavorited
 }
 
@@ -701,8 +708,6 @@ function renderUnfavoritedNOK (extendedState, eventData, settings){
 function renderUnfavoritedAndRender (extendedState, eventData, settings){
   const { articles } = extendedState;
   const {article:updatedArticle} = eventData;
-  // TODO check that the article returned is actually the updated article and not the previous one
-  // TODO: if the same, change renderUnfavoritedAndRender  to renderUpdatedFavorite and use it for both
   const updatedArticleSlug = updatedArticle.slug;
 
   const updatedArticles = {

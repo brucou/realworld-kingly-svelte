@@ -10,7 +10,8 @@ export default function apiRouterFactory(location, addEventListener) {
         false
       );
     },
-    getCurrentHash: () => location.hash.replace(/^#\/?|\/$/g, "")
+    getCurrentHash: () => location.hash.replace(/^#\/?|\/$/g, ""),
+    redirect: newHash => history.pushState(null, null, document.location.pathname + '#' + newHash)
   };
 
   return api;

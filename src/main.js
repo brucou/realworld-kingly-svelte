@@ -18,7 +18,8 @@ const [
   FETCH_USER_FEED,
   FETCH_FILTERED_FEED,
   FAVORITE_ARTICLE,
-  UNFAVORITE_ARTICLE
+  UNFAVORITE_ARTICLE,
+  REDIRECT
 ] = commands;
 const [
   ROUTE_CHANGED,
@@ -61,7 +62,7 @@ function hashChangeHandler({ newURL, oldURL, hash }) {
   next({ [ROUTE_CHANGED]: { newURL, oldURL, hash } });
 }
 
-const { subscribe: hashChangeSubscribe, getCurrentHash } = apiRouterFactory(
+const { subscribe: hashChangeSubscribe, getCurrentHash, redirect } = apiRouterFactory(
   window.location,
   window.addEventListener
 );
@@ -146,6 +147,12 @@ const commandHandlers = {
       .then(res => dispatch({[UNFAVORITE_OK]: {article:res.article, slug}}))
       .catch(err => dispatch({[UNFAVORITE_NOK]: {err, slug}}))
   },
+  [REDIRECT]: (dispatch, params, effectHandlers) => {
+    const hash = params;
+    const {redirect} = effectHandlers;
+
+    redirect(hash);
+  }
   // TODO: add command missing handlers
   // some favorite stuff?
 };
@@ -158,7 +165,8 @@ const effectHandlers = {
   fetchTagFilteredFeed,
   fetchAuthentication,
   favoriteArticle,
-  unfavoriteArticle
+  unfavoriteArticle,
+  redirect
 };
 
 const app = new App({

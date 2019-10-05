@@ -1,8 +1,25 @@
+export const allRoutes = "*";
 export const routes = {
   // Home route will be empty strings. Cf. apiRouter
   home: "",
-  signUp: "TODO"
+  signUp: "/register",
+  [allRoutes]: "all routes"
 };
+
+export function routeViewLens(route){
+  return function (extendedState){
+    return extendedState[route]
+  }
+}
+
+export function homeUpdates(updates){
+  return [[routes.home, updates]]
+}
+
+export function allRoutesUpdate(updates){
+  return [[routes[allRoutes], updates]]
+}
+
 
 export const loadingStates = ["TAGS_ARE_LOADING", "ARTICLES_ARE_LOADING"];
 
@@ -27,3 +44,4 @@ export const events = [
   "UNFAVORITE_OK",
   "UNFAVORITE_NOK",
 ];
+

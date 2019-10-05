@@ -48,7 +48,8 @@ const [
   FETCH_USER_FEED,
   FETCH_FILTERED_FEED,
   FAVORITE_ARTICLE,
-  UNFAVORITE_ARTICLE
+  UNFAVORITE_ARTICLE,
+  REDIRECT
 ] = commands;
 const { home } = routes;
 const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
@@ -303,17 +304,9 @@ const AUTH_USER_ON_HOME_SEES_USER_FEED_THEN_GLOBAL_FEED_COMMANDS = AUTH_USER_ON_
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_AND_NAVIGATES_HOME = `Unauthenticated user navigates to *Home* page and sees the full global feed, then navigates back to the *home* route`;
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_AND_NAVIGATES_HOME_INPUTS = [
   UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
-  UNAUTH_USER_ON_HOME_INPUTS,
-  { [ARTICLES_FETCHED_OK]: articlesFixture }
+  UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
 ].flat();
-const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_AND_NAVIGATES_HOME_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
-  [{ [FETCH_AUTHENTICATION]: void 0 }],
-  [
-    { [RENDER]: { tags: tagsFixture, articles: ARTICLES_ARE_LOADING, page: 0, user:null, activeFeed: GLOBAL_FEED, selectedTag: null } },
-    { [FETCH_ARTICLES_GLOBAL_FEED]: { page: 0 } },
-  ],
-    [{ [RENDER]: { articles: articlesFixture, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED, selectedTag: null } }],
-  ]);
+const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_AND_NAVIGATES_HOME_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat(UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS)
 
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE = `Unauthenticated user navigates to *Home* page, sees the full global feed, likes one article and is redirected`;
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE_INPUTS = [
@@ -323,7 +316,7 @@ const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE_INPUTS = [
 ].flat();
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
   [{ [FETCH_AUTHENTICATION]: void 0 }],
-  []
+  [{[REDIRECT]: "/register" }]
 ]);
 
 const AUTH_USER_ON_HOME_SEES_USER_FEED_LIKES_ARTICLE = `Authenticated user navigates to *Home* page, sees the full user feed and likes article`;
@@ -506,7 +499,11 @@ const userStories = [
 const fsmSettings = { debug: { console, checkContracts: fsmContracts } };
 
 userStories.forEach(([scenario, inputSeq, outputsSeq]) => {
-  if (inputSeq.length !== outputsSeq.length) throw `Error in test scenario ${scenario}! Input sequences and outputs sequences must have the same length! Every input must map to an outputs array. You probably skip a such mapping! Remember that even if the outputs is the empty array (i.e. no outputs) it must still be set in the test scenario data structure.`
+  if (inputSeq.length !== outputsSeq.length) {
+    console.error(`inputSeq`, inputSeq);
+    console.error(`outputsSeq`, outputsSeq);
+    throw `Error in test scenario ${scenario}! Input sequences and outputs sequences must have the same length! Every input must map to an outputs array. You probably skip a such mapping! Remember that even if the outputs is the empty array (i.e. no outputs) it must still be set in the test scenario data structure. Cf. logs`
+  }
   QUnit.test(scenario, function exec_test(assert) {
     const fsm = fsmFactory(fsmSettings);
     const rawOutputsSeq = inputSeq.map(fsm);

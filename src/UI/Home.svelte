@@ -6,7 +6,7 @@
   import GlobalFeedTab from "./GlobalFeedTab.svelte";
   import UserFeedTab from "./UserFeedTab.svelte";
   import TagFilterTab from "./TagFilterTab.svelte";
-import { events, viewModel } from "../constants"
+  import { events, viewModel } from "../constants"
 
   // Props
   // Common props
@@ -73,11 +73,17 @@ import { events, viewModel } from "../constants"
   $: articlesCount =
     typeof articles === "object" ? articles && articles.articlesCount : 0;
   $: tagList = typeof tags === "object" ? tags && tags.tags : void 0;
-  $: tagsFetchStatus = computeFetchStatus(tags);
-  $: articlesFetchStatus = computeFetchStatus(articles);
+  $: tagsFetchStatus = tags && computeFetchStatus(tags);
+  $: articlesFetchStatus = articles && computeFetchStatus(articles);
   $: currentPage = page || 0;
   $: isFilterTagFeed = activeFeed === TAG_FILTER_FEED;
   $: token = user && user.token;
+  // This allows us to have something to show even when the only properties
+  // The view could (should?) also check the validity of its parameters,
+  // but here we make minimal checks and of course avoid throwing
+  // `page` is set to 0 if not there.
+  // A key mandatory prop here is activeFeed so we guard against that.
+  $: hasActiveFeed = typeof activeFeed !== 'undefined';
 </script>
 
 <div>
@@ -86,6 +92,7 @@ import { events, viewModel } from "../constants"
     {#if !user}
       <Banner />
     {/if}
+    {#if hasActiveFeed}
     <div class="container page">
       <div class="row">
         <div class="col-md-9">
@@ -123,5 +130,6 @@ import { events, viewModel } from "../constants"
         </div>
       </div>
     </div>
+    {/if}
   </div>
 </div>

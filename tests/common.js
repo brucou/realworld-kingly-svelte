@@ -1,5 +1,5 @@
 import { NO_OUTPUT } from "kingly"
-import { commands } from "../src/behaviour/fsm"
+import { commands } from "../src/constants"
 
 const [
   RENDER,

@@ -1,6 +1,6 @@
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
 import {
-  allRoutesViewLens, fetchAuthentication, isAuthenticated, isNotAuthenticated, redirectToSignUp, updateURL
+  allRoutesViewLens, fetchAuthentication, isAuthenticated, isNotAuthenticated, redirectToSignUp, updateAuth, updateURL
 } from "./common"
 import { events, commands, homeUpdates, loadingStates, routes, routeViewLens, viewModel, allRoutes } from "../constants"
 import { not } from "../shared/hof"

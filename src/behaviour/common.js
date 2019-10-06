@@ -1,5 +1,4 @@
-import { allRoutes, allRoutesUpdate, routes, routeViewLens } from "../constants"
-import { commands } from "./fsm"
+import { allRoutes, allRoutesUpdate, routes, routeViewLens, commands } from "../constants"
 import { NO_OUTPUT } from "kingly"
 
 const { home, signUp } = routes;

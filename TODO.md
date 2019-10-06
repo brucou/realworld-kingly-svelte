@@ -1,5 +1,5 @@
 # TODO
-// TODO: in the docs when the scenarios (the first batch) draw a table with highlighted the path through the machine
+- DOC: link user scenarios and paths in the machine
 - write the machine tests left!
 - then implement the machine
 
@@ -10,12 +10,7 @@
   - the routing guards must be fulfilled otherwise it stays there forever
     - define a catchall guard which redirects to an existing default screen or a 404 screen 
       - with links to get back to home?? 
-  - add the favorite click to the machine!!! HOW COULD I FORGET!!
-    - implement optimistic updates for the UI even if it is not done in the Conduit demo app
-  - write tests for it too!
-  - write the handlers for the view
-  - quick test manually
-  - then write the properties
+- write the properties
 - examples of properties:
   - user navigating to a route leads to displaying the corresponding screen
   - user clicking on a page leads to displaying the current tab with the new page 
@@ -77,3 +72,6 @@ Failed to load resource: the server responded with a status of 401 ()
 articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' of undefined
     at articles.js:79
 ```
+
+- also register in demo app redirects to home
+  - not with hyperapp: open register in one tab, log in in another tab, close it, then go back and refresh: no redirect 

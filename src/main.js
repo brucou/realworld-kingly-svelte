@@ -146,8 +146,6 @@ const commandHandlers = {
       .then(res => dispatch({[UNFAVORITE_OK]: {article:res.article, slug}}))
       .catch(err => dispatch({[UNFAVORITE_NOK]: {err, slug}}))
   },
-  // TODO: add command missing handlers
-  // some favorite stuff?
 };
 
 const effectHandlers = {

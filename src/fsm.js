@@ -76,8 +76,6 @@ const initialExtendedState = {
   tags: null,
   favoriteStatus: null
 };
-// TODO: maybe I should when I enter the Home compound state, reset the extended state? YES
-// Will be necessary when I will do the other routes
 
 const states = {
   [INIT]: "",
@@ -274,7 +272,7 @@ const transitions = [
     }]},
   {
     from: "fetch-auth-for-favorite", event: AUTH_CHECKED, guards: [
-      // TODO: I need to change the location without reemitting a ROUTE_CHANGED event. How??
+      // NOTE: will need to change the location without reemitting a ROUTE_CHANGED event. Not necessary yet.
       {predicate: isNotAuthenticated, to: "routing", action: updateUrlToSignUp },
       { predicate: isAuthenticatedAndArticleLiked, to: historyState(DEEP, "feeds"), action: unlikeArticleAndRender },
       { predicate: isAuthenticatedAndArticleNotLiked, to: historyState(DEEP, "feeds"), action: likeArticleAndRender }

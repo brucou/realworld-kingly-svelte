@@ -300,21 +300,6 @@ const AUTH_USER_ON_HOME_SEES_USER_FEED_THEN_GLOBAL_FEED_COMMANDS = AUTH_USER_ON_
   [{ [RENDER]: { articles: articlesPage1Fixture, tags: tagsFixture, page: 0, user:userFixture, activeFeed: GLOBAL_FEED, selectedTag: null } }],
 ]);
 
-const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_AND_NAVIGATES_HOME = `Unauthenticated user navigates to *Home* page and sees the full global feed, then navigates back to the *home* route`;
-const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_AND_NAVIGATES_HOME_INPUTS = [
-  UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
-  UNAUTH_USER_ON_HOME_INPUTS,
-  { [ARTICLES_FETCHED_OK]: articlesFixture }
-].flat();
-const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_AND_NAVIGATES_HOME_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
-  [{ [FETCH_AUTHENTICATION]: void 0 }],
-  [
-    { [RENDER]: { tags: tagsFixture, articles: ARTICLES_ARE_LOADING, page: 0, user:null, activeFeed: GLOBAL_FEED, selectedTag: null } },
-    { [FETCH_ARTICLES_GLOBAL_FEED]: { page: 0 } },
-  ],
-    [{ [RENDER]: { articles: articlesFixture, tags: tagsFixture, page: 0, user:null, activeFeed: GLOBAL_FEED, selectedTag: null } }],
-  ]);
-
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE = `Unauthenticated user navigates to *Home* page, sees the full global feed, likes one article and is redirected`;
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE_INPUTS = [
   UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_INPUTS,
@@ -487,7 +472,6 @@ const userStories = [
     AUTH_USER_ON_HOME_SEES_USER_FEED_LIKES_ARTICLE_FAILS_INPUTS,
     AUTH_USER_ON_HOME_SEES_USER_FEED_LIKES_ARTICLE_FAILS_COMMANDS
   ],
-//TODO:  click like article liked, click like article unliked (cf. fixtures)
   [
     AUTH_USER_ON_HOME_SEES_USER_FEED_UNLIKES_ARTICLE,
     AUTH_USER_ON_HOME_SEES_USER_FEED_UNLIKES_ARTICLE_INPUTS,
@@ -498,9 +482,6 @@ const userStories = [
     AUTH_USER_ON_HOME_SEES_USER_FEED_UNLIKES_ARTICLE_FAILS_INPUTS,
     AUTH_USER_ON_HOME_SEES_USER_FEED_UNLIKES_ARTICLE_FAILS_COMMANDS
   ],
-  // 4. auth, unliked, ok
-  // 5. auth, unliked, nok
-
 ];
 
 const fsmSettings = { debug: { console, checkContracts: fsmContracts } };

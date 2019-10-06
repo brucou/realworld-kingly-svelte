@@ -1,10 +1,12 @@
-import { ACTION_IDENTITY, createStateMachine, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
+import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
 import {
-  events, loadingStates, routes, viewModel, routeViewLens, homeUpdates, allRoutesUpdate, allRoutes
-} from "./constants";
-import { not } from "./shared/hof";
+  allRoutesViewLens, fetchAuthentication, isAuthenticated, isNotAuthenticated, redirectToSignUp, updateURL
+} from "./common"
+import { events, commands, homeUpdates, loadingStates, routes, routeViewLens, viewModel, allRoutes } from "../constants"
+import { not } from "../shared/hof"
 
-/** @type Array<HOME_ROUTE_EVENTS> */
+const { home, signUp } = routes;
+export const homeRouteViewLens = routeViewLens(home);
 const [
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,
@@ -22,19 +24,6 @@ const [
   UNFAVORITE_OK,
   UNFAVORITE_NOK,
 ] = events;
-
-export const commands = [
-  "RENDER",
-  "FETCH_GLOBAL_FEED",
-  "FETCH_ARTICLES_GLOBAL_FEED",
-  "FETCH_ARTICLES_USER_FEED",
-  "FETCH_AUTHENTICATION",
-  "FETCH_USER_FEED",
-  "FETCH_FILTERED_FEED",
-  "FAVORITE_ARTICLE",
-  "UNFAVORITE_ARTICLE",
-  "REDIRECT"
-];
 const [
   RENDER,
   FETCH_GLOBAL_FEED,
@@ -47,25 +36,12 @@ const [
   UNFAVORITE_ARTICLE,
   REDIRECT
 ] = commands;
-
-const { home, signUp } = routes;
-const homeRouteViewLens = routeViewLens(home);
-const allRoutesViewLens = routeViewLens(routes[allRoutes]);
 const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 const {
   tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED]
 } = viewModel;
 
-const INIT = "start";
-const initialControlState = INIT;
-const initialHomeRouteState = {
-  currentPage: 0,
-  user: null,
-  filterTag: null,
-  articles: null,
-  tags: null,
-  favoriteStatus: null
-};
+// Machine definition for route
 
 /**
  * @typedef {Object} ExtendedState
@@ -81,44 +57,40 @@ const initialHomeRouteState = {
  *                         the corresponding command is pending response, `favoriteStatus` will
  *                         contain the slug corresponding to the liked/unlked article
  * */
-const initialExtendedState = {
-  [home]: initialHomeRouteState
+  // TODO: move user in common
+export const initialHomeRouteState = {
+  currentPage: 0,
+  filterTag: null,
+  articles: null,
+  tags: null,
+  favoriteStatus: null
 };
-// TODO: maybe I should when I enter the Home compound state, reset the extended state? YES
-// Will be necessary when I will do the other routes
 
-const states = {
-  [INIT]: "",
-  routing: "",
-  home: {
-    feeds: {
-      "fetching-authentication": "",
+export const homeStates = {
+  feeds: {
+    "fetching-authentication": "",
       "fetching-global-feed": {
-        "pending-global-feed": "",
+      "pending-global-feed": "",
         "pending-global-feed-articles": ""
-      },
-      "fetching-user-feed": {
-        "pending-user-feed": "",
+    },
+    "fetching-user-feed": {
+      "pending-user-feed": "",
         "pending-user-feed-articles": ""
-      },
-      "fetching-filtered-articles": {
-        "pending-filtered-articles": "",
+    },
+    "fetching-filtered-articles": {
+      "pending-filtered-articles": "",
         "fetched-filtered-articles": "",
         "failed-fetch-filtered-articles": ""
-      }
-    },
-    "fetch-auth-for-favorite": ""
-  }
+    }
+  },
+  "fetch-auth-for-favorite": ""
 };
 
-/** @type {Array<Transition>} */
-const transitions = [
-  { from: INIT, event: ROUTE_CHANGED, to: "routing", action: updateURL },
-  {
-    from: "routing",
-    event: void 0,
-    guards: [{ predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY }]
-  },
+// Transitions
+
+// NOTE DOC?: there is a dependency with `fsm.js` through the 'routing' state.
+// Generally any transition from here to outside creates a dependency with outside
+export const homeTransitions = [
   {
     from: "home",
     event: INIT_EVENT,
@@ -284,7 +256,7 @@ const transitions = [
   },
   {
     from: "fetch-auth-for-favorite", event: AUTH_CHECKED, guards: [
-      { predicate: isNotAuthenticated, to: "routing", action: redirectToSignup },
+      { predicate: isNotAuthenticated, to: "routing", action: redirectToSignUp },
       { predicate: isAuthenticatedAndArticleLiked, to: historyState(DEEP, "feeds"), action: unlikeArticleAndRender },
       { predicate: isAuthenticatedAndArticleNotLiked, to: historyState(DEEP, "feeds"), action: likeArticleAndRender }
     ]
@@ -295,60 +267,20 @@ const transitions = [
   { from: "feeds", event: UNFAVORITE_NOK, to: historyState(DEEP, "feeds"), action: renderUnfavoritedNOK },
 ];
 
-/**
- * @typedef {Object} Update
- *
- * This function updates a state object, spliced per a property called `route`
- * The route update basically works like this: {a, b: {c, d}}, [{b:{e}]} -> {a, b:{e}}
- * All Object.assign caveats apply
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
- * @param {Object} extendedState
- * @param {Array.<[route, Array<Update>]>} extendedStateUpdates
- * @returns {Object}
- */
-function updateState(extendedState, extendedStateUpdates) {
-  const extendedStateCopy = Object.assign({}, extendedState);
-
-  if (extendedStateUpdates.length === 0) return extendedStateCopy
-
-  return extendedStateUpdates.reduce((acc, extendedStateUpdate) => {
-    const [route, updates] = extendedStateUpdate;
-    if (route === void 0 || updates === void 0) {
-      console.warn(`updateState: incorrect extended state update argument! [route, updates] with either route or updates undefined!`, extendedStateUpdate);
-      return extendedState
-    }
-    const routeState = Object.assign({}, acc[route]);
-    acc[route] = updates.reduce((acc, update) => Object.assign(routeState, update), routeState)
-
-    return acc
-  }, extendedStateCopy)
-}
-
 // Guards
-function isHomeRoute(extendedState, eventData, settings) {
-  const {url} = allRoutesViewLens(extendedState);
+
+export function isHomeRoute(extendedState, eventData, settings) {
+  const { url } = allRoutesViewLens(extendedState);
   return url === home;
 }
 
-function isAuthenticated(extendedState, eventData, settings) {
-  const user = eventData;
-
-  return user != null;
-}
-
-function isNotAuthenticated(extendedState, eventData, settings) {
-  const user = eventData;
-
-  return user == null;
-}
-
-function areTagsFetched(extendedState, eventData, settings) {
+export function areTagsFetched(extendedState, eventData, settings) {
   const { tags } = homeRouteViewLens(extendedState)
 
   return Boolean(tags);
 }
 
-function isAuthenticatedAndArticleLiked(extendedState, eventData, settings) {
+export function isAuthenticatedAndArticleLiked(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState)
   const { slug, isFavorited } = favoriteStatus;
@@ -356,7 +288,7 @@ function isAuthenticatedAndArticleLiked(extendedState, eventData, settings) {
   return user && isFavorited
 }
 
-function isAuthenticatedAndArticleNotLiked(extendedState, eventData, settings) {
+export function isAuthenticatedAndArticleNotLiked(extendedState, eventData, settings) {
   return !isAuthenticatedAndArticleLiked(extendedState, eventData, settings)
 }
 
@@ -368,33 +300,17 @@ function isAuthenticatedAndArticleNotLiked(extendedState, eventData, settings) {
  * @param {*} settings
  * @returns {*|boolean}
  */
-function areArticlesFetched(extendedState, eventData, settings) {
+export function areArticlesFetched(extendedState, eventData, settings) {
   const { articles } = homeRouteViewLens(extendedState)
 
   return articles && articles.articlesCount > 0
 }
 
 // Action factories
-function updateURL(extendedState, eventData, settings) {
-  const { hash } = eventData;
 
-  return {
-    updates: allRoutesUpdate([{ url: hash }]),
-    outputs: []
-  };
-}
-
-function redirectToSignup(extendedState, eventData, settings) {
-  return {
-    updates: allRoutesUpdate([{ url: signUp }]),
-    outputs: [
-      { command: REDIRECT, params: signUp }
-    ]
-  };
-}
-
-function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settings) {
-  const { currentPage, user } = homeRouteViewLens(extendedState)
+export function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settings) {
+  const { currentPage} = homeRouteViewLens(extendedState);
+  const { user } = allRoutesViewLens(extendedState);
 
   return {
     updates: [],
@@ -415,12 +331,13 @@ function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settings) {
   };
 }
 
-function fetchGlobalFeedArticlesAndRenderLoading(
+export function fetchGlobalFeedArticlesAndRenderLoading(
   extendedState,
   eventData,
   settings
 ) {
-  const { currentPage, user, tags } = homeRouteViewLens(extendedState)
+  const { currentPage, tags } = homeRouteViewLens(extendedState)
+  const { user } = allRoutesViewLens(extendedState);
 
   return {
     updates: [],
@@ -441,7 +358,7 @@ function fetchGlobalFeedArticlesAndRenderLoading(
   };
 }
 
-function renderTags(extendedState, eventData, settings) {
+export function renderTags(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ tags: eventData }]),
     outputs: [
@@ -453,14 +370,14 @@ function renderTags(extendedState, eventData, settings) {
   };
 }
 
-function renderTagsFetchError(extendedState, eventData, settings) {
+export function renderTagsFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ tags: eventData }]),
     outputs: [{ command: RENDER, params: { tags: eventData, selectedTag: null } }]
   };
 }
 
-function renderGlobalFeedArticles(extendedState, eventData, settings) {
+export function renderGlobalFeedArticles(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
@@ -472,7 +389,7 @@ function renderGlobalFeedArticles(extendedState, eventData, settings) {
   };
 }
 
-function renderGlobalFeedArticlesFetchError(
+export function renderGlobalFeedArticlesFetchError(
   extendedState,
   eventData,
   settings
@@ -483,14 +400,7 @@ function renderGlobalFeedArticlesFetchError(
   };
 }
 
-function fetchAuthentication(extendedState, eventData, settings) {
-  return {
-    updates: [],
-    outputs: [{ command: FETCH_AUTHENTICATION, params: void 0 }]
-  };
-}
-
-function fetchAuthenticationAndUpdateFavoriteStatus(extendedState, eventData, settings) {
+export function fetchAuthenticationAndUpdateFavoriteStatus(extendedState, eventData, settings) {
   const { slug, isFavorited } = eventData;
   return {
     updates: homeUpdates([{ favoriteStatus: { slug, isFavorited } }]),
@@ -498,30 +408,22 @@ function fetchAuthenticationAndUpdateFavoriteStatus(extendedState, eventData, se
   };
 }
 
-function updateAuthAndResetPage(extendedState, eventData, settings) {
+export function updateAuthAndResetPage(extendedState, eventData, settings) {
   const user = eventData;
 
   return {
-    updates: homeUpdates([{ user }, { currentPage: 0 }]),
+    updates: [[allRoutes, [{ user }]], [home, [{ currentPage: 0 }]]],
     outputs: NO_OUTPUT
   };
 }
 
-function updateAuth(extendedState, eventData, settings) {
-  const user = eventData;
-
-  return {
-    updates: homeUpdates([{ user }]),
-    outputs: NO_OUTPUT
-  };
-}
-
-function fetchUserFeedArticlesAndRenderLoading(
+export function fetchUserFeedArticlesAndRenderLoading(
   extendedState,
   eventData,
   settings
 ) {
-  const { currentPage, user, tags } = homeRouteViewLens(extendedState)
+  const { currentPage, tags } = homeRouteViewLens(extendedState)
+  const { user } = allRoutesViewLens(extendedState);
   const username = user && user.username;
 
   return {
@@ -546,8 +448,9 @@ function fetchUserFeedArticlesAndRenderLoading(
   };
 }
 
-function fetchUserFeedAndRenderLoading(extendedState, eventData, settings) {
-  const { currentPage, user } = homeRouteViewLens(extendedState)
+export function fetchUserFeedAndRenderLoading(extendedState, eventData, settings) {
+  const { currentPage } = homeRouteViewLens(extendedState)
+  const { user } = allRoutesViewLens(extendedState);
 
   return {
     updates: [],
@@ -568,7 +471,7 @@ function fetchUserFeedAndRenderLoading(extendedState, eventData, settings) {
   };
 }
 
-function updatePageAndFetchAuthentication(extendedState, eventData, settings) {
+export function updatePageAndFetchAuthentication(extendedState, eventData, settings) {
   const currentPage = eventData;
 
   return {
@@ -577,7 +480,7 @@ function updatePageAndFetchAuthentication(extendedState, eventData, settings) {
   };
 }
 
-function updatePage(extendedState, eventData, settings) {
+export function updatePage(extendedState, eventData, settings) {
   const currentPage = eventData;
 
   return {
@@ -586,7 +489,7 @@ function updatePage(extendedState, eventData, settings) {
   };
 }
 
-function renderUserFeedArticles(extendedState, eventData, settings) {
+export function renderUserFeedArticles(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
@@ -598,7 +501,7 @@ function renderUserFeedArticles(extendedState, eventData, settings) {
   };
 }
 
-function renderUserFeedArticlesFetchError(extendedState, eventData, settings) {
+export function renderUserFeedArticlesFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
@@ -610,12 +513,13 @@ function renderUserFeedArticlesFetchError(extendedState, eventData, settings) {
   };
 }
 
-function fetchFilteredArticlesAndRenderLoading(
+export function fetchFilteredArticlesAndRenderLoading(
   extendedState,
   eventData,
   settings
 ) {
-  const { currentPage, filterTag, user, tags } = homeRouteViewLens(extendedState)
+  const { currentPage, filterTag, tags } = homeRouteViewLens(extendedState)
+  const { user } = allRoutesViewLens(extendedState);
 
   return {
     updates: [],
@@ -639,14 +543,14 @@ function fetchFilteredArticlesAndRenderLoading(
   };
 }
 
-function renderFilteredArticles(extendedState, eventData, settings) {
+export function renderFilteredArticles(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [{ command: RENDER, params: { articles: eventData } }]
   };
 }
 
-function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
+export function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
@@ -658,14 +562,14 @@ function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
   };
 }
 
-function resetPage(extendedState, eventData, settings) {
+export function resetPage(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ currentPage: 0 }]),
     outputs: []
   };
 }
 
-function resetPageAndSetTag(extendedState, eventData, settings) {
+export function resetPageAndSetTag(extendedState, eventData, settings) {
   const tag = eventData;
   return {
     updates: homeUpdates([{ currentPage: 0, filterTag: tag }]),
@@ -673,7 +577,7 @@ function resetPageAndSetTag(extendedState, eventData, settings) {
   };
 }
 
-function unlikeArticleAndRender(extendedState, eventData, settings) {
+export function unlikeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState)
   const { slug, isFavorited } = favoriteStatus;
@@ -687,7 +591,7 @@ function unlikeArticleAndRender(extendedState, eventData, settings) {
   };
 }
 
-function likeArticleAndRender(extendedState, eventData, settings) {
+export function likeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState)
   const { slug, isFavorited } = favoriteStatus;
@@ -701,7 +605,7 @@ function likeArticleAndRender(extendedState, eventData, settings) {
   };
 }
 
-function updateFavoritedAndRender(extendedState, eventData, settings) {
+export function updateFavoritedAndRender(extendedState, eventData, settings) {
   const { articles } = homeRouteViewLens(extendedState)
   const { article: updatedArticle } = eventData;
   const updatedArticleSlug = updatedArticle.slug;
@@ -721,21 +625,21 @@ function updateFavoritedAndRender(extendedState, eventData, settings) {
   };
 }
 
-function renderFavoritedNOK(extendedState, eventData, settings) {
+export function renderFavoritedNOK(extendedState, eventData, settings) {
   return {
     updates: [],
     outputs: [{ command: RENDER, params: { favoriteStatus: null } }]
   };
 }
 
-function renderUnfavoritedNOK(extendedState, eventData, settings) {
+export function renderUnfavoritedNOK(extendedState, eventData, settings) {
   return {
     updates: [],
     outputs: [{ command: RENDER, params: { favoriteStatus: null } }]
   };
 }
 
-function renderUnfavoritedAndRender(extendedState, eventData, settings) {
+export function renderUnfavoritedAndRender(extendedState, eventData, settings) {
   const { articles } = homeRouteViewLens(extendedState)
   const { article: updatedArticle } = eventData;
   const updatedArticleSlug = updatedArticle.slug;
@@ -755,25 +659,9 @@ function renderUnfavoritedAndRender(extendedState, eventData, settings) {
   };
 }
 
-function resetHomeRouteState(extendedState, eventData, settings) {
+export function resetHomeRouteState(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([initialHomeRouteState]),
     outputs: []
   }
 }
-
-export const fsmDef = {
-  initialControlState,
-  initialExtendedState,
-  states,
-  events,
-  transitions,
-  updateState
-};
-
-export const fsmFactory = settings => createStateMachine(fsmDef, settings);
-
-// TODO: refactor
-// - remove duplication after checking everything works
-//   renderFilteredArticles = renderFilteredArticlesFetchError = renderUserFeedArticles etc.
-// - write helper functions : only updates, only render. Problem is we loose the function name in the trace...

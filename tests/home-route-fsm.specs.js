@@ -2,8 +2,8 @@ import QUnit from "qunit"
 import prettyFormat from 'pretty-format'
 import {equals as deepEqual} from "ramda"
 import { fsmContracts, NO_OUTPUT } from "kingly"
-import { commands, fsmFactory } from "../src/fsm"
-import { events, loadingStates, routes, viewModel } from "../src/constants"
+import { fsmFactory } from "../src/behaviour/fsm"
+import { events, commands, loadingStates, routes, viewModel } from "../src/constants"
 import {
   articlesErrorFixture, articlesFilteredErrorFixture, articlesFilteredFixture, articlesFixture, articlesPage1Fixture
 } from "./fixtures/articles"

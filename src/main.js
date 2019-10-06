@@ -5,7 +5,7 @@ import sessionRepositoryFactory from "./sessionRepository";
 import apiGatewayFactory from "./apiGateway";
 import apiRouterFactory from "./apiRouter";
 import eventEmitterFactory from "./eventEmitter";
-import { commands, fsmFactory } from "./fsm";
+import { commands, fsmFactory } from "./behaviour/fsm";
 import { events } from "./constants"
 
 // Commands
@@ -51,7 +51,7 @@ const sessionRepository = sessionRepositoryFactory(
 );
 
 // We set in place the APIs for fetching domain objects
-const { fetchGlobalFeed, fetchUserFeed, fetchTagFilteredFeed, fetchTags, fetchAuthentication,     favoriteArticle, unfavoriteArticle
+const { fetchGlobalFeed, fetchUserFeed, fetchTagFilteredFeed, fetchTags, fetchAuthentication, favoriteArticle, unfavoriteArticle
 } = apiGatewayFactory(
   fetch,
   sessionRepository
@@ -153,8 +153,6 @@ const commandHandlers = {
 
     redirect(hash);
   }
-  // TODO: add command missing handlers
-  // some favorite stuff?
 };
 
 const effectHandlers = {

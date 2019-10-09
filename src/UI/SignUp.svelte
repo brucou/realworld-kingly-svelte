@@ -1,6 +1,7 @@
 <script>
   import { routes, events } from "../constants";
   import ListErrors from "./ListErrors.svelte";
+  import { LOGIN } from "../links";
 
   export let dispatch;
   export let inProgress;
@@ -24,7 +25,6 @@
     UNFAVORITE_NOK,
     CLICKED_SIGNUP
   ] = events;
-  const { home, signUp, logIn } = routes;
   const onSubmit = ev => {
     ev.preventDefault();
     const formData = new FormData(ev.target);
@@ -41,7 +41,7 @@
       <div class="col-md-6 offset-md-3 col-xs-12">
         <h1 class="text-xs-center">Sign Up</h1>
         <p class="text-xs-center">
-          <a href={logIn}>Have an account?</a>
+          <a href={LOGIN}>Have an account?</a>
         </p>
 
         <ListErrors {errors} />

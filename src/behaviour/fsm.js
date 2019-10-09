@@ -104,7 +104,7 @@ export function isHomeRoute(extendedState, eventData, settings) {
 
 export function isSignUpRoute(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
-  return url === signUp;
+  return url === cleanHash(signUp);
 }
 
 // Action factories

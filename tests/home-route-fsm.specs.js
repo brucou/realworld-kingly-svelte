@@ -11,6 +11,7 @@ import {
   favoritedSlugFixture, unfavoritedSlugFixture, updatedLikedArticleFixture, updatedLikedArticlesFixture,
   updatedUnlikedArticleFixture, updatedUnlikedArticlesFixture
 } from "./fixtures/slugs"
+import { cleanHash } from "../src/shared/helpers"
 
 QUnit.module("Testing home route fsm", {});
 
@@ -49,7 +50,7 @@ const [
   UNFAVORITE_ARTICLE,
   REDIRECT
 ] = commands;
-const { home } = routes;
+const { home, signUp } = routes;
 const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 
 const UNAUTH_USER = null;
@@ -342,7 +343,7 @@ const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE_INPUTS = [
 const UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_LIKES_ARTICLE_COMMANDS = UNAUTH_USER_ON_HOME_SEES_GLOBAL_FEED_COMMANDS.concat([
   [{ [FETCH_AUTHENTICATION]: void 0 }],
   [
-    {[REDIRECT]: "/register" },
+    {[REDIRECT]: cleanHash(signUp) },
     { [FETCH_AUTHENTICATION]: undefined }]
 ]);
 

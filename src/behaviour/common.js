@@ -1,5 +1,6 @@
 import { allRoutesUpdate, routes, routeViewLens, commands } from "../constants";
 import { NO_OUTPUT } from "kingly";
+import { cleanHash } from "../shared/helpers"
 
 const { home, signUp, allRoutes } = routes;
 const [
@@ -49,8 +50,8 @@ export function updateURL(extendedState, eventData, settings) {
 
 export function redirectToSignUp(extendedState, eventData, settings) {
   return {
-    updates: allRoutesUpdate([{ url: signUp }]),
-    outputs: [{ command: REDIRECT, params: signUp }]
+    updates: allRoutesUpdate([{ url: cleanHash(signUp) }]),
+    outputs: [{ command: REDIRECT, params: cleanHash(signUp )}]
   };
 }
 

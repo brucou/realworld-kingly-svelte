@@ -80,7 +80,11 @@ NOTE: once the machine confidently works, it cn be used with stateful PBT to tes
   - could be const piecesState = view(route, [props], extendedState), with pieceState with normal destructuring, view a kind of lens?
   - have individual lenses for each prop and combine that: that would define view. The individual lenses may be automatically generated?
 
-
+## Integration tests
+- still necessary
+  - mistake in the `href` of links, issues with the trailing `/` which cannot be found through unit testing alone
+  - also issue with back button not working! have to add event handler to detect popState? but not pushState ?
+  
 ## Bug found in other versions
 - open a window, log in there
 - duplicate the window

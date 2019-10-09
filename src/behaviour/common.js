@@ -1,9 +1,10 @@
-import { allRoutes, allRoutesUpdate, routes, routeViewLens, commands } from "../constants"
+import { allRoutesUpdate, routes, routeViewLens, commands } from "../constants"
 import { NO_OUTPUT } from "kingly"
 
-const { home, signUp } = routes;
+const { home, signUp, allRoutes } = routes;
 const [
-  RENDER,
+  RENDER_HOME,
+  RENDER_SIGN_UP,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,
@@ -15,7 +16,7 @@ const [
   REDIRECT
 ] = commands;
 
-export const allRoutesViewLens = routeViewLens(routes[allRoutes]);
+export const allRoutesViewLens = routeViewLens(allRoutes);
 
 export const initialAllRoutesState = {
   user: null
@@ -51,6 +52,22 @@ export function redirectToSignUp(extendedState, eventData, settings) {
     updates: allRoutesUpdate([{ url: signUp }]),
     outputs: [
       { command: REDIRECT, params: signUp }
+    ]
+  };
+}
+
+export function updateUrlAndRedirectToHome(extendedState, eventData, settings) {
+  return {
+    updates: allRoutesUpdate([{ url: home }]),
+    outputs: []
+  }
+}
+
+export function redirectToHome(extendedState, eventData, settings) {
+  return {
+    updates: allRoutesUpdate([{ url: home }]),
+    outputs: [
+      { command: REDIRECT, params: home }
     ]
   };
 }

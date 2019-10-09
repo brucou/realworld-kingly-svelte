@@ -5,12 +5,15 @@ import sessionRepositoryFactory from "./sessionRepository";
 import apiGatewayFactory from "./apiGateway";
 import apiRouterFactory from "./apiRouter";
 import eventEmitterFactory from "./eventEmitter";
-import { commands, fsmFactory } from "./behaviour/fsm";
-import { events } from "./constants"
+import { fsmFactory } from "./behaviour/fsm";
+import { events, commands, routes } from "./constants"
+
+const { home, signUp, allRoutes } = routes;
 
 // Commands
 const [
-  RENDER,
+  RENDER_HOME,
+  RENDER_SIGN_UP,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,
@@ -19,7 +22,8 @@ const [
   FETCH_FILTERED_FEED,
   FAVORITE_ARTICLE,
   UNFAVORITE_ARTICLE,
-  REDIRECT
+  REDIRECT,
+  SIGN_UP
 ] = commands;
 const [
   ROUTE_CHANGED,
@@ -37,6 +41,9 @@ const [
   FAVORITE_NOK,
   UNFAVORITE_OK,
   UNFAVORITE_NOK,
+  CLICKED_SIGNUP,
+  FAILED_SIGN_UP,
+  SUCCEEDED_SIGN_UP,
 ] = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -51,7 +58,7 @@ const sessionRepository = sessionRepositoryFactory(
 );
 
 // We set in place the APIs for fetching domain objects
-const { fetchGlobalFeed, fetchUserFeed, fetchTagFilteredFeed, fetchTags, fetchAuthentication, favoriteArticle, unfavoriteArticle
+const { fetchGlobalFeed, fetchUserFeed, fetchTagFilteredFeed, fetchTags, fetchAuthentication, favoriteArticle, unfavoriteArticle, register
 } = apiGatewayFactory(
   fetch,
   sessionRepository
@@ -68,16 +75,20 @@ const { subscribe: hashChangeSubscribe, getCurrentHash, redirect } = apiRouterFa
 );
 hashChangeSubscribe(hashChangeHandler);
 
-function render(props) {
+function render(route, props) {
   // This allows to toggle rendering when an actual render command has to be executed
-  app.$set(Object.assign({}, props, { _shouldRender: true }));
+  app.$set(Object.assign({}, props, { route, _shouldRender: true }));
 }
 
 // Command and effect handlers
 const commandHandlers = {
-  [RENDER]: (dispatch, params, effectHandlers) => {
+  [RENDER_HOME]: (dispatch, params, effectHandlers) => {
     const { render } = effectHandlers;
-    render(params);
+    render(home, params);
+  },
+  [RENDER_SIGN_UP]: (dispatch, params, effectHandlers) => {
+    const { render } = effectHandlers;
+    render(signUp, params);
   },
   [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
     const { page } = params;
@@ -152,6 +163,20 @@ const commandHandlers = {
     const {redirect} = effectHandlers;
 
     redirect(hash);
+  },
+  [SIGN_UP]: (dispatch, params, effectHandlers) => {
+    const {email, username, password} = params;
+    const {register, saveUser} = effectHandlers;
+
+    register({ email, password, username })
+      .then(res => {
+        const {user} = res;
+        sessionRepository.save(user);
+        dispatch({[SUCCEEDED_SIGN_UP]: user})
+      })
+      .catch(({ errors }) => {
+        dispatch({[FAILED_SIGN_UP]: errors})
+      })
   }
 };
 
@@ -164,7 +189,9 @@ const effectHandlers = {
   fetchAuthentication,
   favoriteArticle,
   unfavoriteArticle,
-  redirect
+  redirect,
+  register,
+  saveUser: sessionRepository.save
 };
 
 const app = new App({
@@ -183,7 +210,9 @@ const app = new App({
     page: void 0,
     activeFeed: void 0,
     user: void 0,
-    selectedTag: void 0
+    selectedTag: void 0,
+    route: void 0,
+    favoriteStatus: void 0,
   }
 });
 

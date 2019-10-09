@@ -24,7 +24,7 @@ export default function sessionRepositoryFactory(
         // console.error(e);
       }
     },
-    // TODO: rmov that, I won't need it
+    // TODO: remove that at the end, I won't need it
     onChange(callback) {
       addEventListener(
         "storage",

@@ -2,10 +2,10 @@ import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "king
 import {
   allRoutesViewLens, fetchAuthentication, isAuthenticated, isNotAuthenticated, redirectToSignUp, updateAuth, updateURL
 } from "./common"
-import { events, commands, homeUpdates, loadingStates, routes, routeViewLens, viewModel, allRoutes } from "../constants"
+import { events, commands, homeUpdates, loadingStates, routes, routeViewLens, viewModel } from "../constants"
 import { not } from "../shared/hof"
 
-const { home, signUp } = routes;
+const { home, signUp, allRoutes } = routes;
 export const homeRouteViewLens = routeViewLens(home);
 const [
   ROUTE_CHANGED,
@@ -25,7 +25,8 @@ const [
   UNFAVORITE_NOK,
 ] = events;
 const [
-  RENDER,
+  RENDER_HOME,
+  RENDER_SIGN_UP,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,
@@ -57,7 +58,6 @@ const {
  *                         the corresponding command is pending response, `favoriteStatus` will
  *                         contain the slug corresponding to the liked/unlked article
  * */
-  // TODO: move user in common
 export const initialHomeRouteState = {
   currentPage: 0,
   filterTag: null,
@@ -95,7 +95,7 @@ export const homeTransitions = [
     from: "home",
     event: INIT_EVENT,
     to: "feeds",
-    action: resetHomeRouteState
+    action: resetHomeRouteStateAndRenderRoute
   },
   {
     from: "feeds",
@@ -269,11 +269,6 @@ export const homeTransitions = [
 
 // Guards
 
-export function isHomeRoute(extendedState, eventData, settings) {
-  const { url } = allRoutesViewLens(extendedState);
-  return url === home;
-}
-
 export function areTagsFetched(extendedState, eventData, settings) {
   const { tags } = homeRouteViewLens(extendedState)
 
@@ -317,7 +312,7 @@ export function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settin
     outputs: [
       { command: FETCH_GLOBAL_FEED, params: { page: currentPage } },
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: {
           tags: TAGS_ARE_LOADING,
           articles: ARTICLES_ARE_LOADING,
@@ -344,7 +339,7 @@ export function fetchGlobalFeedArticlesAndRenderLoading(
     outputs: [
       { command: FETCH_ARTICLES_GLOBAL_FEED, params: { page: currentPage } },
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: {
           articles: ARTICLES_ARE_LOADING,
           tags,
@@ -363,7 +358,7 @@ export function renderTags(extendedState, eventData, settings) {
     updates: homeUpdates([{ tags: eventData }]),
     outputs: [
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: { tags: eventData, selectedTag: null }
       }
     ]
@@ -373,7 +368,7 @@ export function renderTags(extendedState, eventData, settings) {
 export function renderTagsFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ tags: eventData }]),
-    outputs: [{ command: RENDER, params: { tags: eventData, selectedTag: null } }]
+    outputs: [{ command: RENDER_HOME, params: { tags: eventData, selectedTag: null } }]
   };
 }
 
@@ -382,7 +377,7 @@ export function renderGlobalFeedArticles(extendedState, eventData, settings) {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: { articles: eventData }
       }
     ]
@@ -396,7 +391,7 @@ export function renderGlobalFeedArticlesFetchError(
 ) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
-    outputs: [{ command: RENDER, params: { articles: eventData } }]
+    outputs: [{ command: RENDER_HOME, params: { articles: eventData } }]
   };
 }
 
@@ -434,7 +429,7 @@ export function fetchUserFeedArticlesAndRenderLoading(
         params: { page: currentPage, username }
       },
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: {
           articles: ARTICLES_ARE_LOADING,
           tags,
@@ -457,7 +452,7 @@ export function fetchUserFeedAndRenderLoading(extendedState, eventData, settings
     outputs: [
       { command: FETCH_USER_FEED, params: { page: currentPage } },
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: {
           tags: TAGS_ARE_LOADING,
           articles: ARTICLES_ARE_LOADING,
@@ -494,7 +489,7 @@ export function renderUserFeedArticles(extendedState, eventData, settings) {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: { articles: eventData }
       }
     ]
@@ -506,7 +501,7 @@ export function renderUserFeedArticlesFetchError(extendedState, eventData, setti
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: { articles: eventData }
       }
     ]
@@ -529,7 +524,7 @@ export function fetchFilteredArticlesAndRenderLoading(
         params: { page: currentPage, tag: filterTag }
       },
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: {
           articles: ARTICLES_ARE_LOADING,
           tags,
@@ -546,7 +541,7 @@ export function fetchFilteredArticlesAndRenderLoading(
 export function renderFilteredArticles(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
-    outputs: [{ command: RENDER, params: { articles: eventData } }]
+    outputs: [{ command: RENDER_HOME, params: { articles: eventData } }]
   };
 }
 
@@ -555,7 +550,7 @@ export function renderFilteredArticlesFetchError(extendedState, eventData, setti
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
       {
-        command: RENDER,
+        command: RENDER_HOME,
         params: { articles: eventData }
       }
     ]
@@ -585,7 +580,7 @@ export function unlikeArticleAndRender(extendedState, eventData, settings) {
   return {
     updates: [],
     outputs: [
-      { command: RENDER, params: { favoriteStatus: slug, user } },
+      { command: RENDER_HOME, params: { favoriteStatus: slug, user } },
       { command: UNFAVORITE_ARTICLE, params: { slug } }
     ]
   };
@@ -599,7 +594,7 @@ export function likeArticleAndRender(extendedState, eventData, settings) {
   return {
     updates: [],
     outputs: [
-      { command: RENDER, params: { favoriteStatus: slug, user } },
+      { command: RENDER_HOME, params: { favoriteStatus: slug, user } },
       { command: FAVORITE_ARTICLE, params: { slug } }
     ]
   };
@@ -621,21 +616,21 @@ export function updateFavoritedAndRender(extendedState, eventData, settings) {
 
   return {
     updates: homeUpdates([{ articles: updatedArticles }]),
-    outputs: [{ command: RENDER, params: { favoriteStatus: null, articles: updatedArticles } }]
+    outputs: [{ command: RENDER_HOME, params: { favoriteStatus: null, articles: updatedArticles } }]
   };
 }
 
 export function renderFavoritedNOK(extendedState, eventData, settings) {
   return {
     updates: [],
-    outputs: [{ command: RENDER, params: { favoriteStatus: null } }]
+    outputs: [{ command: RENDER_HOME, params: { favoriteStatus: null } }]
   };
 }
 
 export function renderUnfavoritedNOK(extendedState, eventData, settings) {
   return {
     updates: [],
-    outputs: [{ command: RENDER, params: { favoriteStatus: null } }]
+    outputs: [{ command: RENDER_HOME, params: { favoriteStatus: null } }]
   };
 }
 
@@ -655,13 +650,18 @@ export function renderUnfavoritedAndRender(extendedState, eventData, settings) {
 
   return {
     updates: homeUpdates([{ articles: updatedArticles }]),
-    outputs: [{ command: RENDER, params: { favoriteStatus: null, articles: updatedArticles } }]
+    outputs: [{ command: RENDER_HOME, params: { favoriteStatus: null, articles: updatedArticles } }]
   };
 }
 
-export function resetHomeRouteState(extendedState, eventData, settings) {
+export function resetHomeRouteStateAndRenderRoute(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([initialHomeRouteState]),
-    outputs: []
+    outputs: [{
+      command: RENDER_HOME,
+      params: {
+        route: home, user: null, articles: null, tags: null, page: 0, activeFeed: null, selectedTag: null, favoriteStatus: null
+      }
+    }]
   }
 }

@@ -57,6 +57,9 @@ const apiGateway = (fetch, sessionRepository) => {
   const favoriteArticle = ({ slug }) => post(`/articles/${slug}/favorite`);
   const unfavoriteArticle = ({ slug }) => del(`/articles/${slug}/favorite`);
 
+  const register = ({ email, password, username }) =>
+    post("/users", { user: { email, password, username } });
+
   return {
     fetchGlobalFeed,
     fetchUserFeed,
@@ -64,7 +67,8 @@ const apiGateway = (fetch, sessionRepository) => {
     fetchTags,
     fetchAuthentication,
     favoriteArticle,
-    unfavoriteArticle
+    unfavoriteArticle,
+    register
   };
 };
 

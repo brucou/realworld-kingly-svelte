@@ -4,12 +4,16 @@
 
   export let _fsm;
   export let _shouldRender = false;
+  export let route;
   export let page;
   export let tags;
   export let articles;
   export let activeFeed;
   export let user;
   export let selectedTag;
+  export let favoriteStatus;
+  export let inProgress;
+  export let errors;
 
   const {
     fsmFactory,
@@ -32,12 +36,17 @@
   {initEvent}>
   {#if _shouldRender}
     <RealWorld
+      dispatch={next}
+      {route}
       {tags}
       {articles}
       {page}
       {activeFeed}
       {user}
       {selectedTag}
-      dispatch={next} />
+      {favoriteStatus}
+      {inProgress}
+      {errors}
+     />
   {/if}
 </Fsm>

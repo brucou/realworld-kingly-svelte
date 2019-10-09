@@ -1,7 +1,9 @@
 import { ACTION_IDENTITY, createStateMachine } from "kingly";
-import { allRoutes, events, routes } from "../constants";
-import { initialAllRoutesState, updateURL } from "./common";
-import { homeStates, homeTransitions, initialHomeRouteState, isHomeRoute } from "./home";
+import { events, routes } from "../constants";
+import { allRoutesViewLens, initialAllRoutesState, updateURL } from "./common";
+import { homeStates, homeTransitions, initialHomeRouteState } from "./home";
+import { initialSignUpRouteState, signUpStates, signUpTransitions } from "./signUp"
+import { cleanHash } from "../shared/helpers"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const [
@@ -22,7 +24,7 @@ const [
   UNFAVORITE_NOK,
 ] = events;
 
-const { home, signUp } = routes;
+const { home, allRoutes, signUp } = routes;
 
 const INIT = "start";
 const initialControlState = INIT;
@@ -30,14 +32,14 @@ const initialControlState = INIT;
 const initialExtendedState = {
   [home]: initialHomeRouteState,
   [allRoutes]: initialAllRoutesState,
-  // TODO: add sign up route
+  [signUp]: initialSignUpRouteState,
 };
 
 const states = {
   [INIT]: "",
   routing: "",
   home: homeStates,
-  // TODO: add sign up state
+  signUp: signUpStates
 };
 
 /** @type {Array<Transition>} */
@@ -46,9 +48,13 @@ const transitions = [
   {
     from: "routing",
     event: void 0,
-    guards: [{ predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY }]
+    guards: [
+      { predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY },
+      { predicate: isSignUpRoute, to: "signUp", action: ACTION_IDENTITY }
+      ]
   },
-  homeTransitions
+  homeTransitions,
+  signUpTransitions
 ].flat();
 
 /**
@@ -81,6 +87,15 @@ function updateState(extendedState, extendedStateUpdates) {
 }
 
 // Guards
+export function isHomeRoute(extendedState, eventData, settings) {
+  const { url } = allRoutesViewLens(extendedState);
+  return url === home;
+}
+
+export function isSignUpRoute(extendedState, eventData, settings) {
+  const { url } = allRoutesViewLens(extendedState);
+  return url === signUp;
+}
 
 // Action factories
 

@@ -1,9 +1,9 @@
-export const allRoutes = "*";
 export const routes = {
   // Home route will be empty strings. Cf. apiRouter
   home: "",
   signUp: "/register",
-  [allRoutes]: "all routes"
+  allRoutes: "all routes",
+  logIn: "/login"
 };
 
 export function routeViewLens(route){
@@ -17,7 +17,7 @@ export function homeUpdates(updates){
 }
 
 export function allRoutesUpdate(updates){
-  return [[routes[allRoutes], updates]]
+  return [[routes.allRoutes, updates]]
 }
 
 
@@ -43,11 +43,15 @@ export const events = [
   "FAVORITE_NOK",
   "UNFAVORITE_OK",
   "UNFAVORITE_NOK",
-];
+  "CLICKED_SIGNUP",
+  "FAILED_SIGN_UP",
+  "SUCCEEDED_SIGN_UP"
+  ];
 
 
 export const commands = [
-  "RENDER",
+  "RENDER_HOME",
+  "RENDER_SIGN_UP",
   "FETCH_GLOBAL_FEED",
   "FETCH_ARTICLES_GLOBAL_FEED",
   "FETCH_ARTICLES_USER_FEED",
@@ -56,5 +60,6 @@ export const commands = [
   "FETCH_FILTERED_FEED",
   "FAVORITE_ARTICLE",
   "UNFAVORITE_ARTICLE",
-  "REDIRECT"
+  "REDIRECT",
+  "SIGN_UP"
 ];

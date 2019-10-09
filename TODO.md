@@ -63,10 +63,30 @@ NOTE: once the machine confidently works, it cn be used with stateful PBT to tes
 - Actions:
   - storybook display the list of arguments received by the handlers, i.e. an array 
 
+## Maintainability
+- changing view props (added route) => changing commands, potentially everywhere
+  - if we couple props and commands... but that is the best to not make mistakes writing the test
+  - otherwise we leave the machine as is, and then test the adapter machine render prop to component render prop...
+  - mmm not sure which is the best approach
+  - for instance we could have put homeProps in the component and leave the machine, and doing the conversion in the App.svelte adapter
+- changing view props also means changing all the tests!! as we MUST always use all props in the tests (if we use merge props in App.svelte)
+  - assuming a change of route resets the other route states, that would help to automatize test changes but sucks anyways
+- refactoring state => refactoring all the update commands
+  - should use lenses from the get go? instead of direct destructuring
+  - maybe some helpers would be good? hyperapp does this in a nice way
+  - maybe updateState that accepts lenses instead of the one I have would have better?
+    - you don't want to pass lenses in the commands, it couples to the machine state? but maybe that is logical
+- I was able to do search and replace so that may indicates the space for tooling to solve the problem automatically
+  - could be const piecesState = view(route, [props], extendedState), with pieceState with normal destructuring, view a kind of lens?
+  - have individual lenses for each prop and combine that: that would define view. The individual lenses may be automatically generated?
+
+
 ## Bug found in other versions
-- if I favorite an article
-- log out in another screen
-- then unfavorite the article in the first screen, the favorite stays on (no login screen) and an error is logged to the console (promise ... no article on data or something)
+- open a window, log in there
+- duplicate the window
+- favorite an article in the first window
+- log out in second window
+- then unfavorite the article in the first window, the favorite stays on (no login screen) and an error is logged to the console (promise ... no article on data or something)
 ```text
 Failed to load resource: the server responded with a status of 401 ()
 articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' of undefined
@@ -75,3 +95,16 @@ articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' o
 
 - also register in demo app redirects to home
   - not with hyperapp: open register in one tab, log in in another tab, close it, then go back and refresh: no redirect 
+
+- also, maybe bugs here but I did not check
+// TODO: update graph to add fetch auth another time, check with demo app, what happens if
+// I sign in before submitting the form, then submit the form
+// could be a bug of demo app, but do it right myself
+// safety properties: cannot sign up if already sign in!!
+// check with hyperapp and conclude; this is one advantage of state machine modelling
+
+- errors with demo app backend
+  - empty form signup gives username both too short and too long!!
+    - username can't be blank
+      username is too short (minimum is 1 character)
+      username is too long (maximum is 20 characters) !!! 

@@ -1,5 +1,6 @@
 <script>
   import Home from "./Home.svelte"
+  import SignUp from "./SignUp.svelte"
   import { routes } from "../constants"
 
   // Props
@@ -14,22 +15,33 @@
   export let activeFeed;
   export let selectedTag;
   export let favoriteStatus;
+  // Sign up props
+  export let inProgress;
+  export let errors;
 
   const { home, signUp } = routes;
 
   // Component which will be displayed depending on the route
+/*
   const componentRoutes= {
     [home]: Home,
     // [signUp]: Signup
   };
-  // Props for the component which will be displayed
+  Props for the component which will be displayed
   const componentRoutesProps={
-    [home]: () => ({tags, articles, page, activeFeed, selectedTag, favoriteStatus})
+    [home]: {tags, articles, page, activeFeed, selectedTag, favoriteStatus}
   };
 
   $: component = componentRoutes[route]
-  $: componentProps = componentRoutesProps[route]()
+  $: componentProps = componentRoutesProps[route]
   $: commonProps = {dispatch, user, route}
+  $: console.info(`Realworld`, component.name, componentProps, commonProps, {tags, articles, page, activeFeed, selectedTag, favoriteStatus})
+*/
 </script>
 
-<svelte:component this="{component}" {...componentProps} {...commonProps} />
+{#if route === home}
+  <Home {dispatch} {user} {tags} {articles} {page} {activeFeed} {selectedTag} {favoriteStatus} />
+{/if }
+{#if route === signUp}
+  <SignUp {dispatch} {inProgress} {errors} />
+{/if }

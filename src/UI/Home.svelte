@@ -6,7 +6,7 @@
   import GlobalFeedTab from "./GlobalFeedTab.svelte";
   import UserFeedTab from "./UserFeedTab.svelte";
   import TagFilterTab from "./TagFilterTab.svelte";
-  import { events, viewModel } from "../constants"
+  import { events, viewModel } from "../constants";
 
   // Props
   // Common props
@@ -47,8 +47,8 @@
   const onClickPage = page => {
     dispatch({ [CLICKED_PAGE]: page });
   };
-  const onClickFavorite = ({slug, article}) => {
-    dispatch({ [TOGGLED_FAVORITE]: {slug, isFavorited: article.favorited} });
+  const onClickFavorite = ({ slug, article }) => {
+    dispatch({ [TOGGLED_FAVORITE]: { slug, isFavorited: article.favorited } });
   };
 
   const {
@@ -83,7 +83,7 @@
   // but here we make minimal checks and of course avoid throwing
   // `page` is set to 0 if not there.
   // A key mandatory prop here is activeFeed so we guard against that.
-  $: hasActiveFeed = typeof activeFeed !== 'undefined';
+  $: hasActiveFeed = typeof activeFeed !== "undefined";
 </script>
 
 <div>
@@ -93,43 +93,42 @@
       <Banner />
     {/if}
     {#if hasActiveFeed}
-    <div class="container page">
-      <div class="row">
-        <div class="col-md-9">
-          <div class="feed-toggle">
-            <ul class="nav nav-pills outline-active">
-              {#if token}
-                <UserFeedTab
+      <div class="container page">
+        <div class="row">
+          <div class="col-md-9">
+            <div class="feed-toggle">
+              <ul class="nav nav-pills outline-active">
+                {#if token}
+                  <UserFeedTab
+                    tab={activeFeed}
+                    {user}
+                    onClickTab={onClickUserFeedTab} />
+                {/if}
+                <GlobalFeedTab
                   tab={activeFeed}
-                  {user}
-                  onClickTab={onClickUserFeedTab} />
-              {/if}
-              <GlobalFeedTab
-                tab={activeFeed}
-                onClickTab={onClickGlobalFeedTab} />
-              {#if isFilterTagFeed}
-                <TagFilterTab tab={activeFeed} tag={selectedTag} />
-              {/if}
-            </ul>
+                  onClickTab={onClickGlobalFeedTab} />
+                {#if isFilterTagFeed}
+                  <TagFilterTab tab={activeFeed} tag={selectedTag} />
+                {/if}
+              </ul>
+            </div>
+            <ArticleList
+              articles={articleList}
+              {articlesCount}
+              {currentPage}
+              {onClickPage}
+              {onClickFavorite}
+              fetchStatus={articlesFetchStatus}
+              {favoriteStatus} />
           </div>
-          <ArticleList
-            articles={articleList}
-            {articlesCount}
-            {currentPage}
-            {onClickPage}
-            {onClickFavorite}
-            fetchStatus={articlesFetchStatus}
-            {favoriteStatus}
-            />
-        </div>
-        <div class="col-md-3">
-          <div class="sidebar">
-            <p>Popular Tags</p>
-            <Tags tags={tagList} fetchStatus={tagsFetchStatus} {onClickTag} />
+          <div class="col-md-3">
+            <div class="sidebar">
+              <p>Popular Tags</p>
+              <Tags tags={tagList} fetchStatus={tagsFetchStatus} {onClickTag} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
     {/if}
   </div>
 </div>

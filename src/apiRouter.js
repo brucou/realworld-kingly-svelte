@@ -11,7 +11,8 @@ export default function apiRouterFactory(location, addEventListener) {
       );
     },
     getCurrentHash: () => location.hash.replace(/^#\/?|\/$/g, ""),
-    redirect: newHash => history.pushState(null, null, document.location.pathname + '#' + newHash)
+    redirect: newHash =>
+      history.pushState(null, null, document.location.pathname + "#" + newHash)
   };
 
   return api;

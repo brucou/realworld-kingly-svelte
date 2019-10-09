@@ -1,16 +1,11 @@
 import QUnit from "qunit"
 import { fsmContracts } from "kingly"
-import { commands, events, loadingStates, routes, viewModel } from "../src/constants"
+import { commands, events, routes } from "../src/constants"
 import { signedUpUserFixture, signUpErrorsFixture, signUpUserFixture, userFixture } from "./fixtures/user"
 import { runUserStories } from "./common"
 import { AUTH_USER_ON_HOME_COMMANDS } from "./home-route-fsm.specs"
 
 QUnit.module("Testing sign up route fsm", {});
-
-const {
-  tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
-  fetchStatus: [LOADING, NOK, OK]
-} = viewModel;
 
 const [
   ROUTE_CHANGED,
@@ -47,7 +42,6 @@ const [
   SIGN_UP
 ] = commands;
 const { home, signUp, allRoutes } = routes;
-const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 
 // Scenarios
 

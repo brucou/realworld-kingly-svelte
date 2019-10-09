@@ -47,7 +47,7 @@ const apiGateway = (fetch, sessionRepository) => {
     get(`/articles/feed?${pagination({ page, limit: 10 })}`);
 
   const fetchAuthentication = () => {
-    console.debug('fetchAuthentication> user', load())
+    console.debug("fetchAuthentication> user", load());
     return load();
   };
 

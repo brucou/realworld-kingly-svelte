@@ -6,7 +6,7 @@ import apiGatewayFactory from "./apiGateway";
 import apiRouterFactory from "./apiRouter";
 import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
-import { events, commands, routes } from "./constants"
+import { events, commands, routes } from "./constants";
 
 const { home, signUp, allRoutes } = routes;
 
@@ -43,7 +43,7 @@ const [
   UNFAVORITE_NOK,
   CLICKED_SIGNUP,
   FAILED_SIGN_UP,
-  SUCCEEDED_SIGN_UP,
+  SUCCEEDED_SIGN_UP
 ] = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -58,21 +58,27 @@ const sessionRepository = sessionRepositoryFactory(
 );
 
 // We set in place the APIs for fetching domain objects
-const { fetchGlobalFeed, fetchUserFeed, fetchTagFilteredFeed, fetchTags, fetchAuthentication, favoriteArticle, unfavoriteArticle, register
-} = apiGatewayFactory(
-  fetch,
-  sessionRepository
-);
+const {
+  fetchGlobalFeed,
+  fetchUserFeed,
+  fetchTagFilteredFeed,
+  fetchTags,
+  fetchAuthentication,
+  favoriteArticle,
+  unfavoriteArticle,
+  register
+} = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
 function hashChangeHandler({ newURL, oldURL, hash }) {
   next({ [ROUTE_CHANGED]: { newURL, oldURL, hash } });
 }
 
-const { subscribe: hashChangeSubscribe, getCurrentHash, redirect } = apiRouterFactory(
-  window.location,
-  window.addEventListener
-);
+const {
+  subscribe: hashChangeSubscribe,
+  getCurrentHash,
+  redirect
+} = apiRouterFactory(window.location, window.addEventListener);
 hashChangeSubscribe(hashChangeHandler);
 
 function render(route, props) {
@@ -113,7 +119,7 @@ const commandHandlers = {
     fetchGlobalFeed({ page })
       .then(res => dispatch({ [ARTICLES_FETCHED_OK]: res }))
       .catch(err => dispatch({ [ARTICLES_FETCHED_NOK]: err }));
-    },
+  },
   [FETCH_USER_FEED]: (dispatch, params, effectHandlers) => {
     const { page } = params;
     const { fetchUserFeed, fetchTags } = effectHandlers;
@@ -138,7 +144,7 @@ const commandHandlers = {
     const { page, tag } = params;
     const { fetchTagFilteredFeed } = effectHandlers;
 
-    fetchTagFilteredFeed({page, tag})
+    fetchTagFilteredFeed({ page, tag })
       .then(res => dispatch({ [ARTICLES_FETCHED_OK]: res }))
       .catch(err => dispatch({ [ARTICLES_FETCHED_NOK]: err }));
   },
@@ -146,37 +152,39 @@ const commandHandlers = {
     const { slug } = params;
     const { favoriteArticle } = effectHandlers;
 
-    favoriteArticle({slug})
-      .then(res => dispatch({[FAVORITE_OK]: {article:res.article, slug}}))
-      .catch(err => dispatch({[FAVORITE_NOK]: {err, slug}}))
+    favoriteArticle({ slug })
+      .then(res => dispatch({ [FAVORITE_OK]: { article: res.article, slug } }))
+      .catch(err => dispatch({ [FAVORITE_NOK]: { err, slug } }));
   },
   [UNFAVORITE_ARTICLE]: (dispatch, params, effectHandlers) => {
     const { slug } = params;
     const { unfavoriteArticle } = effectHandlers;
 
-    unfavoriteArticle({slug})
-      .then(res => dispatch({[UNFAVORITE_OK]: {article:res.article, slug}}))
-      .catch(err => dispatch({[UNFAVORITE_NOK]: {err, slug}}))
+    unfavoriteArticle({ slug })
+      .then(res =>
+        dispatch({ [UNFAVORITE_OK]: { article: res.article, slug } })
+      )
+      .catch(err => dispatch({ [UNFAVORITE_NOK]: { err, slug } }));
   },
   [REDIRECT]: (dispatch, params, effectHandlers) => {
     const hash = params;
-    const {redirect} = effectHandlers;
+    const { redirect } = effectHandlers;
 
     redirect(hash);
   },
   [SIGN_UP]: (dispatch, params, effectHandlers) => {
-    const {email, username, password} = params;
-    const {register, saveUser} = effectHandlers;
+    const { email, username, password } = params;
+    const { register, saveUser } = effectHandlers;
 
     register({ email, password, username })
       .then(res => {
-        const {user} = res;
+        const { user } = res;
         sessionRepository.save(user);
-        dispatch({[SUCCEEDED_SIGN_UP]: user})
+        dispatch({ [SUCCEEDED_SIGN_UP]: user });
       })
       .catch(({ errors }) => {
-        dispatch({[FAILED_SIGN_UP]: errors})
-      })
+        dispatch({ [FAILED_SIGN_UP]: errors });
+      });
   }
 };
 
@@ -203,7 +211,7 @@ const app = new App({
       env,
       eventBus,
       commandHandlers,
-      effectHandlers,
+      effectHandlers
     },
     tags: void 0,
     articles: void 0,
@@ -212,7 +220,7 @@ const app = new App({
     user: void 0,
     selectedTag: void 0,
     route: void 0,
-    favoriteStatus: void 0,
+    favoriteStatus: void 0
   }
 });
 

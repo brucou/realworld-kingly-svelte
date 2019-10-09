@@ -1,5 +1,5 @@
-import { allRoutesUpdate, routes, routeViewLens, commands } from "../constants"
-import { NO_OUTPUT } from "kingly"
+import { allRoutesUpdate, routes, routeViewLens, commands } from "../constants";
+import { NO_OUTPUT } from "kingly";
 
 const { home, signUp, allRoutes } = routes;
 const [
@@ -50,9 +50,7 @@ export function updateURL(extendedState, eventData, settings) {
 export function redirectToSignUp(extendedState, eventData, settings) {
   return {
     updates: allRoutesUpdate([{ url: signUp }]),
-    outputs: [
-      { command: REDIRECT, params: signUp }
-    ]
+    outputs: [{ command: REDIRECT, params: signUp }]
   };
 }
 
@@ -60,15 +58,13 @@ export function updateUrlAndRedirectToHome(extendedState, eventData, settings) {
   return {
     updates: allRoutesUpdate([{ url: home }]),
     outputs: []
-  }
+  };
 }
 
 export function redirectToHome(extendedState, eventData, settings) {
   return {
     updates: allRoutesUpdate([{ url: home }]),
-    outputs: [
-      { command: REDIRECT, params: home }
-    ]
+    outputs: [{ command: REDIRECT, params: home }]
   };
 }
 
@@ -87,4 +83,3 @@ export function updateAuth(extendedState, eventData, settings) {
     outputs: NO_OUTPUT
   };
 }
-

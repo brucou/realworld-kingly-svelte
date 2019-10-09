@@ -6,20 +6,19 @@ export const routes = {
   logIn: "/login"
 };
 
-export function routeViewLens(route){
-  return function (extendedState){
-    return extendedState[route]
-  }
+export function routeViewLens(route) {
+  return function(extendedState) {
+    return extendedState[route];
+  };
 }
 
-export function homeUpdates(updates){
-  return [[routes.home, updates]]
+export function homeUpdates(updates) {
+  return [[routes.home, updates]];
 }
 
-export function allRoutesUpdate(updates){
-  return [[routes.allRoutes, updates]]
+export function allRoutesUpdate(updates) {
+  return [[routes.allRoutes, updates]];
 }
-
 
 export const loadingStates = ["TAGS_ARE_LOADING", "ARTICLES_ARE_LOADING"];
 
@@ -46,8 +45,7 @@ export const events = [
   "CLICKED_SIGNUP",
   "FAILED_SIGN_UP",
   "SUCCEEDED_SIGN_UP"
-  ];
-
+];
 
 export const commands = [
   "RENDER_HOME",

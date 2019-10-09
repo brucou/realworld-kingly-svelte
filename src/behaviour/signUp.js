@@ -1,6 +1,17 @@
-import { fetchAuthentication, isAuthenticated, isNotAuthenticated, redirectToHome } from "./common"
-import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT } from "kingly"
-import { allRoutesUpdate, commands, events, routes, routeViewLens } from "../constants"
+import {
+  fetchAuthentication,
+  isAuthenticated,
+  isNotAuthenticated,
+  redirectToHome
+} from "./common";
+import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT } from "kingly";
+import {
+  allRoutesUpdate,
+  commands,
+  events,
+  routes,
+  routeViewLens
+} from "../constants";
 
 const { home, signUp, allRoutes } = routes;
 export const signUpRouteViewLens = routeViewLens(signUp);
@@ -23,7 +34,7 @@ const [
   UNFAVORITE_NOK,
   CLICKED_SIGNUP,
   FAILED_SIGN_UP,
-  SUCCEEDED_SIGN_UP,
+  SUCCEEDED_SIGN_UP
 ] = events;
 const [
   RENDER_HOME,
@@ -47,10 +58,15 @@ export const signUpStates = {
   "signing-up": ""
 };
 
-export const initialSignUpRouteState = { email: "", password: "", username: "", errors: null };
+export const initialSignUpRouteState = {
+  email: "",
+  password: "",
+  username: "",
+  errors: null
+};
 
 export function signUpUpdates(updates) {
-  return [[routes.signUp, updates]]
+  return [[routes.signUp, updates]];
 }
 
 // TODO: try to see if I can use event data instead of state for the user and if yes remove it from extended state
@@ -69,7 +85,11 @@ export const signUpTransitions = [
     from: "fetching-authentication-form-entry",
     event: AUTH_CHECKED,
     guards: [
-      { predicate: isNotAuthenticated, to: "form-entry-sign-up", action: renderSignUpForm },
+      {
+        predicate: isNotAuthenticated,
+        to: "form-entry-sign-up",
+        action: renderSignUpForm
+      },
       { predicate: isAuthenticated, to: "routing", action: redirectToHome }
     ]
   },
@@ -98,17 +118,21 @@ export const signUpTransitions = [
     event: SUCCEEDED_SIGN_UP,
     to: "routing",
     action: redirectToHome
-  },
+  }
 ];
 
 // Guards
 
 // Action factories
-export function resetSignUpRouteStateAndFetchAuth(extendedState, eventData, settings) {
+export function resetSignUpRouteStateAndFetchAuth(
+  extendedState,
+  eventData,
+  settings
+) {
   return {
     updates: signUpUpdates([initialSignUpRouteState]),
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
-  }
+  };
 }
 
 export function renderSignUpForm(extendedState, eventData, settings) {
@@ -116,35 +140,51 @@ export function renderSignUpForm(extendedState, eventData, settings) {
 
   return {
     updates: [],
-    outputs: [{
-      command: RENDER_SIGN_UP,
-      params: { route: signUp, inProgress: false, errors }
-    }]
-  }
+    outputs: [
+      {
+        command: RENDER_SIGN_UP,
+        params: { route: signUp, inProgress: false, errors }
+      }
+    ]
+  };
 }
 
-export function renderFormWithErrorsAndFetchAuth(extendedState, eventData, settings) {
+export function renderFormWithErrorsAndFetchAuth(
+  extendedState,
+  eventData,
+  settings
+) {
   const errors = eventData;
 
   return {
     updates: signUpUpdates([{ errors }]),
     outputs: [
-      { command: RENDER_SIGN_UP, params: { route: signUp, inProgress: false, errors } },
+      {
+        command: RENDER_SIGN_UP,
+        params: { route: signUp, inProgress: false, errors }
+      },
       fetchAuthentication(extendedState, eventData, settings).outputs
     ].flat()
-  }
+  };
 }
 
-export function fetchAuthenticationAndRenderInProgress(extendedState, eventData, settings) {
+export function fetchAuthenticationAndRenderInProgress(
+  extendedState,
+  eventData,
+  settings
+) {
   const { email, password, username } = eventData;
 
   return {
     updates: signUpUpdates([{ email, password, username }]),
     outputs: [
-      { command: RENDER_SIGN_UP, params: { route: signUp, inProgress: true, errors: null } },
+      {
+        command: RENDER_SIGN_UP,
+        params: { route: signUp, inProgress: true, errors: null }
+      },
       fetchAuthentication(extendedState, eventData, settings).outputs
     ].flat()
-  }
+  };
 }
 
 export function signUserUp(extendedState, eventData, settings) {
@@ -152,9 +192,11 @@ export function signUserUp(extendedState, eventData, settings) {
 
   return {
     updates: [],
-    outputs: [{
-      command: SIGN_UP,
-      params: { email, password, username }
-    }]
-  }
+    outputs: [
+      {
+        command: SIGN_UP,
+        params: { email, password, username }
+      }
+    ]
+  };
 }

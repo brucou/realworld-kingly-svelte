@@ -29,7 +29,10 @@
 {:else if articles}
   <div>
     {#each articles as article (article.slug)}
-      <ArticlePreview {article} {onClickFavorite} isDisabled="{article.slug === favoritedSlug}" />
+      <ArticlePreview
+        {article}
+        {onClickFavorite}
+        isDisabled={article.slug === favoritedSlug} />
     {/each}
     <ListPagination {articlesCount} {currentPage} {onClickPage} />
   </div>

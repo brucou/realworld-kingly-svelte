@@ -1,7 +1,7 @@
 <script>
-  import Home from "./Home.svelte"
-  import SignUp from "./SignUp.svelte"
-  import { routes } from "../constants"
+  import Home from "./Home.svelte";
+  import SignUp from "./SignUp.svelte";
+  import { routes } from "../constants";
 
   // Props
   // Common props
@@ -22,7 +22,7 @@
   const { home, signUp } = routes;
 
   // Component which will be displayed depending on the route
-/*
+  /*
   const componentRoutes= {
     [home]: Home,
     // [signUp]: Signup
@@ -40,8 +40,16 @@
 </script>
 
 {#if route === home}
-  <Home {dispatch} {user} {tags} {articles} {page} {activeFeed} {selectedTag} {favoriteStatus} />
-{/if }
+  <Home
+    {dispatch}
+    {user}
+    {tags}
+    {articles}
+    {page}
+    {activeFeed}
+    {selectedTag}
+    {favoriteStatus} />
+{/if}
 {#if route === signUp}
   <SignUp {dispatch} {inProgress} {errors} />
-{/if }
+{/if}

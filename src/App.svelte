@@ -46,7 +46,6 @@
       {selectedTag}
       {favoriteStatus}
       {inProgress}
-      {errors}
-     />
+      {errors} />
   {/if}
 </Fsm>

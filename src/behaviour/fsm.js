@@ -2,8 +2,12 @@ import { ACTION_IDENTITY, createStateMachine } from "kingly";
 import { events, routes } from "../constants";
 import { allRoutesViewLens, initialAllRoutesState, updateURL } from "./common";
 import { homeStates, homeTransitions, initialHomeRouteState } from "./home";
-import { initialSignUpRouteState, signUpStates, signUpTransitions } from "./signUp"
-import { cleanHash } from "../shared/helpers"
+import {
+  initialSignUpRouteState,
+  signUpStates,
+  signUpTransitions
+} from "./signUp";
+import { cleanHash } from "../shared/helpers";
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const [
@@ -21,7 +25,7 @@ const [
   FAVORITE_OK,
   FAVORITE_NOK,
   UNFAVORITE_OK,
-  UNFAVORITE_NOK,
+  UNFAVORITE_NOK
 ] = events;
 
 const { home, allRoutes, signUp } = routes;
@@ -32,7 +36,7 @@ const initialControlState = INIT;
 const initialExtendedState = {
   [home]: initialHomeRouteState,
   [allRoutes]: initialAllRoutesState,
-  [signUp]: initialSignUpRouteState,
+  [signUp]: initialSignUpRouteState
 };
 
 const states = {
@@ -51,7 +55,7 @@ const transitions = [
     guards: [
       { predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY },
       { predicate: isSignUpRoute, to: "signUp", action: ACTION_IDENTITY }
-      ]
+    ]
   },
   homeTransitions,
   signUpTransitions
@@ -71,19 +75,25 @@ const transitions = [
 function updateState(extendedState, extendedStateUpdates) {
   const extendedStateCopy = Object.assign({}, extendedState);
 
-  if (extendedStateUpdates.length === 0) return extendedStateCopy
+  if (extendedStateUpdates.length === 0) return extendedStateCopy;
 
   return extendedStateUpdates.reduce((acc, extendedStateUpdate) => {
     const [route, updates] = extendedStateUpdate;
     if (route === void 0 || updates === void 0) {
-      console.warn(`updateState: incorrect extended state update argument! [route, updates] with either route or updates undefined!`, extendedStateUpdate);
-      return extendedState
+      console.warn(
+        `updateState: incorrect extended state update argument! [route, updates] with either route or updates undefined!`,
+        extendedStateUpdate
+      );
+      return extendedState;
     }
     const routeState = Object.assign({}, acc[route]);
-    acc[route] = updates.reduce((acc, update) => Object.assign(routeState, update), routeState)
+    acc[route] = updates.reduce(
+      (acc, update) => Object.assign(routeState, update),
+      routeState
+    );
 
-    return acc
-  }, extendedStateCopy)
+    return acc;
+  }, extendedStateCopy);
 }
 
 // Guards

@@ -5,14 +5,15 @@
 
   const FAVORITED_CLASS = "btn btn-sm btn-primary pull-xs-right";
   const NOT_FAVORITED_CLASS = "btn btn-sm btn-outline-primary pull-xs-right";
-  const handleClick = (slug, article) => e => onClickFavorite({slug, article});
+  const handleClick = (slug, article) => e =>
+    onClickFavorite({ slug, article });
 
   $: favorited = article.favorited;
   $: favoritesCount = article.favoritesCount;
   $: favoriteButtonClass = [
     favorited ? FAVORITED_CLASS : NOT_FAVORITED_CLASS,
     isDisabled ? "disabled" : ""
-  ].join(' ');
+  ].join(" ");
   $: slug = article.slug;
 </script>
 

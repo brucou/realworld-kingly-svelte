@@ -1,6 +1,7 @@
 <script>
   import Home from "./Home.svelte";
   import SignUp from "./SignUp.svelte";
+  import SignIn from "./SignIn.svelte";
   import { routes } from "../constants";
 
   // Props
@@ -15,11 +16,11 @@
   export let activeFeed;
   export let selectedTag;
   export let favoriteStatus;
-  // Sign up props
+  // Sign up and sign in props
   export let inProgress;
   export let errors;
 
-  const { home, signUp } = routes;
+  const { home, signUp, signIn } = routes;
 
   // Component which will be displayed depending on the route
   /*
@@ -52,4 +53,7 @@
 {/if}
 {#if route === signUp}
   <SignUp {dispatch} {inProgress} {errors} />
+{/if}
+{#if route === signIn}
+  <SignIn {dispatch} {inProgress} {errors} />
 {/if}

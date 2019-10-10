@@ -22,3 +22,18 @@ export const signUpErrorsFixture = {
   email: ["can't be blank"],
   password: ["can't be blank"],
 };
+export const signInUserFixture = {
+  "email": "manu@dibango.lv",
+  password: "123456"
+};
+export const signedInUserFixture = {
+  "email": "manu@dibango.lv",
+  "token": "jwt.token.rightthere",
+  "username": "cake",
+  "bio": "no play no pay",
+  "image": null
+};
+export const signInErrorsFixture = {
+  email: ["can't be blank"],
+  password: ["can't be blank"],
+};

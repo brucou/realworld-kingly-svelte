@@ -112,3 +112,7 @@ articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' o
     - username can't be blank
       username is too short (minimum is 1 character)
       username is too long (maximum is 20 characters) !!! 
+
+- Demo app bug
+  - if I log in, duplicate tab, then log out in second tab, then I still can see the user profile!
+

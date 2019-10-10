@@ -6,6 +6,7 @@ const { home, signUp, allRoutes } = routes;
 const [
   RENDER_HOME,
   RENDER_SIGN_UP,
+  RENDER_SIGN_IN,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,

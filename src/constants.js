@@ -4,7 +4,7 @@ export const routes = {
   home: "",
   signUp: "/register",
   allRoutes: "all routes",
-  logIn: "/login"
+  signIn: "/login"
 };
 
 export function routeViewLens(route) {
@@ -43,14 +43,18 @@ export const events = [
   "FAVORITE_NOK",
   "UNFAVORITE_OK",
   "UNFAVORITE_NOK",
-  "CLICKED_SIGNUP",
+  "CLICKED_SIGN_UP",
   "FAILED_SIGN_UP",
-  "SUCCEEDED_SIGN_UP"
+  "SUCCEEDED_SIGN_UP",
+  "CLICKED_SIGN_IN",
+  "FAILED_SIGN_IN",
+  "SUCCEEDED_SIGN_IN",
 ];
 
 export const commands = [
   "RENDER_HOME",
   "RENDER_SIGN_UP",
+  "RENDER_SIGN_IN",
   "FETCH_GLOBAL_FEED",
   "FETCH_ARTICLES_GLOBAL_FEED",
   "FETCH_ARTICLES_USER_FEED",
@@ -60,5 +64,6 @@ export const commands = [
   "FAVORITE_ARTICLE",
   "UNFAVORITE_ARTICLE",
   "REDIRECT",
-  "SIGN_UP"
+  "SIGN_UP",
+  "SIGN_IN"
 ];

@@ -8,27 +8,14 @@ import {
   signUpTransitions
 } from "./signUp";
 import { cleanHash } from "../shared/helpers";
+import { signInStates, signInTransitions } from "./signIn"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const [
   ROUTE_CHANGED,
-  TAGS_FETCHED_OK,
-  TAGS_FETCHED_NOK,
-  ARTICLES_FETCHED_OK,
-  ARTICLES_FETCHED_NOK,
-  AUTH_CHECKED,
-  CLICKED_TAG,
-  CLICKED_PAGE,
-  CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED,
-  TOGGLED_FAVORITE,
-  FAVORITE_OK,
-  FAVORITE_NOK,
-  UNFAVORITE_OK,
-  UNFAVORITE_NOK
 ] = events;
 
-const { home, allRoutes, signUp } = routes;
+const { home, allRoutes, signUp, signIn } = routes;
 
 const INIT = "start";
 const initialControlState = INIT;
@@ -43,7 +30,8 @@ const states = {
   [INIT]: "",
   routing: "",
   home: homeStates,
-  signUp: signUpStates
+  signUp: signUpStates,
+  signIn: signInStates
 };
 
 /** @type {Array<Transition>} */
@@ -54,11 +42,13 @@ const transitions = [
     event: void 0,
     guards: [
       { predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY },
-      { predicate: isSignUpRoute, to: "signUp", action: ACTION_IDENTITY }
+      { predicate: isSignUpRoute, to: "signUp", action: ACTION_IDENTITY },
+      { predicate: isSignInRoute, to: "signIn", action: ACTION_IDENTITY }
     ]
   },
   homeTransitions,
-  signUpTransitions
+  signUpTransitions,
+  signInTransitions,
 ].flat();
 
 /**
@@ -105,6 +95,11 @@ export function isHomeRoute(extendedState, eventData, settings) {
 export function isSignUpRoute(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
   return url === cleanHash(signUp);
+}
+
+export function isSignInRoute(extendedState, eventData, settings) {
+  const { url } = allRoutesViewLens(extendedState);
+  return url === cleanHash(signIn);
 }
 
 // Action factories

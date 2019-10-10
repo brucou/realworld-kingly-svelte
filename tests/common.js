@@ -8,6 +8,7 @@ export const NO_COMMAND = "none!"
 const [
   RENDER_HOME,
   RENDER_SIGN_UP,
+  RENDER_SIGN_IN,
 ] = commands;
 
 export function formatIndex(i) {
@@ -20,10 +21,11 @@ export function formatIndex(i) {
     : i.map(formatIndex).join(', ')
 }
 
-const { home, signUp, allRoutes } = routes;
+const { home, signUp, signIn, allRoutes } = routes;
 const renderCommandRouteMap={
   [RENDER_HOME]: home,
   [RENDER_SIGN_UP]: signUp,
+  [RENDER_SIGN_IN]: signIn,
 };
 
 /**

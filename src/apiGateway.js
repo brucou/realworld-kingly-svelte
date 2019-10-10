@@ -59,6 +59,8 @@ const apiGateway = (fetch, sessionRepository) => {
 
   const register = ({ email, password, username }) =>
     post("/users", { user: { email, password, username } });
+  const login = ({ email, password }) =>
+    post("/users/login", { user: { email, password } });
 
   return {
     fetchGlobalFeed,
@@ -68,7 +70,8 @@ const apiGateway = (fetch, sessionRepository) => {
     fetchAuthentication,
     favoriteArticle,
     unfavoriteArticle,
-    register
+    register,
+    login
   };
 };
 

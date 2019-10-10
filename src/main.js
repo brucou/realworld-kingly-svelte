@@ -8,12 +8,13 @@ import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
 import { events, commands, routes } from "./constants";
 
-const { home, signUp, allRoutes } = routes;
+const { home, signUp, signIn, allRoutes } = routes;
 
 // Commands
 const [
   RENDER_HOME,
   RENDER_SIGN_UP,
+  RENDER_SIGN_IN,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,
@@ -23,7 +24,8 @@ const [
   FAVORITE_ARTICLE,
   UNFAVORITE_ARTICLE,
   REDIRECT,
-  SIGN_UP
+  SIGN_UP,
+  SIGN_IN
 ] = commands;
 const [
   ROUTE_CHANGED,
@@ -43,7 +45,10 @@ const [
   UNFAVORITE_NOK,
   CLICKED_SIGNUP,
   FAILED_SIGN_UP,
-  SUCCEEDED_SIGN_UP
+  SUCCEEDED_SIGN_UP,
+  CLICKED_SIGN_IN,
+  FAILED_SIGN_IN,
+  SUCCEEDED_SIGN_IN,
 ] = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -66,7 +71,8 @@ const {
   fetchAuthentication,
   favoriteArticle,
   unfavoriteArticle,
-  register
+  register,
+  login
 } = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
@@ -95,6 +101,10 @@ const commandHandlers = {
   [RENDER_SIGN_UP]: (dispatch, params, effectHandlers) => {
     const { render } = effectHandlers;
     render(signUp, params);
+  },
+  [RENDER_SIGN_IN]: (dispatch, params, effectHandlers) => {
+    const { render } = effectHandlers;
+    render(signIn, params);
   },
   [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
     const { page } = params;
@@ -185,7 +195,21 @@ const commandHandlers = {
       .catch(({ errors }) => {
         dispatch({ [FAILED_SIGN_UP]: errors });
       });
-  }
+  },
+  [SIGN_IN]: (dispatch, params, effectHandlers) => {
+    const { email, password } = params;
+    const { login, saveUser } = effectHandlers;
+
+    login({ email, password })
+      .then(res => {
+        const { user } = res;
+        saveUser(user);
+        dispatch({ [SUCCEEDED_SIGN_IN]: user });
+      })
+      .catch(({ errors }) => {
+        dispatch({ [FAILED_SIGN_IN]: errors });
+      });
+  },
 };
 
 const effectHandlers = {
@@ -199,7 +223,8 @@ const effectHandlers = {
   unfavoriteArticle,
   redirect,
   register,
-  saveUser: sessionRepository.save
+  saveUser: sessionRepository.save,
+  login
 };
 
 const app = new App({
@@ -220,7 +245,9 @@ const app = new App({
     user: void 0,
     selectedTag: void 0,
     route: void 0,
-    favoriteStatus: void 0
+    favoriteStatus: void 0,
+    inProgress: void 0,
+    errors: void 0
   }
 });
 

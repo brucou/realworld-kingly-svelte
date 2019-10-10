@@ -85,8 +85,6 @@ const AUTH_USER_ON_SIGNIN_COMMANDS = page => ([
   ].flat()
 ]);
 
-// TODO: switch test to sign in!!
-
 // Unauthenticated user navigates to sign in route and sees sign in form
 const UNAUTH_USER_ON_SIGNIN_SEES_FORM = `Unauthenticated user navigates to *sign in* route and sees sign in form`;
 const UNAUTH_USER_ON_SIGNIN_SEES_FORM_INPUTS = [

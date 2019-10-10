@@ -1,5 +1,5 @@
 import { INIT_EVENT } from "kingly";
-import {  fetchAuthentication,  isAuthenticated,  isNotAuthenticated,  redirectToHome} from "./common";
+import { fetchAuthentication, isAuthenticated, isNotAuthenticated, redirectToHome, updateURL } from "./common";
 import {  commands,  events,  routes,  routeViewLens} from "../constants";
 
 const { signIn } = routes;
@@ -71,6 +71,7 @@ export const signInTransitions = [
     to: "fetching-authentication-sign-in-form-entry",
     action: resetSignInRouteStateAndFetchAuth
   },
+  { from: "signIn", event: ROUTE_CHANGED, to: "routing", action: updateURL },
   {
     from: "fetching-authentication-sign-in-form-entry",
     event: AUTH_CHECKED,
@@ -108,7 +109,7 @@ export const signInTransitions = [
     event: SUCCEEDED_SIGN_IN,
     to: "routing",
     action: redirectToHome
-  }
+  },
 ];
 
 // Guards
@@ -164,7 +165,6 @@ export function fetchAuthenticationAndRenderInProgress(
   settings
 ) {
   const { email, password } = eventData;
-  debugger
 
   return {
     updates: signInUpdates([{ email, password }]),

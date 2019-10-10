@@ -28,10 +28,10 @@ const initialExtendedState = {
 
 const states = {
   [INIT]: "",
-  routing: "",
-  home: homeStates,
-  signUp: signUpStates,
-  signIn: signInStates
+  "routing": "",
+  "home": homeStates,
+  "signUp": signUpStates,
+  "signIn": signInStates
 };
 
 /** @type {Array<Transition>} */

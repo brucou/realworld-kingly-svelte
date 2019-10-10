@@ -2,7 +2,7 @@ import {
   fetchAuthentication,
   isAuthenticated,
   isNotAuthenticated,
-  redirectToHome
+  redirectToHome, updateURL
 } from "./common";
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT } from "kingly";
 import {
@@ -82,6 +82,7 @@ export const signUpTransitions = [
     to: "fetching-authentication-form-entry",
     action: resetSignUpRouteStateAndFetchAuth
   },
+  { from: "signUp", event: ROUTE_CHANGED, to: "routing", action: updateURL },
   {
     from: "fetching-authentication-form-entry",
     event: AUTH_CHECKED,

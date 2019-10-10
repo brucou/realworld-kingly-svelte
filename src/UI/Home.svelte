@@ -87,7 +87,6 @@
 </script>
 
 <div>
-  <Header {user} />
   <div class="home-page">
     {#if !user}
       <Banner />

@@ -1,4 +1,6 @@
 <script>
+  import Banner from "./Banner.svelte";
+  import Header from "./Header.svelte";
   import Home from "./Home.svelte";
   import SignUp from "./SignUp.svelte";
   import SignIn from "./SignIn.svelte";
@@ -40,6 +42,8 @@
 */
 </script>
 
+<div>
+  <Header {user} />
 {#if route === home}
   <Home
     {dispatch}
@@ -57,3 +61,4 @@
 {#if route === signIn}
   <SignIn {dispatch} {inProgress} {errors} />
 {/if}
+</div>

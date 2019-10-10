@@ -1,3 +1,4 @@
+// TODO: DRY this with src/links.js!! then adjust cleanHash to also remove #
 export const routes = {
   // Home route will be empty strings. Cf. apiRouter
   home: "",

@@ -179,7 +179,7 @@ const commandHandlers = {
     register({ email, password, username })
       .then(res => {
         const { user } = res;
-        sessionRepository.save(user);
+        saveUser(user);
         dispatch({ [SUCCEEDED_SIGN_UP]: user });
       })
       .catch(({ errors }) => {

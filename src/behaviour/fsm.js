@@ -109,6 +109,8 @@ export function isSignUpRoute(extendedState, eventData, settings) {
 
 // Action factories
 
+// Machine definition
+
 export const fsmDef = {
   initialControlState,
   initialExtendedState,

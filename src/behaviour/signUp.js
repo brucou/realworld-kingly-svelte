@@ -2,7 +2,8 @@ import {
   fetchAuthentication,
   isAuthenticated,
   isNotAuthenticated,
-  redirectToHome, updateURL
+  redirectToHome,
+  updateURL
 } from "./common";
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT } from "kingly";
 import {

@@ -8,12 +8,10 @@ import {
   signUpTransitions
 } from "./signUp";
 import { cleanHash } from "../shared/helpers";
-import { signInStates, signInTransitions } from "./signIn"
+import { signInStates, signInTransitions } from "./signIn";
 
 /** @type Array<HOME_ROUTE_EVENTS> */
-const [
-  ROUTE_CHANGED,
-] = events;
+const [ROUTE_CHANGED] = events;
 
 const { home, allRoutes, signUp, signIn } = routes;
 
@@ -28,10 +26,10 @@ const initialExtendedState = {
 
 const states = {
   [INIT]: "",
-  "routing": "",
-  "home": homeStates,
-  "signUp": signUpStates,
-  "signIn": signInStates
+  routing: "",
+  home: homeStates,
+  signUp: signUpStates,
+  signIn: signInStates
 };
 
 /** @type {Array<Transition>} */
@@ -48,7 +46,7 @@ const transitions = [
   },
   homeTransitions,
   signUpTransitions,
-  signInTransitions,
+  signInTransitions
 ].flat();
 
 /**

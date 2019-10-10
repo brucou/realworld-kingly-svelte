@@ -48,7 +48,7 @@ const [
   SUCCEEDED_SIGN_UP,
   CLICKED_SIGN_IN,
   FAILED_SIGN_IN,
-  SUCCEEDED_SIGN_IN,
+  SUCCEEDED_SIGN_IN
 ] = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -209,7 +209,7 @@ const commandHandlers = {
       .catch(({ errors }) => {
         dispatch({ [FAILED_SIGN_IN]: errors });
       });
-  },
+  }
 };
 
 const effectHandlers = {

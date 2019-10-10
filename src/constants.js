@@ -48,7 +48,7 @@ export const events = [
   "SUCCEEDED_SIGN_UP",
   "CLICKED_SIGN_IN",
   "FAILED_SIGN_IN",
-  "SUCCEEDED_SIGN_IN",
+  "SUCCEEDED_SIGN_IN"
 ];
 
 export const commands = [

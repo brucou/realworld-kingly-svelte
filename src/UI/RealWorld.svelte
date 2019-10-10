@@ -44,21 +44,21 @@
 
 <div>
   <Header {user} />
-{#if route === home}
-  <Home
-    {dispatch}
-    {user}
-    {tags}
-    {articles}
-    {page}
-    {activeFeed}
-    {selectedTag}
-    {favoriteStatus} />
-{/if}
-{#if route === signUp}
-  <SignUp {dispatch} {inProgress} {errors} />
-{/if}
-{#if route === signIn}
-  <SignIn {dispatch} {inProgress} {errors} />
-{/if}
+  {#if route === home}
+    <Home
+      {dispatch}
+      {user}
+      {tags}
+      {articles}
+      {page}
+      {activeFeed}
+      {selectedTag}
+      {favoriteStatus} />
+  {/if}
+  {#if route === signUp}
+    <SignUp {dispatch} {inProgress} {errors} />
+  {/if}
+  {#if route === signIn}
+    <SignIn {dispatch} {inProgress} {errors} />
+  {/if}
 </div>

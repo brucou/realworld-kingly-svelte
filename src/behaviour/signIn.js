@@ -1,6 +1,12 @@
 import { INIT_EVENT } from "kingly";
-import { fetchAuthentication, isAuthenticated, isNotAuthenticated, redirectToHome, updateURL } from "./common";
-import {  commands,  events,  routes,  routeViewLens} from "../constants";
+import {
+  fetchAuthentication,
+  isAuthenticated,
+  isNotAuthenticated,
+  redirectToHome,
+  updateURL
+} from "./common";
+import { commands, events, routes, routeViewLens } from "../constants";
 
 const { signIn } = routes;
 export const signInRouteViewLens = routeViewLens(signIn);
@@ -26,7 +32,7 @@ const [
   SUCCEEDED_SIGN_UP,
   CLICKED_SIGN_IN,
   FAILED_SIGN_IN,
-  SUCCEEDED_SIGN_IN,
+  SUCCEEDED_SIGN_IN
 ] = events;
 const [
   RENDER_HOME,
@@ -109,7 +115,7 @@ export const signInTransitions = [
     event: SUCCEEDED_SIGN_IN,
     to: "routing",
     action: redirectToHome
-  },
+  }
 ];
 
 // Guards

@@ -28,7 +28,7 @@
     SUCCEEDED_SIGN_UP,
     CLICKED_SIGN_IN,
     FAILED_SIGN_IN,
-    SUCCEEDED_SIGN_IN,
+    SUCCEEDED_SIGN_IN
   ] = events;
   const onSubmit = ev => {
     ev.preventDefault();
@@ -39,49 +39,46 @@
   };
 </script>
 
-    <div class="auth-page">
-      <div class="container page">
-        <div class="row">
-          <div class="col-md-6 offset-md-3 col-xs-12">
-            <h1 class="text-xs-center">Sign In</h1>
-            <p class="text-xs-center">
-              <a href={REGISTER}>Need an account?</a>
-            </p>
+<div class="auth-page">
+  <div class="container page">
+    <div class="row">
+      <div class="col-md-6 offset-md-3 col-xs-12">
+        <h1 class="text-xs-center">Sign In</h1>
+        <p class="text-xs-center">
+          <a href={REGISTER}>Need an account?</a>
+        </p>
 
-            <ListErrors errors={errors} />
+        <ListErrors {errors} />
 
         <form on:submit={onSubmit}>
-              <fieldset>
-                <fieldset class="form-group">
-                  <input
-                    name="email"
-                    class="form-control form-control-lg"
-                    type="email"
-                    placeholder="Email"
-                    value=""
-                  />
-                </fieldset>
+          <fieldset>
+            <fieldset class="form-group">
+              <input
+                name="email"
+                class="form-control form-control-lg"
+                type="email"
+                placeholder="Email"
+                value="" />
+            </fieldset>
 
-                <fieldset class="form-group">
-                  <input
-                    name="password"
-                    class="form-control form-control-lg"
-                    type="password"
-                    placeholder="Password"
-                    value=""
-                  />
-                </fieldset>
+            <fieldset class="form-group">
+              <input
+                name="password"
+                class="form-control form-control-lg"
+                type="password"
+                placeholder="Password"
+                value="" />
+            </fieldset>
 
-                <button
-                  class="btn btn-lg btn-primary pull-xs-right"
-                  type="submit"
-                  disabled={inProgress}
-                >
-                  Sign in
-                </button>
-              </fieldset>
-            </form>
-          </div>
-        </div>
+            <button
+              class="btn btn-lg btn-primary pull-xs-right"
+              type="submit"
+              disabled={inProgress}>
+              Sign in
+            </button>
+          </fieldset>
+        </form>
       </div>
     </div>
+  </div>
+</div>

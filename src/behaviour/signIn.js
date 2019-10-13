@@ -6,7 +6,7 @@ import {
   redirectToHome,
   updateURL
 } from "./common";
-import { commands, events, routes, routeViewLens } from "../constants";
+import { commands, events, routes, routeViewLens, signInUpdates } from "../constants";
 
 const { signIn } = routes;
 export const signInRouteViewLens = routeViewLens(signIn);
@@ -63,10 +63,6 @@ export const initialSignInRouteState = {
   password: "",
   errors: null
 };
-
-export function signInUpdates(updates) {
-  return [[routes.signIn, updates]];
-}
 
 // Transitions
 

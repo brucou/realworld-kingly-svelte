@@ -11,7 +11,7 @@ import {
   commands,
   events,
   routes,
-  routeViewLens
+  routeViewLens, signUpUpdates
 } from "../constants";
 
 const { signUp } = routes;
@@ -66,10 +66,6 @@ export const initialSignUpRouteState = {
   username: "",
   errors: null
 };
-
-export function signUpUpdates(updates) {
-  return [[routes.signUp, updates]];
-}
 
 // TODO: try to see if I can use event data instead of state for the user and if yes remove it from extended state
 // the user state source of truth is not in the machine, so don't duplicate!! this risks desynchronization

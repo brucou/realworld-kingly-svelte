@@ -9,11 +9,12 @@ import {
 } from "./signUp";
 import { cleanHash } from "../shared/helpers";
 import { signInStates, signInTransitions } from "./signIn";
+import { editorStates, initialEditorRouteState } from "./editor"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const [ROUTE_CHANGED] = events;
 
-const { home, allRoutes, signUp, signIn } = routes;
+const { home, allRoutes, signUp, signIn, editor } = routes;
 
 const INIT = "start";
 const initialControlState = INIT;
@@ -21,7 +22,8 @@ const initialControlState = INIT;
 const initialExtendedState = {
   [home]: initialHomeRouteState,
   [allRoutes]: initialAllRoutesState,
-  [signUp]: initialSignUpRouteState
+  [signUp]: initialSignUpRouteState,
+  [editor]: initialEditorRouteState
 };
 
 const states = {
@@ -29,7 +31,8 @@ const states = {
   routing: "",
   home: homeStates,
   signUp: signUpStates,
-  signIn: signInStates
+  signIn: signInStates,
+  editor: editorStates,
 };
 
 /** @type {Array<Transition>} */
@@ -41,12 +44,14 @@ const transitions = [
     guards: [
       { predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY },
       { predicate: isSignUpRoute, to: "signUp", action: ACTION_IDENTITY },
-      { predicate: isSignInRoute, to: "signIn", action: ACTION_IDENTITY }
+      { predicate: isSignInRoute, to: "signIn", action: ACTION_IDENTITY },
+      { predicate: isEditorRoute, to: "editor", action: ACTION_IDENTITY }
     ]
   },
   homeTransitions,
   signUpTransitions,
-  signInTransitions
+  signInTransitions,
+  editorTransitions
 ].flat();
 
 /**
@@ -85,20 +90,17 @@ function updateState(extendedState, extendedStateUpdates) {
 }
 
 // Guards
-export function isHomeRoute(extendedState, eventData, settings) {
-  const { url } = allRoutesViewLens(extendedState);
-  return url === home;
+function isRoute(hash){
+  return function (extendedState, eventData, settings){
+    const { url } = allRoutesViewLens(extendedState);
+    return url === hash;
+  }
 }
 
-export function isSignUpRoute(extendedState, eventData, settings) {
-  const { url } = allRoutesViewLens(extendedState);
-  return url === cleanHash(signUp);
-}
-
-export function isSignInRoute(extendedState, eventData, settings) {
-  const { url } = allRoutesViewLens(extendedState);
-  return url === cleanHash(signIn);
-}
+export const isHomeRoute = isRoute(home);
+export const isSignUpRoute = isRoute(signUp);
+export const isSignInRoute = isRoute(signIn);
+export const isEditorRoute = isRoute(editor);
 
 // Action factories
 

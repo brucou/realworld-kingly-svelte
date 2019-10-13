@@ -14,9 +14,16 @@ export function routeViewLens(route) {
   };
 }
 
-export function homeUpdates(updates) {
-  return [[routes.home, updates]];
+export function routeUpdateLens(route){
+  return function(updates) {
+    return [[routes[route], updates]];
+  };
 }
+
+export const homeUpdates = routeUpdateLens(routes.home);
+export const signInUpdates = routeUpdateLens(routes.signIn);
+export const signUpUpdates = routeUpdateLens(routes.signUp);
+export const editorUpdates = routeUpdateLens(routes.editor);
 
 export function allRoutesUpdate(updates) {
   return [[routes.allRoutes, updates]];

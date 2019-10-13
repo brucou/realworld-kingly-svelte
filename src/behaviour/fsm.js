@@ -119,3 +119,13 @@ export const fsmFactory = settings => createStateMachine(fsmDef, settings);
 // - remove duplication after checking everything works
 //   renderFilteredArticles = renderFilteredArticlesFetchError = renderUserFeedArticles etc.
 // - write helper functions : only updates, only render. Problem is we loose the function name in the trace...
+
+// TODO:
+// put the second auth fetched into the publishing article control state
+// one extra answer from the publishing action will be the AUTH_CHECKED (false)
+// Do that only there for now, and put a word about it in the doc
+// refactor the machine!! two refactorings:
+// 0. put the second auth checked in the submitting phase
+// 1. two-steps-auth-factoring
+// and another round of refactoring
+// 2. gather all routes in one compound state

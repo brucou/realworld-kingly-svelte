@@ -25,7 +25,8 @@ const [
   UNFAVORITE_ARTICLE,
   REDIRECT,
   SIGN_UP,
-  SIGN_IN
+  SIGN_IN,
+  PUBLISH_ARTICLE
 ] = commands;
 const [
   ROUTE_CHANGED,
@@ -48,7 +49,12 @@ const [
   SUCCEEDED_SIGN_UP,
   CLICKED_SIGN_IN,
   FAILED_SIGN_IN,
-  SUCCEEDED_SIGN_IN
+  SUCCEEDED_SIGN_IN,
+  CLICKED_PUBLISH,
+  PRESSED_ENTER,
+  REMOVED_TAG,
+  FAILED_PUBLISHING,
+  SUCCEEDED_PUBLISHING,
 ] = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -209,7 +215,9 @@ const commandHandlers = {
       .catch(({ errors }) => {
         dispatch({ [FAILED_SIGN_IN]: errors });
       });
-  }
+  },
+  [PUBLISH_ARTICLE]: (dispatch, params, effectHandlers) => {}
+  // TODO
 };
 
 const effectHandlers = {
@@ -247,8 +255,13 @@ const app = new App({
     route: void 0,
     favoriteStatus: void 0,
     inProgress: void 0,
-    errors: void 0
-  }
+    errors: void 0,
+    title: void 0,
+ description: void 0,
+ body: void 0,
+currentTag: void 0,
+tagList: void 0
+}
 });
 
 // kick start the app with the routing event corresponding to the current route

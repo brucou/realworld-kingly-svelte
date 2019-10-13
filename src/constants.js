@@ -54,7 +54,9 @@ export const events = [
   "ADDED_TAG",
   "REMOVED_TAG",
   "FAILED_PUBLISHING",
-  "SUCCEEDED_PUBLISHING"
+  "SUCCEEDED_PUBLISHING",
+  "FAILED_FETCH_ARTICLE",
+  "FETCHED_ARTICLE",
 ];
 
 export const commands = [
@@ -72,5 +74,6 @@ export const commands = [
   "REDIRECT",
   "SIGN_UP",
   "SIGN_IN",
-  "PUBLISH_ARTICLE"
+  "PUBLISH_ARTICLE",
+  "FETCH_ARTICLE"
 ];

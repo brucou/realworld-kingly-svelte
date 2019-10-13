@@ -23,11 +23,11 @@
   export let inProgress;
   export let errors;
   // Editor props
-    export let title;
-    export let description;
-    export let body;
-    export let currentTag;
-    export let tagList;
+  export let title;
+  export let description;
+  export let body;
+  export let currentTag;
+  export let tagList;
 
   const { home, signUp, signIn, editor } = routes;
 
@@ -69,6 +69,14 @@
     <SignIn {dispatch} {inProgress} {errors} />
   {/if}
   {#if route === editor}
-    <Editor {dispatch} {inProgress} {errors} {title} {description} {body} {currentTag} {tagList} />
+    <Editor
+      {dispatch}
+      {inProgress}
+      {errors}
+      {title}
+      {description}
+      {body}
+      {currentTag}
+      {tagList} />
   {/if}
 </div>

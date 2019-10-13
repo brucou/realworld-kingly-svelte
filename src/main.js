@@ -26,7 +26,8 @@ const [
   REDIRECT,
   SIGN_UP,
   SIGN_IN,
-  PUBLISH_ARTICLE
+  PUBLISH_ARTICLE,
+  FETCH_ARTICLE
 ] = commands;
 const [
   ROUTE_CHANGED,
@@ -55,6 +56,8 @@ const [
   REMOVED_TAG,
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
+  FAILED_FETCH_ARTICLE,
+  FETCHED_ARTICLE,
 ] = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -78,7 +81,9 @@ const {
   favoriteArticle,
   unfavoriteArticle,
   register,
-  login
+  login,
+  fetchArticle,
+  saveArticle
 } = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
@@ -216,8 +221,31 @@ const commandHandlers = {
         dispatch({ [FAILED_SIGN_IN]: errors });
       });
   },
-  [PUBLISH_ARTICLE]: (dispatch, params, effectHandlers) => {}
-  // TODO
+  [FETCH_ARTICLE]: (dispatch, params, effectHandlers) => {
+    const slug = params;
+    const {fetchArticle} = effectHandlers;
+
+    fetchArticle({slug})
+      .then(data => {
+        const {title, description, body, tagList} = data.article;
+        dispatch({[FETCHED_ARTICLE]: {title, description, body, tagList}})
+      })
+      .catch(err => {
+        dispatch({[FAILED_FETCH_ARTICLE]: err})
+      })
+  },
+  [PUBLISH_ARTICLE]: (dispatch, params, effectHandlers) => {
+    const {title, description, body, tagList} = params;
+    const {saveArticle} = effectHandlers;
+
+    saveArticle({title, description, body, tagList})
+      .then(data => {
+        dispatch({[SUCCEEDED_PUBLISHING]: data.article})
+      })
+      .catch(({errors}) => {
+        dispatch({ [FAILED_PUBLISHING]: errors });
+      })
+  }
 };
 
 const effectHandlers = {
@@ -232,7 +260,9 @@ const effectHandlers = {
   redirect,
   register,
   saveUser: sessionRepository.save,
-  login
+  login,
+  fetchArticle,
+  saveArticle
 };
 
 const app = new App({
@@ -257,11 +287,11 @@ const app = new App({
     inProgress: void 0,
     errors: void 0,
     title: void 0,
- description: void 0,
- body: void 0,
-currentTag: void 0,
-tagList: void 0
-}
+    description: void 0,
+    body: void 0,
+    currentTag: void 0,
+    tagList: void 0
+  }
 });
 
 // kick start the app with the routing event corresponding to the current route

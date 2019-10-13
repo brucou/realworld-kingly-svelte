@@ -62,6 +62,9 @@ const apiGateway = (fetch, sessionRepository) => {
   const login = ({ email, password }) =>
     post("/users/login", { user: { email, password } });
 
+  const fetchArticle = ({ slug }) => get(`/articles/${slug}`);
+  const saveArticle = ({ ...article }) => post("/articles", { article });
+
   return {
     fetchGlobalFeed,
     fetchUserFeed,
@@ -71,7 +74,9 @@ const apiGateway = (fetch, sessionRepository) => {
     favoriteArticle,
     unfavoriteArticle,
     register,
-    login
+    login,
+    fetchArticle,
+    saveArticle
   };
 };
 

@@ -33,24 +33,23 @@
     CLICKED_SIGN_IN,
     FAILED_SIGN_IN,
     SUCCEEDED_SIGN_IN,
-      CLICKED_PUBLISH,
-      ADDED_TAG,
-      REMOVED_TAG,
-      FAILED_PUBLISHING,
-      SUCCEEDED_PUBLISHING,
+    CLICKED_PUBLISH,
+    ADDED_TAG,
+    REMOVED_TAG,
+    FAILED_PUBLISHING,
+    SUCCEEDED_PUBLISHING
   ] = events;
 
-    const watchForEnter = ev => {
-      if (ev.keyCode === 13) {
-        ev.preventDefault();
-    const formData = new FormData(ev.target.closest("form"));
-    const tag = formData.get("tag");
-        dispatch({[ADDED_TAG]: tag})
-      }
-    };
-
-    const removeTag = tag => ev => dispatch({[REMOVED_TAG]: tag});
-    const onSubmit = ev => {
+  const watchForEnter = ev => {
+    if (ev.keyCode === 13) {
+      ev.preventDefault();
+      const formData = new FormData(ev.target.closest("form"));
+      const tag = formData.get("tag");
+      dispatch({ [ADDED_TAG]: tag });
+    }
+  };
+  const removeTag = tag => ev => dispatch({ [REMOVED_TAG]: tag });
+  const onSubmit = ev => {
     const formData = new FormData(ev.target.closest("form"));
     const title = formData.get("title");
     const description = formData.get("description");
@@ -59,80 +58,72 @@
   };
 </script>
 
-    <div class="editor-page">
-      <div class="container page">
-        <div class="row">
-          <div class="col-md-10 offset-md-1 col-xs-12">
-            <ListErrors errors={errors} />
+<div class="editor-page">
+  <div class="container page">
+    <div class="row">
+      <div class="col-md-10 offset-md-1 col-xs-12">
+        <ListErrors {errors} />
 
-            <form>
-              <fieldset>
-                <fieldset class="form-group">
-                  <input
-                  name="title"
-                    class="form-control form-control-lg"
-                    type="text"
-                    placeholder="Article Title"
-                    value={title}
-                  />
-                </fieldset>
+        <form>
+          <fieldset>
+            <fieldset class="form-group">
+              <input
+                name="title"
+                class="form-control form-control-lg"
+                type="text"
+                placeholder="Article Title"
+                value={title} />
+            </fieldset>
 
-                <fieldset class="form-group">
-                  <input
-                    name="description"
-                    class="form-control"
-                    type="text"
-                    placeholder="What's this article about?"
-                    value={description}
-                  />
-                </fieldset>
+            <fieldset class="form-group">
+              <input
+                name="description"
+                class="form-control"
+                type="text"
+                placeholder="What's this article about?"
+                value={description} />
+            </fieldset>
 
-                <fieldset class="form-group">
-                  <textarea
-                    name="body"
-                    class="form-control"
-                    rows="8"
-                    placeholder="Write your article (in markdown)"
-                    value={body}
-                  />
-                </fieldset>
+            <fieldset class="form-group">
+              <textarea
+                name="body"
+                class="form-control"
+                rows="8"
+                placeholder="Write your article (in markdown)"
+                value={body} />
+            </fieldset>
 
-                <fieldset class="form-group">
-                  <input
-                    name="tag"
-                    class="form-control"
-                    type="text"
-                    placeholder="Enter tags"
-                    value={currentTag}
-                    on:keyup={watchForEnter}
-                  />
+            <fieldset class="form-group">
+              <input
+                name="tag"
+                class="form-control"
+                type="text"
+                placeholder="Enter tags"
+                value={currentTag}
+                on:keyup={watchForEnter} />
 
-                  <div class="tag-list">
-                  {#if tagList }
-                    {#each tagList as tag (tag)}
-                        <span class="tag-default tag-pill">
-                          <i
-                            class="ion-close-round"
-                            on:click={removeTag(tag)}
-                          />
-                          {tag}
-                        </span>
-                    {/each}
-                  {/if }
-                  </div>
-                </fieldset>
+              <div class="tag-list">
+                {#if tagList}
+                  {#each tagList as tag (tag)}
+                    <span class="tag-default tag-pill">
+                      <i class="ion-close-round" on:click={removeTag(tag)} />
+                      {tag}
+                    </span>
+                  {/each}
+                {/if}
+              </div>
+            </fieldset>
 
-                <button
-                  class="btn btn-lg pull-xs-right btn-primary"
-                  type="button"
-                  disabled={inProgress}
-                  on:click={onSubmit}
-                >
-                  Publish Article
-                </button>
-              </fieldset>
-            </form>
-          </div>
-        </div>
+            <button
+              class="btn btn-lg pull-xs-right btn-primary"
+              type="button"
+              disabled={inProgress}
+              on:click={onSubmit}>
+              Publish Article
+            </button>
+          </fieldset>
+        </form>
       </div>
     </div>
+  </div>
+</div>

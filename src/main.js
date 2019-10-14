@@ -11,7 +11,7 @@ import { events, commands, routes } from "./constants";
 const { home, signUp, signIn, allRoutes } = routes;
 
 // Commands
-const [
+const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
@@ -30,7 +30,7 @@ const [
   FETCH_ARTICLE,
   RENDER_EDITOR,
   UPDATE_ARTICLE
-] = commands;
+} = commands;
 const [
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,

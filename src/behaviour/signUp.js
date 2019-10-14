@@ -37,7 +37,7 @@ const [
   FAILED_SIGN_UP,
   SUCCEEDED_SIGN_UP
 ] = events;
-const [
+const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
@@ -51,7 +51,7 @@ const [
   UNFAVORITE_ARTICLE,
   REDIRECT,
   SIGN_UP
-] = commands;
+  } = commands;
 
 export const signUpStates = {
   "fetching-authentication-form-entry": "",

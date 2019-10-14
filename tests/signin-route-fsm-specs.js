@@ -35,22 +35,12 @@ const [
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
 ] = events;
-const [
-  RENDER_HOME,
-  RENDER_SIGN_UP,
+const {
   RENDER_SIGN_IN,
-  FETCH_GLOBAL_FEED,
-  FETCH_ARTICLES_GLOBAL_FEED,
-  FETCH_ARTICLES_USER_FEED,
   FETCH_AUTHENTICATION,
-  FETCH_USER_FEED,
-  FETCH_FILTERED_FEED,
-  FAVORITE_ARTICLE,
-  UNFAVORITE_ARTICLE,
   REDIRECT,
-  SIGN_UP,
   SIGN_IN
-] = commands;
+  } = commands;
 const { home, signUp, signIn, allRoutes } = routes;
 
 // Scenarios

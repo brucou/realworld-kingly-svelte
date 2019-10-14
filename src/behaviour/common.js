@@ -2,7 +2,7 @@ import { allRoutesUpdate, routes, routeViewLens, commands } from "../constants";
 import { NO_OUTPUT } from "kingly";
 
 const { home, signUp, allRoutes } = routes;
-const [
+const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
@@ -15,7 +15,7 @@ const [
   FAVORITE_ARTICLE,
   UNFAVORITE_ARTICLE,
   REDIRECT
-] = commands;
+} = commands;
 
 export const allRoutesViewLens = routeViewLens(allRoutes);
 

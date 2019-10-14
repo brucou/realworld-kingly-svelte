@@ -5,11 +5,11 @@ import { fsmFactory } from "../src/behaviour/fsm"
 import prettyFormat from 'pretty-format'
 
 export const NO_COMMAND = "none!"
-const [
+const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
-] = commands;
+} = commands;
 
 export function formatIndex(i) {
   return typeof i === 'number'

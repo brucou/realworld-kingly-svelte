@@ -39,7 +39,7 @@ const [
   FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE,
 ] = events;
-const [
+const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
@@ -58,7 +58,7 @@ const [
   FETCH_ARTICLE,
   RENDER_EDITOR,
   UPDATE_ARTICLE
-] = commands;
+  } = commands;
 
 const { home, editor } = routes;
 

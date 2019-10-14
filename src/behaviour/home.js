@@ -44,7 +44,7 @@ const [
   UNFAVORITE_OK,
   UNFAVORITE_NOK
 ] = events;
-const [
+const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
@@ -57,7 +57,7 @@ const [
   FAVORITE_ARTICLE,
   UNFAVORITE_ARTICLE,
   REDIRECT
-] = commands;
+} = commands;
 const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 const {
   tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED]

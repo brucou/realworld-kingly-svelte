@@ -1,4 +1,8 @@
-// TODO: DRY this with src/links.js!! then adjust cleanHash to also remove #
+function makeEnum(enums){
+  return enums.reduce((acc, _enum) => Object.assign(acc, {[_enum]: _enum}), {})
+}
+
+// TODO: DRY this with src/links.js!! so move that to links.js then change view to add the #
 export const routes = {
   // Home route will be empty strings. Cf. apiRouter
   home: "/",
@@ -66,23 +70,23 @@ export const events = [
   "FETCHED_ARTICLE",
 ];
 
-export const commands = [
-  "RENDER_HOME",
-  "RENDER_SIGN_UP",
-  "RENDER_SIGN_IN",
-  "FETCH_GLOBAL_FEED",
-  "FETCH_ARTICLES_GLOBAL_FEED",
-  "FETCH_ARTICLES_USER_FEED",
-  "FETCH_AUTHENTICATION",
-  "FETCH_USER_FEED",
-  "FETCH_FILTERED_FEED",
-  "FAVORITE_ARTICLE",
-  "UNFAVORITE_ARTICLE",
-  "REDIRECT",
-  "SIGN_UP",
-  "SIGN_IN",
-  "PUBLISH_ARTICLE",
-  "FETCH_ARTICLE",
-  "RENDER_EDITOR",
-  "UPDATE_ARTICLE"
-];
+export const commands = {
+  "RENDER_HOME": "RENDER_HOME",
+  "RENDER_SIGN_UP": "RENDER_SIGN_UP",
+  "RENDER_SIGN_IN": "RENDER_SIGN_IN",
+  "FETCH_GLOBAL_FEED": "FETCH_GLOBAL_FEED",
+  "FETCH_ARTICLES_GLOBAL_FEED":"FETCH_ARTICLES_GLOBAL_FEED",
+  "FETCH_ARTICLES_USER_FEED": "FETCH_ARTICLES_USER_FEED",
+  "FETCH_AUTHENTICATION": "FETCH_AUTHENTICATION",
+  "FETCH_USER_FEED":"FETCH_USER_FEED",
+  "FETCH_FILTERED_FEED": "FETCH_FILTERED_FEED",
+  "FAVORITE_ARTICLE": "FAVORITE_ARTICLE",
+  "UNFAVORITE_ARTICLE": "UNFAVORITE_ARTICLE",
+  "REDIRECT": "REDIRECT",
+  "SIGN_UP": "SIGN_UP",
+  "SIGN_IN": "SIGN_IN",
+  "PUBLISH_ARTICLE": "PUBLISH_ARTICLE",
+  "FETCH_ARTICLE": "FETCH_ARTICLE",
+  "RENDER_EDITOR": "RENDER_EDITOR",
+  "UPDATE_ARTICLE": "UPDATE_ARTICLE",
+};

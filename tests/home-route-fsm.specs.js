@@ -36,10 +36,8 @@ const [
   UNFAVORITE_OK,
   UNFAVORITE_NOK,
 ] = events;
-const [
+const {
   RENDER_HOME,
-  RENDER_SIGN_UP,
-  RENDER_SIGN_IN,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,
@@ -49,7 +47,7 @@ const [
   FAVORITE_ARTICLE,
   UNFAVORITE_ARTICLE,
   REDIRECT
-] = commands;
+} = commands;
 const { home, signUp } = routes;
 const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 

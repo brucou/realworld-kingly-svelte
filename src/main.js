@@ -8,7 +8,7 @@ import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
 import { events, commands, routes } from "./constants";
 
-const { home, signUp, signIn, allRoutes } = routes;
+const { home, signUp, signIn, editor, allRoutes } = routes;
 
 // Commands
 const {
@@ -38,24 +38,14 @@ const {
   ARTICLES_FETCHED_OK,
   ARTICLES_FETCHED_NOK,
   AUTH_CHECKED,
-  CLICKED_TAG,
-  CLICKED_PAGE,
-  CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED,
-  TOGGLED_FAVORITE,
   FAVORITE_OK,
   FAVORITE_NOK,
   UNFAVORITE_OK,
   UNFAVORITE_NOK,
-  CLICKED_SIGNUP,
   FAILED_SIGN_UP,
   SUCCEEDED_SIGN_UP,
-  CLICKED_SIGN_IN,
   FAILED_SIGN_IN,
   SUCCEEDED_SIGN_IN,
-  CLICKED_PUBLISH,
-  PRESSED_ENTER,
-  REMOVED_TAG,
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
@@ -103,23 +93,15 @@ function render(route, props) {
 }
 
 // Command and effect handlers
+const renderRoute = route => (dispatch, params, effectHandlers) => {
+  const { render } = effectHandlers;
+  render(route, params);
+}
 const commandHandlers = {
-  [RENDER_HOME]: (dispatch, params, effectHandlers) => {
-    const { render } = effectHandlers;
-    render(home, params);
-  },
-  [RENDER_SIGN_UP]: (dispatch, params, effectHandlers) => {
-    const { render } = effectHandlers;
-    render(signUp, params);
-  },
-  [RENDER_SIGN_IN]: (dispatch, params, effectHandlers) => {
-    const { render } = effectHandlers;
-    render(signIn, params);
-  },
-  [RENDER_EDITOR]: (dispatch, params, effectHandlers) => {
-    const { render } = effectHandlers;
-    render(signIn, params);
-  },
+  [RENDER_HOME]: renderRoute(home),
+  [RENDER_SIGN_UP]: renderRoute(signUp),
+  [RENDER_SIGN_IN]: renderRoute(signIn),
+  [RENDER_EDITOR]: renderRoute(editor),
   [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
     const { page } = params;
     const { fetchGlobalFeed, fetchTags } = effectHandlers;

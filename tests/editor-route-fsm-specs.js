@@ -9,7 +9,7 @@ import { articleSlugFixture, fetchedArticleFixture } from "./fixtures/article"
 
 QUnit.module("Testing editor route fsm", {});
 
-const [
+const {
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,
   TAGS_FETCHED_NOK,
@@ -38,7 +38,7 @@ const [
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE,
-] = events;
+  } = events;
 const {
   RENDER_HOME,
   RENDER_SIGN_UP,

@@ -12,7 +12,7 @@ import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
-const [ROUTE_CHANGED] = events;
+const {ROUTE_CHANGED} = events;
 
 const { home, allRoutes, signUp, signIn, editor } = routes;
 
@@ -107,11 +107,12 @@ function updateState(extendedState, extendedStateUpdates) {
 
 // Machine definition
 
+const fsmEvents = Object.keys(events);
 export const fsmDef = {
   initialControlState,
   initialExtendedState,
   states,
-  events,
+  events: fsmEvents,
   transitions,
   updateState
 };

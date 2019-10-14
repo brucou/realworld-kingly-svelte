@@ -19,7 +19,7 @@ const {
   fetchStatus: [LOADING, NOK, OK]
 } = viewModel;
 
-const [
+const {
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,
   TAGS_FETCHED_NOK,
@@ -35,7 +35,7 @@ const [
   FAVORITE_NOK,
   UNFAVORITE_OK,
   UNFAVORITE_NOK,
-] = events;
+  } = events;
 const {
   RENDER_HOME,
   FETCH_GLOBAL_FEED,

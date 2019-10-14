@@ -31,7 +31,7 @@ const {
   RENDER_EDITOR,
   UPDATE_ARTICLE
 } = commands;
-const [
+const {
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,
   TAGS_FETCHED_NOK,
@@ -60,7 +60,7 @@ const [
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE,
-] = events;
+  } = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
 // Event emitter

@@ -27,7 +27,7 @@ import { not } from "../shared/hof";
 
 const { home, signUp, allRoutes } = routes;
 export const homeRouteViewLens = routeViewLens(home);
-const [
+const {
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,
   TAGS_FETCHED_NOK,
@@ -43,7 +43,7 @@ const [
   FAVORITE_NOK,
   UNFAVORITE_OK,
   UNFAVORITE_NOK
-] = events;
+  } = events;
 const {
   RENDER_HOME,
   RENDER_SIGN_UP,

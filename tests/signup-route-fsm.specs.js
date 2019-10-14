@@ -7,29 +7,16 @@ import { AUTH_USER_ON_HOME_COMMANDS } from "./home-route-fsm.specs"
 
 QUnit.module("Testing sign up route fsm", {});
 
-const [
+const {
   ROUTE_CHANGED,
-  TAGS_FETCHED_OK,
-  TAGS_FETCHED_NOK,
-  ARTICLES_FETCHED_OK,
-  ARTICLES_FETCHED_NOK,
   AUTH_CHECKED,
-  CLICKED_TAG,
-  CLICKED_PAGE,
-  CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED,
-  TOGGLED_FAVORITE,
-  FAVORITE_OK,
-  FAVORITE_NOK,
-  UNFAVORITE_OK,
-  UNFAVORITE_NOK,
-  CLICKED_SIGNUP,
+  CLICKED_SIGN_UP,
   FAILED_SIGN_UP,
   SUCCEEDED_SIGN_UP,
   CLICKED_SIGN_IN,
   FAILED_SIGN_IN,
   SUCCEEDED_SIGN_IN,
-] = events;
+  } = events;
 const {  RENDER_SIGN_UP,  FETCH_AUTHENTICATION,  REDIRECT,  SIGN_UP} = commands;
 const { home, signUp, allRoutes } = routes;
 
@@ -87,7 +74,7 @@ const AUTH_USER_ON_SIGNUP_SEES_FORM_COMMANDS = AUTH_USER_ON_SIGNUP_COMMANDS(0);
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_SIGNS_UP_AND_SEES_HOME_FEED = `Unauthenticated user navigates to sign up route and sees sign up form, successfully signs and is redirected to home and sees home feed`;
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_SIGNS_UP_AND_SEES_HOME_FEED_INPUTS= [
   UNAUTH_USER_ON_SIGNUP_INPUTS,
-  {[CLICKED_SIGNUP]: signUpUserFixture},
+  {[CLICKED_SIGN_UP]: signUpUserFixture},
   {[AUTH_CHECKED]: null},
   {[SUCCEEDED_SIGN_UP]: signedUpUserFixture}
 ].flat();
@@ -107,7 +94,7 @@ const UNAUTH_USER_ON_SIGNUP_SEES_FORM_SIGNS_UP_AND_SEES_HOME_FEED_COMMANDS = UNA
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_FAILS_SIGN_UP_AND_SEES_FORM_WITH_ERRORS = `Unauthenticated user navigates to sign up route and sees sign up form, fails to sign up, sees error messages`;
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_FAILS_SIGN_UP_AND_SEES_FORM_WITH_ERRORS_INPUTS= [
   UNAUTH_USER_ON_SIGNUP_INPUTS,
-  {[CLICKED_SIGNUP]: signUpUserFixture},
+  {[CLICKED_SIGN_UP]: signUpUserFixture},
   {[AUTH_CHECKED]: null},
   {[FAILED_SIGN_UP]: signUpErrorsFixture}
 ].flat();

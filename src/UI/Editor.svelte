@@ -11,7 +11,7 @@
   export let currentTag;
   export let tagList;
 
-  const [
+  const {
     ROUTE_CHANGED,
     TAGS_FETCHED_OK,
     TAGS_FETCHED_NOK,
@@ -38,7 +38,7 @@
     REMOVED_TAG,
     FAILED_PUBLISHING,
     SUCCEEDED_PUBLISHING
-  ] = events;
+  } = events;
 
   const watchForEnter = ev => {
     if (ev.keyCode === 13) {

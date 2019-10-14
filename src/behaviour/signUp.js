@@ -17,26 +17,13 @@ import {
 const { signUp } = routes;
 export const signUpRouteViewLens = routeViewLens(signUp);
 
-const [
+const {
   ROUTE_CHANGED,
-  TAGS_FETCHED_OK,
-  TAGS_FETCHED_NOK,
-  ARTICLES_FETCHED_OK,
-  ARTICLES_FETCHED_NOK,
   AUTH_CHECKED,
-  CLICKED_TAG,
-  CLICKED_PAGE,
-  CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED,
-  TOGGLED_FAVORITE,
-  FAVORITE_OK,
-  FAVORITE_NOK,
-  UNFAVORITE_OK,
-  UNFAVORITE_NOK,
-  CLICKED_SIGNUP,
+  CLICKED_SIGN_UP,
   FAILED_SIGN_UP,
   SUCCEEDED_SIGN_UP
-] = events;
+  } = events;
 const {
   RENDER_HOME,
   RENDER_SIGN_UP,
@@ -94,7 +81,7 @@ export const signUpTransitions = [
   },
   {
     from: "form-entry-sign-up",
-    event: CLICKED_SIGNUP,
+    event: CLICKED_SIGN_UP,
     to: "fetching-authentication-sign-up",
     action: fetchAuthenticationAndRenderInProgress
   },

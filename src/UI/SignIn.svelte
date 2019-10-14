@@ -7,7 +7,7 @@
   export let inProgress;
   export let errors;
 
-  const [
+  const {
     ROUTE_CHANGED,
     TAGS_FETCHED_OK,
     TAGS_FETCHED_NOK,
@@ -29,7 +29,7 @@
     CLICKED_SIGN_IN,
     FAILED_SIGN_IN,
     SUCCEEDED_SIGN_IN
-  ] = events;
+  } = events;
   const onSubmit = ev => {
     ev.preventDefault();
     const formData = new FormData(ev.target);

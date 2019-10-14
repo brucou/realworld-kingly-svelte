@@ -7,7 +7,7 @@
   export let inProgress;
   export let errors;
 
-  const [
+  const {
     ROUTE_CHANGED,
     TAGS_FETCHED_OK,
     TAGS_FETCHED_NOK,
@@ -24,7 +24,7 @@
     UNFAVORITE_OK,
     UNFAVORITE_NOK,
     CLICKED_SIGNUP
-  ] = events;
+  } = events;
   const onSubmit = ev => {
     ev.preventDefault();
     const formData = new FormData(ev.target);

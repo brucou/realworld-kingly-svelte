@@ -7,7 +7,7 @@ import { AUTH_USER_ON_HOME_COMMANDS } from "./home-route-fsm.specs"
 
 QUnit.module("Testing sign in route fsm", {});
 
-const [
+const {
   ROUTE_CHANGED,
   TAGS_FETCHED_OK,
   TAGS_FETCHED_NOK,
@@ -34,7 +34,7 @@ const [
   REMOVED_TAG,
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
-] = events;
+  } = events;
 const {
   RENDER_SIGN_IN,
   FETCH_AUTHENTICATION,

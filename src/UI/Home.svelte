@@ -21,7 +21,7 @@
   export let selectedTag;
   export let favoriteStatus;
 
-  const [
+  const {
     ROUTE_CHANGED,
     TAGS_FETCHED_OK,
     TAGS_FETCHED_NOK,
@@ -33,7 +33,7 @@
     CLICKED_USER_FEED,
     CLICKED_GLOBAL_FEED,
     TOGGLED_FAVORITE
-  ] = events;
+  } = events;
 
   const onClickTag = tag => {
     dispatch({ [CLICKED_TAG]: tag });

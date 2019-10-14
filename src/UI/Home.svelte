@@ -68,10 +68,8 @@
     }
   }
 
-  $: articleList =
-    typeof articles === "object" ? articles && articles.articles : void 0;
-  $: articlesCount =
-    typeof articles === "object" ? articles && articles.articlesCount : 0;
+  $: articleList = typeof articles === "object" ? articles && articles.articles : void 0;
+  $: articlesCount = typeof articles === "object" ? articles && articles.articlesCount : 0;
   $: tagList = typeof tags === "object" ? tags && tags.tags : void 0;
   $: tagsFetchStatus = tags && computeFetchStatus(tags);
   $: articlesFetchStatus = articles && computeFetchStatus(articles);
@@ -98,14 +96,9 @@
             <div class="feed-toggle">
               <ul class="nav nav-pills outline-active">
                 {#if token}
-                  <UserFeedTab
-                    tab={activeFeed}
-                    {user}
-                    onClickTab={onClickUserFeedTab} />
+                  <UserFeedTab tab={activeFeed} {user} onClickTab={onClickUserFeedTab} />
                 {/if}
-                <GlobalFeedTab
-                  tab={activeFeed}
-                  onClickTab={onClickGlobalFeedTab} />
+                <GlobalFeedTab tab={activeFeed} onClickTab={onClickGlobalFeedTab} />
                 {#if isFilterTagFeed}
                   <TagFilterTab tab={activeFeed} tag={selectedTag} />
                 {/if}

@@ -14,10 +14,7 @@
 </script>
 
 <li class="nav-item">
-  <a
-    href=".."
-    class={isGlobalFeed ? 'nav-link active' : 'nav-link'}
-    on:click={clickHandler}>
+  <a href=".." class={isGlobalFeed ? 'nav-link active' : 'nav-link'} on:click={clickHandler}>
     Global Feed
   </a>
 </li>

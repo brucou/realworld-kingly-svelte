@@ -21,18 +21,13 @@
 {#if fetchStatus === LOADING}
   <div class="article-preview">Loading...</div>
 {:else if fetchStatus === NOK}
-  <div class="article-preview">
-    Was unable to fetch articles for the global feed!
-  </div>
+  <div class="article-preview">Was unable to fetch articles for the global feed!</div>
 {:else if articles && articles.length === 0}
   <div class="article-preview">No articles are here... yet.</div>
 {:else if articles}
   <div>
     {#each articles as article (article.slug)}
-      <ArticlePreview
-        {article}
-        {onClickFavorite}
-        isDisabled={article.slug === favoritedSlug} />
+      <ArticlePreview {article} {onClickFavorite} isDisabled={article.slug === favoritedSlug} />
     {/each}
     <ListPagination {articlesCount} {currentPage} {onClickPage} />
   </div>

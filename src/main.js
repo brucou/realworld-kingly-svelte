@@ -59,8 +59,8 @@ const {
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
-  FETCHED_ARTICLE,
-  } = events;
+  FETCHED_ARTICLE
+} = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
 // Event emitter
@@ -68,10 +68,7 @@ const eventBus = eventEmitterFactory(emitonoff);
 const next = eventBus.next.bind(eventBus);
 
 // We set in place the API for storing authentication data
-const sessionRepository = sessionRepositoryFactory(
-  window.localStorage,
-  window.addEventListener
-);
+const sessionRepository = sessionRepositoryFactory(window.localStorage, window.addEventListener);
 
 // We set in place the APIs for fetching domain objects
 const {
@@ -94,11 +91,10 @@ function hashChangeHandler({ newURL, oldURL, hash }) {
   next({ [ROUTE_CHANGED]: { newURL, oldURL, hash } });
 }
 
-const {
-  subscribe: hashChangeSubscribe,
-  getCurrentHash,
-  redirect
-} = apiRouterFactory(window.location, window.addEventListener);
+const { subscribe: hashChangeSubscribe, getCurrentHash, redirect } = apiRouterFactory(
+  window.location,
+  window.addEventListener
+);
 hashChangeSubscribe(hashChangeHandler);
 
 function render(route, props) {
@@ -189,9 +185,7 @@ const commandHandlers = {
     const { unfavoriteArticle } = effectHandlers;
 
     unfavoriteArticle({ slug })
-      .then(res =>
-        dispatch({ [UNFAVORITE_OK]: { article: res.article, slug } })
-      )
+      .then(res => dispatch({ [UNFAVORITE_OK]: { article: res.article, slug } }))
       .catch(err => dispatch({ [UNFAVORITE_NOK]: { err, slug } }));
   },
   [REDIRECT]: (dispatch, params, effectHandlers) => {
@@ -219,7 +213,7 @@ const commandHandlers = {
     const { login, saveUser } = effectHandlers;
 
     login({ email, password })
-      .then(({user}) => {
+      .then(({ user }) => {
         saveUser(user);
         dispatch({ [SUCCEEDED_SIGN_IN]: user });
       })
@@ -229,41 +223,41 @@ const commandHandlers = {
   },
   [FETCH_ARTICLE]: (dispatch, params, effectHandlers) => {
     const slug = params;
-    const {fetchArticle} = effectHandlers;
+    const { fetchArticle } = effectHandlers;
 
-    fetchArticle({slug})
-      .then(({article}) => {
-        const {title, description, body, tagList} = article;
-        dispatch({[FETCHED_ARTICLE]: {title, description, body, tagList}})
+    fetchArticle({ slug })
+      .then(({ article }) => {
+        const { title, description, body, tagList } = article;
+        dispatch({ [FETCHED_ARTICLE]: { title, description, body, tagList } });
       })
       .catch(err => {
-        dispatch({[FAILED_FETCH_ARTICLE]: err})
-      })
+        dispatch({ [FAILED_FETCH_ARTICLE]: err });
+      });
   },
   [PUBLISH_ARTICLE]: (dispatch, params, effectHandlers) => {
-    const {title, description, body, tagList} = params;
-    const {saveArticle} = effectHandlers;
+    const { title, description, body, tagList } = params;
+    const { saveArticle } = effectHandlers;
 
-    saveArticle({title, description, body, tagList})
+    saveArticle({ title, description, body, tagList })
       .then(data => {
-        dispatch({[SUCCEEDED_PUBLISHING]: data.article})
+        dispatch({ [SUCCEEDED_PUBLISHING]: data.article });
       })
-      .catch(({errors}) => {
+      .catch(({ errors }) => {
         dispatch({ [FAILED_PUBLISHING]: errors });
-      })
+      });
   },
   [UPDATE_ARTICLE]: (dispatch, params, effectHandlers) => {
-    const {slug, title, description, body, tagList} = params;
-    const {updateArticle} = effectHandlers;
+    const { slug, title, description, body, tagList } = params;
+    const { updateArticle } = effectHandlers;
 
-    updateArticle({slug, title, description, body, tagList})
-      .then(({article}) => {
-        dispatch({[SUCCEEDED_PUBLISHING]: article})
+    updateArticle({ slug, title, description, body, tagList })
+      .then(({ article }) => {
+        dispatch({ [SUCCEEDED_PUBLISHING]: article });
       })
-      .catch(({errors}) => {
+      .catch(({ errors }) => {
         dispatch({ [FAILED_PUBLISHING]: errors });
-      })
-  },
+      });
+  }
 };
 
 const effectHandlers = {

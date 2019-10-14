@@ -52,15 +52,7 @@
 <div>
   <Header {user} />
   {#if route === home}
-    <Home
-      {dispatch}
-      {user}
-      {tags}
-      {articles}
-      {page}
-      {activeFeed}
-      {selectedTag}
-      {favoriteStatus} />
+    <Home {dispatch} {user} {tags} {articles} {page} {activeFeed} {selectedTag} {favoriteStatus} />
   {/if}
   {#if route === signUp}
     <SignUp {dispatch} {inProgress} {errors} />
@@ -69,14 +61,6 @@
     <SignIn {dispatch} {inProgress} {errors} />
   {/if}
   {#if route === editor}
-    <Editor
-      {dispatch}
-      {inProgress}
-      {errors}
-      {title}
-      {description}
-      {body}
-      {currentTag}
-      {tagList} />
+    <Editor {dispatch} {inProgress} {errors} {title} {description} {body} {currentTag} {tagList} />
   {/if}
 </div>

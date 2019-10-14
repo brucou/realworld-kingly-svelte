@@ -15,25 +15,12 @@
   export let inProgress;
   export let errors;
 
-  const {
-    fsmFactory,
-    env,
-    eventBus,
-    commandHandlers,
-    effectHandlers,
-    initEvent
-  } = _fsm;
+  const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
   const next = eventBus.next.bind(eventBus);
 </script>
 
-<Fsm
-  {fsmFactory}
-  {env}
-  {eventBus}
-  {commandHandlers}
-  {effectHandlers}
-  {initEvent}>
+<Fsm {fsmFactory} {env} {eventBus} {commandHandlers} {effectHandlers} {initEvent}>
   {#if _shouldRender}
     <RealWorld
       dispatch={next}

@@ -11,13 +11,7 @@ import { commands, events, routes, routeViewLens, signInUpdates } from "../const
 const { signIn } = routes;
 export const signInRouteViewLens = routeViewLens(signIn);
 
-const {
-  ROUTE_CHANGED,
-  AUTH_CHECKED,
-  CLICKED_SIGN_IN,
-  FAILED_SIGN_IN,
-  SUCCEEDED_SIGN_IN
-  } = events;
+const { ROUTE_CHANGED, AUTH_CHECKED, CLICKED_SIGN_IN, FAILED_SIGN_IN, SUCCEEDED_SIGN_IN } = events;
 const {
   RENDER_HOME,
   RENDER_SIGN_UP,
@@ -33,7 +27,7 @@ const {
   REDIRECT,
   SIGN_UP,
   SIGN_IN
-  } = commands;
+} = commands;
 
 export const signInStates = {
   "fetching-authentication-sign-in-form-entry": "",
@@ -101,11 +95,7 @@ export const signInTransitions = [
 // Guards
 
 // Action factories
-export function resetSignInRouteStateAndFetchAuth(
-  extendedState,
-  eventData,
-  settings
-) {
+export function resetSignInRouteStateAndFetchAuth(extendedState, eventData, settings) {
   return {
     updates: signInUpdates([initialSignInRouteState]),
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
@@ -126,11 +116,7 @@ export function renderSignInForm(extendedState, eventData, settings) {
   };
 }
 
-export function renderFormWithErrorsAndFetchAuth(
-  extendedState,
-  eventData,
-  settings
-) {
+export function renderFormWithErrorsAndFetchAuth(extendedState, eventData, settings) {
   const errors = eventData;
 
   return {
@@ -145,11 +131,7 @@ export function renderFormWithErrorsAndFetchAuth(
   };
 }
 
-export function fetchAuthenticationAndRenderInProgress(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchAuthenticationAndRenderInProgress(extendedState, eventData, settings) {
   const { email, password } = eventData;
 
   return {

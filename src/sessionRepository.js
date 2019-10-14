@@ -1,7 +1,4 @@
-export default function sessionRepositoryFactory(
-  localStorage,
-  addEventListener
-) {
+export default function sessionRepositoryFactory(localStorage, addEventListener) {
   const api = {
     save(user) {
       try {

@@ -6,21 +6,20 @@ export function cleanHash(hash) {
   return hash;
 }
 
-
 /**
  * Returns b in #/a/b
  * @param {String} hash
  * @returns {String}
  */
-export function getSlugFromHash(hash){
-  if (hash.length === 0) return ""
+export function getSlugFromHash(hash) {
+  if (hash.length === 0) return "";
 
-  const hashParts = hash.split('/');
-  return hashParts[1] || ""
+  const hashParts = hash.split("/");
+  return hashParts[1] || "";
 }
 
-export function isNot(guard){
-  return function(a,b,c){
-    return !guard(a,b,c)
-  }
+export function isNot(guard) {
+  return function(a, b, c) {
+    return !guard(a, b, c);
+  };
 }

@@ -29,9 +29,7 @@
 
           const commandHandler = commandHandlers[command];
           if (!commandHandler || typeof commandHandler !== "function") {
-            throw new Error(
-              `Machine: Could not find command handler for command ${command}!`
-            );
+            throw new Error(`Machine: Could not find command handler for command ${command}!`);
           }
 
           commandHandler(next, params, effectHandlers);

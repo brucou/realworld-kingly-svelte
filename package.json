@@ -30,7 +30,7 @@
     "sirv-cli": "^0.4.4"
   },
   "scripts": {
-    "format": "prettier --write {public,src}/**/*.{css,html,js,svelte}",
+    "format": "prettier --write {public,src}/**/*.{css,html,js,svelte} --print-width 100",
     "build": "rollup -c",
     "autobuild": "rollup -c -w",
     "dev": "run-p start:dev autobuild",

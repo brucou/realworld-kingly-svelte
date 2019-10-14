@@ -1,44 +1,12 @@
-import {
-  fetchAuthentication,
-  isAuthenticated,
-  isNotAuthenticated,
-  redirectToHome,
-  updateURL
-} from "./common";
+import {  fetchAuthentication,  isAuthenticated,  isNotAuthenticated,  redirectToHome,  updateURL} from "./common";
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT } from "kingly";
-import {
-  allRoutesUpdate,
-  commands,
-  events,
-  routes,
-  routeViewLens, signUpUpdates
-} from "../constants";
+import { commands, events, routes, routeViewLens, signUpUpdates } from "../constants";
 
 const { signUp } = routes;
 export const signUpRouteViewLens = routeViewLens(signUp);
 
-const {
-  ROUTE_CHANGED,
-  AUTH_CHECKED,
-  CLICKED_SIGN_UP,
-  FAILED_SIGN_UP,
-  SUCCEEDED_SIGN_UP
-  } = events;
-const {
-  RENDER_HOME,
-  RENDER_SIGN_UP,
-  RENDER_SIGN_IN,
-  FETCH_GLOBAL_FEED,
-  FETCH_ARTICLES_GLOBAL_FEED,
-  FETCH_ARTICLES_USER_FEED,
-  FETCH_AUTHENTICATION,
-  FETCH_USER_FEED,
-  FETCH_FILTERED_FEED,
-  FAVORITE_ARTICLE,
-  UNFAVORITE_ARTICLE,
-  REDIRECT,
-  SIGN_UP
-  } = commands;
+const { ROUTE_CHANGED, AUTH_CHECKED, CLICKED_SIGN_UP, FAILED_SIGN_UP, SUCCEEDED_SIGN_UP } = events;
+const { RENDER_SIGN_UP, SIGN_UP } = commands;
 
 export const signUpStates = {
   "fetching-authentication-form-entry": "",
@@ -47,12 +15,7 @@ export const signUpStates = {
   "signing-up": ""
 };
 
-export const initialSignUpRouteState = {
-  email: "",
-  password: "",
-  username: "",
-  errors: null
-};
+export const initialSignUpRouteState = {  email: "",  password: "",  username: "",  errors: null};
 
 // TODO: try to see if I can use event data instead of state for the user and if yes remove it from extended state
 // the user state source of truth is not in the machine, so don't duplicate!! this risks desynchronization
@@ -110,11 +73,7 @@ export const signUpTransitions = [
 // Guards
 
 // Action factories
-export function resetSignUpRouteStateAndFetchAuth(
-  extendedState,
-  eventData,
-  settings
-) {
+export function resetSignUpRouteStateAndFetchAuth(extendedState, eventData, settings) {
   return {
     updates: signUpUpdates([initialSignUpRouteState]),
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
@@ -135,11 +94,7 @@ export function renderSignUpForm(extendedState, eventData, settings) {
   };
 }
 
-export function renderFormWithErrorsAndFetchAuth(
-  extendedState,
-  eventData,
-  settings
-) {
+export function renderFormWithErrorsAndFetchAuth(extendedState, eventData, settings) {
   const errors = eventData;
 
   return {
@@ -154,11 +109,7 @@ export function renderFormWithErrorsAndFetchAuth(
   };
 }
 
-export function fetchAuthenticationAndRenderInProgress(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchAuthenticationAndRenderInProgress(extendedState, eventData, settings) {
   const { email, password, username } = eventData;
 
   return {

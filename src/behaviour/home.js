@@ -1,10 +1,4 @@
-import {
-  ACTION_IDENTITY,
-  DEEP,
-  historyState,
-  INIT_EVENT,
-  NO_OUTPUT
-} from "kingly";
+import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
 import {
   allRoutesViewLens,
   fetchAuthentication,
@@ -43,7 +37,7 @@ const {
   FAVORITE_NOK,
   UNFAVORITE_OK,
   UNFAVORITE_NOK
-  } = events;
+} = events;
 const {
   RENDER_HOME,
   RENDER_SIGN_UP,
@@ -336,11 +330,7 @@ export function areTagsFetched(extendedState, eventData, settings) {
   return Boolean(tags);
 }
 
-export function isAuthenticatedAndArticleLiked(
-  extendedState,
-  eventData,
-  settings
-) {
+export function isAuthenticatedAndArticleLiked(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState);
   const { slug, isFavorited } = favoriteStatus;
@@ -348,11 +338,7 @@ export function isAuthenticatedAndArticleLiked(
   return user && isFavorited;
 }
 
-export function isAuthenticatedAndArticleNotLiked(
-  extendedState,
-  eventData,
-  settings
-) {
+export function isAuthenticatedAndArticleNotLiked(extendedState, eventData, settings) {
   return !isAuthenticatedAndArticleLiked(extendedState, eventData, settings);
 }
 
@@ -372,11 +358,7 @@ export function areArticlesFetched(extendedState, eventData, settings) {
 
 // Action factories
 
-export function fetchGlobalFeedAndRenderLoading(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchGlobalFeedAndRenderLoading(extendedState, eventData, settings) {
   const { currentPage } = homeRouteViewLens(extendedState);
   const { user } = allRoutesViewLens(extendedState);
 
@@ -399,11 +381,7 @@ export function fetchGlobalFeedAndRenderLoading(
   };
 }
 
-export function fetchGlobalFeedArticlesAndRenderLoading(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchGlobalFeedArticlesAndRenderLoading(extendedState, eventData, settings) {
   const { currentPage, tags } = homeRouteViewLens(extendedState);
   const { user } = allRoutesViewLens(extendedState);
 
@@ -441,9 +419,7 @@ export function renderTags(extendedState, eventData, settings) {
 export function renderTagsFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ tags: eventData }]),
-    outputs: [
-      { command: RENDER_HOME, params: { tags: eventData, selectedTag: null } }
-    ]
+    outputs: [{ command: RENDER_HOME, params: { tags: eventData, selectedTag: null } }]
   };
 }
 
@@ -459,22 +435,14 @@ export function renderGlobalFeedArticles(extendedState, eventData, settings) {
   };
 }
 
-export function renderGlobalFeedArticlesFetchError(
-  extendedState,
-  eventData,
-  settings
-) {
+export function renderGlobalFeedArticlesFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [{ command: RENDER_HOME, params: { articles: eventData } }]
   };
 }
 
-export function fetchAuthenticationAndUpdateFavoriteStatus(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchAuthenticationAndUpdateFavoriteStatus(extendedState, eventData, settings) {
   const { slug, isFavorited } = eventData;
   return {
     updates: homeUpdates([{ favoriteStatus: { slug, isFavorited } }]),
@@ -491,11 +459,7 @@ export function updateAuthAndResetPage(extendedState, eventData, settings) {
   };
 }
 
-export function fetchUserFeedArticlesAndRenderLoading(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchUserFeedArticlesAndRenderLoading(extendedState, eventData, settings) {
   const { currentPage, tags } = homeRouteViewLens(extendedState);
   const { user } = allRoutesViewLens(extendedState);
   const username = user && user.username;
@@ -522,11 +486,7 @@ export function fetchUserFeedArticlesAndRenderLoading(
   };
 }
 
-export function fetchUserFeedAndRenderLoading(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchUserFeedAndRenderLoading(extendedState, eventData, settings) {
   const { currentPage } = homeRouteViewLens(extendedState);
   const { user } = allRoutesViewLens(extendedState);
 
@@ -549,11 +509,7 @@ export function fetchUserFeedAndRenderLoading(
   };
 }
 
-export function updatePageAndFetchAuthentication(
-  extendedState,
-  eventData,
-  settings
-) {
+export function updatePageAndFetchAuthentication(extendedState, eventData, settings) {
   const currentPage = eventData;
 
   return {
@@ -583,11 +539,7 @@ export function renderUserFeedArticles(extendedState, eventData, settings) {
   };
 }
 
-export function renderUserFeedArticlesFetchError(
-  extendedState,
-  eventData,
-  settings
-) {
+export function renderUserFeedArticlesFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
@@ -599,11 +551,7 @@ export function renderUserFeedArticlesFetchError(
   };
 }
 
-export function fetchFilteredArticlesAndRenderLoading(
-  extendedState,
-  eventData,
-  settings
-) {
+export function fetchFilteredArticlesAndRenderLoading(extendedState, eventData, settings) {
   const { currentPage, filterTag, tags } = homeRouteViewLens(extendedState);
   const { user } = allRoutesViewLens(extendedState);
 
@@ -636,11 +584,7 @@ export function renderFilteredArticles(extendedState, eventData, settings) {
   };
 }
 
-export function renderFilteredArticlesFetchError(
-  extendedState,
-  eventData,
-  settings
-) {
+export function renderFilteredArticlesFetchError(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([{ articles: eventData }]),
     outputs: [
@@ -755,11 +699,7 @@ export function renderUnfavoritedAndRender(extendedState, eventData, settings) {
   };
 }
 
-export function resetHomeRouteStateAndRenderRoute(
-  extendedState,
-  eventData,
-  settings
-) {
+export function resetHomeRouteStateAndRenderRoute(extendedState, eventData, settings) {
   return {
     updates: homeUpdates([initialHomeRouteState]),
     outputs: [

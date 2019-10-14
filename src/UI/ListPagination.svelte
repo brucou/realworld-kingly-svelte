@@ -25,9 +25,7 @@
   <nav>
     <ul class="pagination">
       {#each pages as page (String(page.number))}
-        <li
-          class={page.isCurrent ? 'page-item active' : 'page-item'}
-          on:click={onClick(page)}>
+        <li class={page.isCurrent ? 'page-item active' : 'page-item'} on:click={onClick(page)}>
           <a class="page-link" href="/">{page.number + 1}</a>
         </li>
       {/each}

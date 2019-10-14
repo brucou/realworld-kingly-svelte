@@ -10,10 +10,18 @@ import {
   redirectToHome,
   updateURL
 } from "./common";
-import { allRoutesUpdate, commands, editorUpdates, events, routes, routeViewLens, signInUpdates } from "../constants";
-import { isEditorRoute } from "./fsm"
-import { cleanHash, getSlugFromHash, isNot } from "../shared/helpers"
-import { getAuthenticatedFormPageTransitions } from "./abstracted"
+import {
+  allRoutesUpdate,
+  commands,
+  editorUpdates,
+  events,
+  routes,
+  routeViewLens,
+  signInUpdates
+} from "../constants";
+import { isEditorRoute } from "./fsm";
+import { cleanHash, getSlugFromHash, isNot } from "../shared/helpers";
+import { getAuthenticatedFormPageTransitions } from "./abstracted";
 
 const { editor } = routes;
 export const editorViewLens = routeViewLens(editor);
@@ -46,8 +54,8 @@ const {
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
-  FETCHED_ARTICLE,
-  } = events;
+  FETCHED_ARTICLE
+} = events;
 const {
   RENDER_HOME,
   RENDER_SIGN_UP,
@@ -67,7 +75,7 @@ const {
   FETCH_ARTICLE,
   RENDER_EDITOR,
   UPDATE_ARTICLE
-  } = commands;
+} = commands;
 
 export const editorStates = {
   "fetching-article-editor": "",
@@ -86,11 +94,11 @@ export const initialEditorRouteState = {
 };
 
 // Guards
-function isEditorEditArticleRoute(extendedState, eventData, settings){
+function isEditorEditArticleRoute(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
-  const splitUrl= url.split('/');
+  const splitUrl = url.split("/");
 
-  return url.startsWith(cleanHash(editor)) && splitUrl.length===2 && splitUrl[1].length > 0
+  return url.startsWith(cleanHash(editor)) && splitUrl.length === 2 && splitUrl[1].length > 0;
   // TODO editor/:slug, do it with a regexp
 }
 
@@ -110,13 +118,32 @@ export const editorTransitions = [
         predicate: isNot(isEditorEditArticleRoute),
         to: "fetching-authentication-editor-pre-form",
         action: resetEditorRouteStateAndFetchAuth
-      },
-    ],
+      }
+    ]
   },
-  { from: "fetching-article-editor", event: FETCHED_ARTICLE, to: "fetching-authentication-editor-pre-form", action: resetEditorRouteStateAndFetchAuth },
-  { from: "fetching-article-editor", event: FAILED_FETCH_ARTICLE, to: "routing", action: redirectToHome },
-  { from: "editing-new-article", event: ADDED_TAG, guards: [{predicate: isNewTag, to: "editing-new-article", action: addTagAndRender}] },
-  { from: "editing-new-article", event: REMOVED_TAG, to: "editing-new-article", action: removeTagAndRenderTagList },
+  {
+    from: "fetching-article-editor",
+    event: FETCHED_ARTICLE,
+    to: "fetching-authentication-editor-pre-form",
+    action: resetEditorRouteStateAndFetchAuth
+  },
+  {
+    from: "fetching-article-editor",
+    event: FAILED_FETCH_ARTICLE,
+    to: "routing",
+    action: redirectToHome
+  },
+  {
+    from: "editing-new-article",
+    event: ADDED_TAG,
+    guards: [{ predicate: isNewTag, to: "editing-new-article", action: addTagAndRender }]
+  },
+  {
+    from: "editing-new-article",
+    event: REMOVED_TAG,
+    to: "editing-new-article",
+    action: removeTagAndRenderTagList
+  },
   getAuthenticatedFormPageTransitions({
     events: {
       AUTH_CHECKED,
@@ -140,40 +167,41 @@ export const editorTransitions = [
       fallback: redirectToHome,
       retry: renderEditorFormWithErrorsAndFetchAuth,
       finalize: updateUrlAndRedirectToArticle
-    },
-  }),
+    }
+  })
 ].flat();
 
 // Guards
-function isNewTag(extendedState, eventData, settings){
+function isNewTag(extendedState, eventData, settings) {
   const tag = eventData;
-  const {tagList} = editorViewLens(extendedState);
+  const { tagList } = editorViewLens(extendedState);
 
-  return tagList.indexOf(tag) === -1
+  return tagList.indexOf(tag) === -1;
 }
 
 // Action factories
-function resetEditorRouteStateAndFetchAuth(extendedState, eventData, settings){
+function resetEditorRouteStateAndFetchAuth(extendedState, eventData, settings) {
   return {
     updates: editorUpdates([initialEditorRouteState]),
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
-  }
+  };
 }
 
-function fetchArticle(extendedState, eventData, settings){
-  const {url} = allRoutesViewLens(extendedState);
+function fetchArticle(extendedState, eventData, settings) {
+  const { url } = allRoutesViewLens(extendedState);
 
   return {
     updates: [],
     outputs: {
-      command : FETCH_ARTICLE, params: getSlugFromHash(url)
+      command: FETCH_ARTICLE,
+      params: getSlugFromHash(url)
     }
-  }
+  };
 }
 
-function addTagAndRender(extendedState, eventData, settings){
+function addTagAndRender(extendedState, eventData, settings) {
   const tag = eventData;
-  const {tagList} = editorViewLens(extendedState);
+  const { tagList } = editorViewLens(extendedState);
   const newTagList = tagList.concat(tag);
 
   // The form field `currentTag` is controlled, the other fields are not
@@ -184,91 +212,97 @@ function addTagAndRender(extendedState, eventData, settings){
   // with past props and thus only act on the props passed in the render
   // In both cases, we are good, the behaviour is independent from the UI library
   return {
-    updates: editorUpdates([{tagList: newTagList}]),
+    updates: editorUpdates([{ tagList: newTagList }]),
     outputs: {
-      command : RENDER_EDITOR, params: {
+      command: RENDER_EDITOR,
+      params: {
         tagList: newTagList,
         currentTag: ""
       }
     }
-  }
+  };
 }
 
-function removeTagAndRenderTagList(extendedState, eventData, settings){
-  const {tag, index} = eventData;
-  const {tagList} = editorViewLens(extendedState);
-  const newTagList = tagList.slice(0, index).concat(tagList.slice(index+1));
+function removeTagAndRenderTagList(extendedState, eventData, settings) {
+  const { tag, index } = eventData;
+  const { tagList } = editorViewLens(extendedState);
+  const newTagList = tagList.slice(0, index).concat(tagList.slice(index + 1));
 
   return {
-    updates: editorUpdates([{tagList: newTagList}]),
+    updates: editorUpdates([{ tagList: newTagList }]),
     outputs: {
-      command : RENDER_EDITOR, params: {
-        tagList: newTagList,
+      command: RENDER_EDITOR,
+      params: {
+        tagList: newTagList
       }
     }
-  }
+  };
 }
 
-function renderEditorForm(extendedState, eventData, settings){
-  const {tagList, title, body, currentTag, description, errors} = editorViewLens(extendedState);
+function renderEditorForm(extendedState, eventData, settings) {
+  const { tagList, title, body, currentTag, description, errors } = editorViewLens(extendedState);
 
   return {
     updates: [],
     outputs: {
-      command : RENDER_EDITOR,
+      command: RENDER_EDITOR,
       params: { tagList, title, body, currentTag, description, errors }
     }
-  }
+  };
 }
 
-function fetchAuthenticationAndRenderInProgressAndUpdateFormData (extendedState, eventData, settings){
-  const {title, description, body, tagList} = eventData;
+function fetchAuthenticationAndRenderInProgressAndUpdateFormData(
+  extendedState,
+  eventData,
+  settings
+) {
+  const { title, description, body, tagList } = eventData;
 
   return {
-    updates: editorUpdates([{title, description, body, tagList}]),
+    updates: editorUpdates([{ title, description, body, tagList }]),
     outputs: [
       {
-      command : RENDER_EDITOR,
-      params: { inProgress:true, errors: null }
-    },
+        command: RENDER_EDITOR,
+        params: { inProgress: true, errors: null }
+      },
       fetchAuthentication(extendedState, eventData, settings).outputs
-  ]
-}
+    ]
+  };
 }
 
-function publishArticle (extendedState, eventData, settings){
-  const {url} = allRoutesViewLens(extendedState);
-  const slug= getSlugFromHash(url);
-  const {tagList, title, body, description} = editorViewLens(extendedState);
+function publishArticle(extendedState, eventData, settings) {
+  const { url } = allRoutesViewLens(extendedState);
+  const slug = getSlugFromHash(url);
+  const { tagList, title, body, description } = editorViewLens(extendedState);
 
   const commandStruct = isEditorEditArticleRoute(url)
-  ? {command: UPDATE_ARTICLE, params: {title, description, body, tagList, slug}}
-  : {command: PUBLISH_ARTICLE, params: {title, description, body, tagList}}
+    ? { command: UPDATE_ARTICLE, params: { title, description, body, tagList, slug } }
+    : { command: PUBLISH_ARTICLE, params: { title, description, body, tagList } };
 
   return {
     updates: [],
     outputs: [commandStruct]
-  }
+  };
 }
 
-function renderEditorFormWithErrorsAndFetchAuth (extendedState, eventData, settings){
+function renderEditorFormWithErrorsAndFetchAuth(extendedState, eventData, settings) {
   const errors = eventData;
 
   return {
     updates: [],
     outputs: [
-      {command: RENDER_EDITOR, params: {inProgress: false, errors}},
+      { command: RENDER_EDITOR, params: { inProgress: false, errors } },
       fetchAuthentication(extendedState, eventData, settings).outputs
     ]
-  }
+  };
 }
 
-function updateUrlAndRedirectToArticle (extendedState, eventData, settings){
-  const {slug} = eventData;
-  const redirectTo = ["article", slug].join('/');
+function updateUrlAndRedirectToArticle(extendedState, eventData, settings) {
+  const { slug } = eventData;
+  const redirectTo = ["article", slug].join("/");
 
   return {
     updates: allRoutesUpdate([{ url: redirectTo }]),
     outputs: [{ command: REDIRECT, params: redirectTo }]
-  }
+  };
 }

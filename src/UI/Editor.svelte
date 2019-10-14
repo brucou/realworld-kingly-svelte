@@ -48,7 +48,7 @@
       dispatch({ [ADDED_TAG]: tag });
     }
   };
-  const removeTag = (tag, i) => ev => dispatch({ [REMOVED_TAG]: {tag, index:i} });
+  const removeTag = (tag, i) => ev => dispatch({ [REMOVED_TAG]: { tag, index: i } });
   const onSubmit = ev => {
     const formData = new FormData(ev.target.closest("form"));
     const title = formData.get("title");

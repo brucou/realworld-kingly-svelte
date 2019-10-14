@@ -2,17 +2,13 @@ import { ACTION_IDENTITY, createStateMachine } from "kingly";
 import { events, routes } from "../constants";
 import { allRoutesViewLens, initialAllRoutesState, updateURL } from "./common";
 import { homeStates, homeTransitions, initialHomeRouteState } from "./home";
-import {
-  initialSignUpRouteState,
-  signUpStates,
-  signUpTransitions
-} from "./signUp";
+import { initialSignUpRouteState, signUpStates, signUpTransitions } from "./signUp";
 import { cleanHash } from "../shared/helpers";
 import { signInStates, signInTransitions } from "./signIn";
-import { editorStates, editorTransitions, initialEditorRouteState } from "./editor"
+import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
 
 /** @type Array<HOME_ROUTE_EVENTS> */
-const {ROUTE_CHANGED} = events;
+const { ROUTE_CHANGED } = events;
 
 const { home, allRoutes, signUp, signIn, editor } = routes;
 
@@ -32,16 +28,16 @@ const states = {
   home: homeStates,
   signUp: signUpStates,
   signIn: signInStates,
-  editor: editorStates,
+  editor: editorStates
 };
 
 // Guards
-function isRoute(hash){
-  return function (extendedState, eventData, settings){
+function isRoute(hash) {
+  return function(extendedState, eventData, settings) {
     const { url } = allRoutesViewLens(extendedState);
     // TODO: do a regexp sartsWith and maybe /
     return url === hash;
-  }
+  };
 }
 
 export const isHomeRoute = isRoute(home);
@@ -94,10 +90,7 @@ function updateState(extendedState, extendedStateUpdates) {
       return extendedState;
     }
     const routeState = Object.assign({}, acc[route]);
-    acc[route] = updates.reduce(
-      (acc, update) => Object.assign(routeState, update),
-      routeState
-    );
+    acc[route] = updates.reduce((acc, update) => Object.assign(routeState, update), routeState);
 
     return acc;
   }, extendedStateCopy);

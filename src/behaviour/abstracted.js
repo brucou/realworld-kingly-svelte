@@ -30,37 +30,60 @@
  * @property {ActionFactory} fallback
  * @property {ActionFactory} retry
  * @property {ActionFactory} finalize
-*/
+ */
 
 /**
  * @param {{events: AuthFormEvents, actionFactories: AuthFormActionFactories, states: AuthFormStates,
  *   isAuthenticatedGuard: Guard}} def
  * @return {*[]}
  */
-export function getAuthenticatedFormPageTransitions(def){
-  const {events, states, actionFactories, isAuthenticatedGuard}= def;
-  const {AUTH_CHECKED, SUBMIT_TRIGGERED, FAILED_SUBMISSION, SUCCEEDED_SUBMISSION} = events;
-  const {fetchingAuthenticationPreForm, fetchingAuthenticationPreSubmit, enteringData, fallback: fallbackState, submitting, done} = states;
-  const {showInitializedForm, showSubmittingForm, submit, fallback: fallbackActionF, retry, finalize} = actionFactories;
+export function getAuthenticatedFormPageTransitions(def) {
+  const { events, states, actionFactories, isAuthenticatedGuard } = def;
+  const { AUTH_CHECKED, SUBMIT_TRIGGERED, FAILED_SUBMISSION, SUCCEEDED_SUBMISSION } = events;
+  const {
+    fetchingAuthenticationPreForm,
+    fetchingAuthenticationPreSubmit,
+    enteringData,
+    fallback: fallbackState,
+    submitting,
+    done
+  } = states;
+  const {
+    showInitializedForm,
+    showSubmittingForm,
+    submit,
+    fallback: fallbackActionF,
+    retry,
+    finalize
+  } = actionFactories;
   const isNotAuthenticatedGuard = complementGuard(isAuthenticatedGuard);
 
   return [
     {
-      from: fetchingAuthenticationPreForm, event: AUTH_CHECKED, guards: [
-      {predicate: isAuthenticatedGuard, to: enteringData, action: showInitializedForm},
-      {predicate: isNotAuthenticatedGuard, to: fallbackState, action: fallbackActionF}
+      from: fetchingAuthenticationPreForm,
+      event: AUTH_CHECKED,
+      guards: [
+        { predicate: isAuthenticatedGuard, to: enteringData, action: showInitializedForm },
+        { predicate: isNotAuthenticatedGuard, to: fallbackState, action: fallbackActionF }
       ]
     },
-    {from: enteringData, event: SUBMIT_TRIGGERED, to: fetchingAuthenticationPreSubmit, action: submit},
     {
-      from: fetchingAuthenticationPreSubmit, event: AUTH_CHECKED, guards: [
-        {predicate: isAuthenticatedGuard, to: submitting, action: showSubmittingForm},
-        {predicate: isNotAuthenticatedGuard, to: fallbackState, action: fallbackActionF}
+      from: enteringData,
+      event: SUBMIT_TRIGGERED,
+      to: fetchingAuthenticationPreSubmit,
+      action: submit
+    },
+    {
+      from: fetchingAuthenticationPreSubmit,
+      event: AUTH_CHECKED,
+      guards: [
+        { predicate: isAuthenticatedGuard, to: submitting, action: showSubmittingForm },
+        { predicate: isNotAuthenticatedGuard, to: fallbackState, action: fallbackActionF }
       ]
     },
-    {from: submitting, event: SUCCEEDED_SUBMISSION, to: done, action: finalize},
-    {from: submitting, event: FAILED_SUBMISSION, to: fetchingAuthenticationPreForm, action: retry}
-  ]
+    { from: submitting, event: SUCCEEDED_SUBMISSION, to: done, action: finalize },
+    { from: submitting, event: FAILED_SUBMISSION, to: fetchingAuthenticationPreForm, action: retry }
+  ];
 }
 
-const complementGuard = g => (a, b, c) => !g(a, b, c)
+const complementGuard = g => (a, b, c) => !g(a, b, c);

@@ -4,7 +4,6 @@ import { commands, events, routes } from "../src/constants"
 import { signInErrorsFixture, signedInUserFixture, userFixture, signInUserFixture } from "./fixtures/user"
 import { runUserStories } from "./common"
 import { AUTH_USER_ON_HOME_COMMANDS } from "./home-route-fsm.specs"
-import { cleanHash } from "../src/shared/helpers"
 
 QUnit.module("Testing sign in route fsm", {});
 
@@ -58,11 +57,11 @@ const { home, signUp, signIn, allRoutes } = routes;
 
 const UNAUTH_USER = null;
 const UNAUTH_USER_ON_SIGNIN_INPUTS = [
-  { [ROUTE_CHANGED]: { hash: cleanHash(signIn )} },
+  { [ROUTE_CHANGED]: { hash: signIn} },
   { [AUTH_CHECKED]: UNAUTH_USER }
 ];
 const AUTH_USER_ON_SIGNIN_INPUTS = [
-  { [ROUTE_CHANGED]: { hash: cleanHash(signIn ) } },
+  { [ROUTE_CHANGED]: { hash: signIn } },
   { [AUTH_CHECKED]: userFixture }
 ];
 

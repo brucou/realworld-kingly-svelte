@@ -1,7 +1,7 @@
 // TODO: DRY this with src/links.js!! then adjust cleanHash to also remove #
 export const routes = {
   // Home route will be empty strings. Cf. apiRouter
-  home: "",
+  home: "/",
   signUp: "/register",
   allRoutes: "all routes",
   signIn: "/login",
@@ -16,7 +16,7 @@ export function routeViewLens(route) {
 
 export function routeUpdateLens(route){
   return function(updates) {
-    return [[routes[route], updates]];
+    return [[route, updates]];
   };
 }
 
@@ -82,5 +82,7 @@ export const commands = [
   "SIGN_UP",
   "SIGN_IN",
   "PUBLISH_ARTICLE",
-  "FETCH_ARTICLE"
+  "FETCH_ARTICLE",
+  "RENDER_EDITOR",
+  "UPDATE_ARTICLE"
 ];

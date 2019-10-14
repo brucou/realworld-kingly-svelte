@@ -2,6 +2,7 @@ import QUnit from "qunit"
 import './home-route-fsm.specs'
 import './signup-route-fsm.specs'
 import './signin-route-fsm-specs'
+import './editor-route-fsm-specs'
 
 
 QUnit.dump.maxDepth = 50;

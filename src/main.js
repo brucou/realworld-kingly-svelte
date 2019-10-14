@@ -27,7 +27,9 @@ const [
   SIGN_UP,
   SIGN_IN,
   PUBLISH_ARTICLE,
-  FETCH_ARTICLE
+  FETCH_ARTICLE,
+  RENDER_EDITOR,
+  UPDATE_ARTICLE
 ] = commands;
 const [
   ROUTE_CHANGED,
@@ -83,7 +85,8 @@ const {
   register,
   login,
   fetchArticle,
-  saveArticle
+  saveArticle,
+  updateArticle
 } = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
@@ -114,6 +117,10 @@ const commandHandlers = {
     render(signUp, params);
   },
   [RENDER_SIGN_IN]: (dispatch, params, effectHandlers) => {
+    const { render } = effectHandlers;
+    render(signIn, params);
+  },
+  [RENDER_EDITOR]: (dispatch, params, effectHandlers) => {
     const { render } = effectHandlers;
     render(signIn, params);
   },
@@ -212,8 +219,7 @@ const commandHandlers = {
     const { login, saveUser } = effectHandlers;
 
     login({ email, password })
-      .then(res => {
-        const { user } = res;
+      .then(({user}) => {
         saveUser(user);
         dispatch({ [SUCCEEDED_SIGN_IN]: user });
       })
@@ -226,8 +232,8 @@ const commandHandlers = {
     const {fetchArticle} = effectHandlers;
 
     fetchArticle({slug})
-      .then(data => {
-        const {title, description, body, tagList} = data.article;
+      .then(({article}) => {
+        const {title, description, body, tagList} = article;
         dispatch({[FETCHED_ARTICLE]: {title, description, body, tagList}})
       })
       .catch(err => {
@@ -245,7 +251,19 @@ const commandHandlers = {
       .catch(({errors}) => {
         dispatch({ [FAILED_PUBLISHING]: errors });
       })
-  }
+  },
+  [UPDATE_ARTICLE]: (dispatch, params, effectHandlers) => {
+    const {slug, title, description, body, tagList} = params;
+    const {updateArticle} = effectHandlers;
+
+    updateArticle({slug, title, description, body, tagList})
+      .then(({article}) => {
+        dispatch({[SUCCEEDED_PUBLISHING]: article})
+      })
+      .catch(({errors}) => {
+        dispatch({ [FAILED_PUBLISHING]: errors });
+      })
+  },
 };
 
 const effectHandlers = {
@@ -262,7 +280,8 @@ const effectHandlers = {
   saveUser: sessionRepository.save,
   login,
   fetchArticle,
-  saveArticle
+  saveArticle,
+  updateArticle
 };
 
 const app = new App({

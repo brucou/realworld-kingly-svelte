@@ -38,6 +38,14 @@ const apiGateway = (fetch, sessionRepository) => {
     );
     return fetchWithToken(url, options);
   };
+  const put = (url, body) => {
+    const options = Object.assign(
+      {},
+      { method: "PUT" },
+      body ? jsonBody(body) : {}
+    );
+    return fetchWithToken(url, options);
+  };
 
   const fetchGlobalFeed = ({ page }) =>
     get(`/articles?${pagination({ page, limit: 10 })}`);
@@ -64,6 +72,7 @@ const apiGateway = (fetch, sessionRepository) => {
 
   const fetchArticle = ({ slug }) => get(`/articles/${slug}`);
   const saveArticle = ({ ...article }) => post("/articles", { article });
+  const updateArticle = ({slug, tagList, title, body, description }) => put("/articles/${slug}", { tagList, title, body, description });
 
   return {
     fetchGlobalFeed,
@@ -76,7 +85,8 @@ const apiGateway = (fetch, sessionRepository) => {
     register,
     login,
     fetchArticle,
-    saveArticle
+    saveArticle,
+    updateArticle
   };
 };
 

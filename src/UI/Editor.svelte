@@ -48,7 +48,7 @@
       dispatch({ [ADDED_TAG]: tag });
     }
   };
-  const removeTag = tag => ev => dispatch({ [REMOVED_TAG]: tag });
+  const removeTag = (tag, i) => ev => dispatch({ [REMOVED_TAG]: {tag, index:i} });
   const onSubmit = ev => {
     const formData = new FormData(ev.target.closest("form"));
     const title = formData.get("title");
@@ -104,9 +104,9 @@
 
               <div class="tag-list">
                 {#if tagList}
-                  {#each tagList as tag (tag)}
+                  {#each tagList as tag, i (tag)}
                     <span class="tag-default tag-pill">
-                      <i class="ion-close-round" on:click={removeTag(tag)} />
+                      <i class="ion-close-round" on:click={removeTag(tag, i)} />
                       {tag}
                     </span>
                   {/each}

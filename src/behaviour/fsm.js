@@ -9,7 +9,7 @@ import {
 } from "./signUp";
 import { cleanHash } from "../shared/helpers";
 import { signInStates, signInTransitions } from "./signIn";
-import { editorStates, initialEditorRouteState } from "./editor"
+import { editorStates, editorTransitions, initialEditorRouteState } from "./editor"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const [ROUTE_CHANGED] = events;
@@ -35,6 +35,20 @@ const states = {
   editor: editorStates,
 };
 
+// Guards
+function isRoute(hash){
+  return function (extendedState, eventData, settings){
+    const { url } = allRoutesViewLens(extendedState);
+    // TODO: do a regexp sartsWith and maybe /
+    return url === hash;
+  }
+}
+
+export const isHomeRoute = isRoute(home);
+export const isSignUpRoute = isRoute(signUp);
+export const isSignInRoute = isRoute(signIn);
+export const isEditorRoute = isRoute(editor);
+
 /** @type {Array<Transition>} */
 const transitions = [
   { from: INIT, event: ROUTE_CHANGED, to: "routing", action: updateURL },
@@ -57,7 +71,7 @@ const transitions = [
 /**
  * @typedef {Object} Update
  *
- * This function updates a state object, spliced per a property called `route`
+ * This function updates a state object, sliced per a property called `route`
  * The route update basically works like this: {a, b: {c, d}}, [{b:{e}]} -> {a, b:{e}}
  * All Object.assign caveats apply
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
@@ -88,19 +102,6 @@ function updateState(extendedState, extendedStateUpdates) {
     return acc;
   }, extendedStateCopy);
 }
-
-// Guards
-function isRoute(hash){
-  return function (extendedState, eventData, settings){
-    const { url } = allRoutesViewLens(extendedState);
-    return url === hash;
-  }
-}
-
-export const isHomeRoute = isRoute(home);
-export const isSignUpRoute = isRoute(signUp);
-export const isSignInRoute = isRoute(signIn);
-export const isEditorRoute = isRoute(editor);
 
 // Action factories
 

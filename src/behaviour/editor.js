@@ -10,9 +10,9 @@ import {
   redirectToHome,
   updateURL
 } from "./common";
-import { commands, events, routes, routeViewLens } from "../constants";
+import { allRoutesUpdate, commands, editorUpdates, events, routes, routeViewLens, signInUpdates } from "../constants";
 import { isEditorRoute } from "./fsm"
-import { cleanHash } from "../shared/helpers"
+import { cleanHash, getSlugFromHash, isNot } from "../shared/helpers"
 import { getAuthenticatedFormPageTransitions } from "./abstracted"
 
 const { editor } = routes;
@@ -65,13 +65,15 @@ const [
   SIGN_IN,
   PUBLISH_ARTICLE,
   FETCH_ARTICLE,
+  RENDER_EDITOR,
+  UPDATE_ARTICLE
 ] = commands;
 
 export const editorStates = {
   "fetching-article-editor": "",
   "fetching-authentication-editor-pre-form": "",
   "editing-new-article": "",
-  "fetching-authentication-pre-publish": "",
+  "fetching-authentication-editor-pre-publish": "",
   "publishing-article": ""
 };
 
@@ -79,12 +81,11 @@ export const initialEditorRouteState = {
   title: "",
   description: "",
   body: "",
-  tagList: null,
+  tagList: [],
   errors: null
 };
 
 // Guards
-const isEditorNewArticleRoute = isEditorRoute;
 function isEditorEditArticleRoute(extendedState, eventData, settings){
   const { url } = allRoutesViewLens(extendedState);
   const splitUrl= url.split('/');
@@ -101,18 +102,19 @@ export const editorTransitions = [
     event: INIT_EVENT,
     guards: [
       {
-        predicate: isEditorNewArticleRoute,
-        to: "fetching-authentication-editor-pre-form",
-        action: resetEditorRouteStateAndFetchAuth
-      },
-      {
         predicate: isEditorEditArticleRoute,
         to: "fetching-article-editor",
         action: fetchArticle
       },
+      {
+        predicate: isNot(isEditorEditArticleRoute),
+        to: "fetching-authentication-editor-pre-form",
+        action: resetEditorRouteStateAndFetchAuth
+      },
     ],
   },
   { from: "fetching-article-editor", event: FETCHED_ARTICLE, to: "fetching-authentication-editor-pre-form", action: resetEditorRouteStateAndFetchAuth },
+  { from: "fetching-article-editor", event: FAILED_FETCH_ARTICLE, to: "routing", action: redirectToHome },
   { from: "editing-new-article", event: ADDED_TAG, guards: [{predicate: isNewTag, to: "editing-new-article", action: addTagAndRender}] },
   { from: "editing-new-article", event: REMOVED_TAG, to: "editing-new-article", action: removeTagAndRenderTagList },
   getAuthenticatedFormPageTransitions({
@@ -140,18 +142,133 @@ export const editorTransitions = [
       finalize: updateUrlAndRedirectToArticle
     },
   }),
-];
+].flat();
 
 // Guards
-// isNewTag
+function isNewTag(extendedState, eventData, settings){
+  const tag = eventData;
+  const {tagList} = editorViewLens(extendedState);
+
+  return tagList.indexOf(tag) === -1
+}
 
 // Action factories
-// fetchArticle
-// resetEditorRouteStateAndFetchAuth
-// addTagAndRender
-// removeTagAndRenderTagList
-// renderEditorForm
-// fetchAuthenticationAndRenderInProgressAndUpdateFormData
-// publishArticle
-// renderEditorFormWithErrorsAndFetchAuth
-// updateUrlAndRedirectToArticle
+function resetEditorRouteStateAndFetchAuth(extendedState, eventData, settings){
+  return {
+    updates: editorUpdates([initialEditorRouteState]),
+    outputs: fetchAuthentication(extendedState, eventData, settings).outputs
+  }
+}
+
+function fetchArticle(extendedState, eventData, settings){
+  const {url} = allRoutesViewLens(extendedState);
+
+  return {
+    updates: [],
+    outputs: {
+      command : FETCH_ARTICLE, params: getSlugFromHash(url)
+    }
+  }
+}
+
+function addTagAndRender(extendedState, eventData, settings){
+  const tag = eventData;
+  const {tagList} = editorViewLens(extendedState);
+  const newTagList = tagList.concat(tag);
+
+  // The form field `currentTag` is controlled, the other fields are not
+  // We do not pass uncontrolled fields data in the render command
+  // so as not to trigger rerendering of those fields with desynchronized values
+  // VDom-based UI libraries will see the same *props* for those fields,
+  // and thus skip rendering. Surgical-DOM UI libraries will not merge new props
+  // with past props and thus only act on the props passed in the render
+  // In both cases, we are good, the behaviour is independent from the UI library
+  return {
+    updates: editorUpdates([{tagList: newTagList}]),
+    outputs: {
+      command : RENDER_EDITOR, params: {
+        tagList: newTagList,
+        currentTag: ""
+      }
+    }
+  }
+}
+
+function removeTagAndRenderTagList(extendedState, eventData, settings){
+  const {tag, index} = eventData;
+  const {tagList} = editorViewLens(extendedState);
+  const newTagList = tagList.slice(0, index).concat(tagList.slice(index+1));
+
+  return {
+    updates: editorUpdates([{tagList: newTagList}]),
+    outputs: {
+      command : RENDER_EDITOR, params: {
+        tagList: newTagList,
+      }
+    }
+  }
+}
+
+function renderEditorForm(extendedState, eventData, settings){
+  const {tagList, title, body, currentTag, description, errors} = editorViewLens(extendedState);
+
+  return {
+    updates: [],
+    outputs: {
+      command : RENDER_EDITOR,
+      params: { tagList, title, body, currentTag, description, errors }
+    }
+  }
+}
+
+function fetchAuthenticationAndRenderInProgressAndUpdateFormData (extendedState, eventData, settings){
+  const {title, description, body, tagList} = eventData;
+
+  return {
+    updates: editorUpdates([{title, description, body, tagList}]),
+    outputs: [
+      {
+      command : RENDER_EDITOR,
+      params: { inProgress:true, errors: null }
+    },
+      fetchAuthentication(extendedState, eventData, settings).outputs
+  ]
+}
+}
+
+function publishArticle (extendedState, eventData, settings){
+  const {url} = allRoutesViewLens(extendedState);
+  const slug= getSlugFromHash(url);
+  const {tagList, title, body, description} = editorViewLens(extendedState);
+
+  const commandStruct = isEditorEditArticleRoute(url)
+  ? {command: UPDATE_ARTICLE, params: {title, description, body, tagList, slug}}
+  : {command: PUBLISH_ARTICLE, params: {title, description, body, tagList}}
+
+  return {
+    updates: [],
+    outputs: [commandStruct]
+  }
+}
+
+function renderEditorFormWithErrorsAndFetchAuth (extendedState, eventData, settings){
+  const errors = eventData;
+
+  return {
+    updates: [],
+    outputs: [
+      {command: RENDER_EDITOR, params: {inProgress: false, errors}},
+      fetchAuthentication(extendedState, eventData, settings).outputs
+    ]
+  }
+}
+
+function updateUrlAndRedirectToArticle (extendedState, eventData, settings){
+  const {slug} = eventData;
+  const redirectTo = ["article", slug].join('/');
+
+  return {
+    updates: allRoutesUpdate([{ url: redirectTo }]),
+    outputs: [{ command: REDIRECT, params: redirectTo }]
+  }
+}

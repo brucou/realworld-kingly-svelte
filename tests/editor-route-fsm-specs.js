@@ -5,16 +5,16 @@ import { signInErrorsFixture, signedInUserFixture, userFixture, signInUserFixtur
 import { runUserStories } from "./common"
 import { cleanHash } from "../src/shared/helpers"
 import { AUTH_USER_ON_HOME_COMMANDS, UNAUTH_USER_ON_HOME_COMMANDS } from "./home-route-fsm.specs"
-import { articleSlugFixture, fetchedArticleFixture } from "./fixtures/article"
+import {
+  articleFixture, articleSlugFixture, createdNewArticleFixture, fetchedArticleFixture, filledInArticleFixture,
+  newArticleFixture, submitErrorArticleFixture
+} from "./fixtures/article"
+import { articlesErrorFixture } from "./fixtures/articles"
 
 QUnit.module("Testing editor route fsm", {});
 
 const {
   ROUTE_CHANGED,
-  TAGS_FETCHED_OK,
-  TAGS_FETCHED_NOK,
-  ARTICLES_FETCHED_OK,
-  ARTICLES_FETCHED_NOK,
   AUTH_CHECKED,
   CLICKED_TAG,
   CLICKED_PAGE,
@@ -65,33 +65,16 @@ const { home, editor } = routes;
 // TODO
 // Scenarios
 // (Create New Article, Edit Article) x (Auth, NAuth) x (Success, Failure) -x include add_tag and remove_tag
-// Unauthenticated user navigates to the editor route (new article) and is redirected to the home route
-// Unauthenticated user navigates to the editor route (edit article) and is redirected to the home route
-// Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills in the fields, publishes the article, and is redirected to the article page
-// Authenticated user navigates to the editor route (edit article), sees the editor form with prefilled values, adds two different tags, removes one tag, publishes the article with empty fields, and sees the editor form with errors and no tag
+// Authenticated user navigates to the editor route (edit article), sees the editor form with prefilled values, adds one tag, removes another tag, publishes the article with empty fields, and sees the editor form with errors and no tag
 // failed fetched article not tested? do it by hand in here, only used once
 
-const UNAUTH_USER = null;
 const hashFixture = [editor, articleSlugFixture].join('/');
+
+const UNAUTH_USER = null;
 const UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS = [
   { [ROUTE_CHANGED]: { hash: editor} },
   { [AUTH_CHECKED]: UNAUTH_USER }
 ];
-const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS = [
-  { [ROUTE_CHANGED]: { hash: hashFixture} },
-  { [FETCHED_ARTICLE]: fetchedArticleFixture },
-  { [AUTH_CHECKED]: UNAUTH_USER }
-];
-const AUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS = [
-  { [ROUTE_CHANGED]: { hash: cleanHash(editor ) } },
-  { [AUTH_CHECKED]: userFixture }
-];
-const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS = [
-  { [ROUTE_CHANGED]: { hash: cleanHash(hashFixture) } },
-  { [FETCHED_ARTICLE]: fetchedArticleFixture },
-  { [AUTH_CHECKED]: userFixture }
-];
-
 const UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS = [
   [    { [FETCH_AUTHENTICATION]: void 0 },  ],
   [
@@ -99,13 +82,23 @@ const UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS = [
     UNAUTH_USER_ON_HOME_COMMANDS(0)[0]
   ].flat()
 ];
+const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: hashFixture} },
+  { [FETCHED_ARTICLE]: fetchedArticleFixture },
+  { [AUTH_CHECKED]: UNAUTH_USER }
+];
 const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS = [
+  [{ [FETCH_ARTICLE]: articleSlugFixture }],
   [    { [FETCH_AUTHENTICATION]: void 0 },  ],
-  [    { [FETCHED_ARTICLE]: articleSlugFixture},  ],
   [
     { [REDIRECT]: home },
     AUTH_USER_ON_HOME_COMMANDS(0)[0]
   ].flat()
+];
+
+const AUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: editor } },
+  { [AUTH_CHECKED]: userFixture }
 ];
 const AUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS = [
   [    { [FETCH_AUTHENTICATION]: void 0 },  ],
@@ -124,10 +117,28 @@ const AUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS = [
     },
   ]
 ];
-const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS = [
-  { [ROUTE_CHANGED]: { hash: cleanHash(hashFixture) } },
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: hashFixture } },
   { [FETCHED_ARTICLE]: fetchedArticleFixture },
   { [AUTH_CHECKED]: userFixture }
+];
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS = [
+  [{ [FETCH_ARTICLE]: articleSlugFixture }],
+  [{ [FETCH_AUTHENTICATION]: void 0 }],
+  [
+    {
+      [RENDER_EDITOR]: {
+        route: editor,
+        inProgress: false,
+        errors: null,
+        title: fetchedArticleFixture.title,
+        description: fetchedArticleFixture.description,
+        body: fetchedArticleFixture.body,
+        currentTag: "",
+        tagList: fetchedArticleFixture.tagList,
+    }
+    }
+    ]
 ];
 
 // Unauthenticated user navigates to the editor route (new article) and is redirected to the home route
@@ -136,6 +147,122 @@ const UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_INPUTS = [
   UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS,
 ].flat();
 const UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_COMMANDS = UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS;
+
+// Unauthenticated user navigates to the editor route (edit article) and is redirected to the home route
+const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM = `Unauthenticated user navigates to the editor route (edit article) and is redirected to the home route`;
+const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_INPUTS = [
+  UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS,
+].flat();
+const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_COMMANDS = UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS;
+
+// Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills in the fields, publishes the article, and is redirected to the article page
+const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES =` Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills in the fields, publishes the article, and is redirected to the article page`;
+const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES_INPUTS = [
+  AUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS,
+  {[ADDED_TAG]: newArticleFixture.tagList[0]},
+  {[ADDED_TAG]: newArticleFixture.tagList[0]},
+  {[CLICKED_PUBLISH]: newArticleFixture},
+  {[AUTH_CHECKED]: userFixture},
+  {[SUCCEEDED_PUBLISHING]: createdNewArticleFixture},
+].flat();
+const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES_COMMANDS = AUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS.concat([
+  [
+    {
+      [RENDER_EDITOR]: {
+        inProgress: false,
+        errors: null,
+        title: "",
+        description: "",
+        body: "",
+        tagList: newArticleFixture.tagList,
+        currentTag: "",
+        route: editor,
+  }
+    }
+  ],
+  [],
+  [
+    {[RENDER_EDITOR]: {
+      inProgress: true, errors: null,
+        title: newArticleFixture.title,
+        description: newArticleFixture.description,
+        body: newArticleFixture.body,
+        tagList: newArticleFixture.tagList,
+        currentTag: "",
+        route: editor,
+      }},
+    {[FETCH_AUTHENTICATION]: void 0}
+  ],
+  [    {[PUBLISH_ARTICLE]: newArticleFixture},  ],
+  [    {[REDIRECT]: '/article/'+createdNewArticleFixture.slug},  ]
+]);
+
+// Authenticated user navigates to the editor route (edit article), sees the editor form with prefilled values, adds one tag, removes another tag, publishes the article with empty fields, and sees the editor form with errors
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS =`Authenticated user navigates to the editor route (edit article), sees the editor form with prefilled values, removes a tag, publishes the article with empty fields, and sees the editor form with errors and no tag`;
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS_INPUTS = [
+  AUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS,
+  {[REMOVED_TAG]: {tag: fetchedArticleFixture.tagList[0], index: 0}},
+  {[CLICKED_PUBLISH]: {tagList: [fetchedArticleFixture.tagList[1]], description:"", title:"", body: ""}},
+  {[AUTH_CHECKED]: userFixture},
+  {[FAILED_PUBLISHING]: submitErrorArticleFixture },
+  {[AUTH_CHECKED]: userFixture},
+].flat();
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS_COMMANDS = AUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS.concat([
+  [
+    {
+      [RENDER_EDITOR]: {
+        route: editor,
+        inProgress: false,
+        errors: null,
+        title: fetchedArticleFixture.title,
+        description: fetchedArticleFixture.description,
+        body: fetchedArticleFixture.body,
+        currentTag: "",
+        tagList: [fetchedArticleFixture.tagList[1]],
+      }
+    }
+  ],
+  [
+    {[RENDER_EDITOR]: {
+        inProgress: true,
+        errors: null,
+        title: "",
+        description: "",
+        body: "",
+        tagList: [fetchedArticleFixture.tagList[1]],
+        currentTag: "",
+        route: editor,
+      }},
+    {[FETCH_AUTHENTICATION]: void 0}
+  ],
+    [    {[UPDATE_ARTICLE]: {slug: articleSlugFixture, tagList: [fetchedArticleFixture.tagList[1]], description:"", title:"", body: ""}} ],
+  [
+    {[FETCH_AUTHENTICATION]: void 0},
+    {[RENDER_EDITOR]: {
+        inProgress: false,
+        errors: submitErrorArticleFixture,
+        title: "",
+        description: "",
+        body: "",
+        tagList: [fetchedArticleFixture.tagList[1]],
+        currentTag: "",
+        route: editor,
+      }}
+    ],
+  [
+    {[RENDER_EDITOR]: {
+        inProgress: false,
+        errors: submitErrorArticleFixture,
+        title: "",
+        description: "",
+        body: "",
+        tagList: [fetchedArticleFixture.tagList[1]],
+        currentTag: "",
+        route: editor,
+      }}
+  ]
+]);
+
 
 // Authenticated user navigates to sign in route and is redirected to home route
 // const AUTH_USER_ON_SIGNIN_SEES_FORM = `Authenticated user navigates to sign in route and is redirected to home route`;
@@ -190,6 +317,21 @@ const userStories = [
     UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_INPUTS,
     UNAUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_COMMANDS
   ],
+  [
+    UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM,
+    UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_INPUTS,
+    UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES,
+    AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES_INPUTS,
+    AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS,
+    AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS_INPUTS,
+    AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS_COMMANDS
+  ]
 ];
 
 const fsmSettings = { debug: { console, checkContracts: fsmContracts } };

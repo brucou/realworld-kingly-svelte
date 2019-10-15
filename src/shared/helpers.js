@@ -15,7 +15,7 @@ export function getSlugFromHash(hash) {
   if (hash.length === 0) return "";
 
   const hashParts = hash.split("/");
-  return hashParts[1] || "";
+  return hashParts[2] || "";
 }
 
 export function isNot(guard) {

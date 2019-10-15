@@ -1,7 +1,10 @@
 # TODO
 - DOC: link user scenarios and paths in the machine
-- write the machine tests left!
-- then implement the machine
+- DOC: the merge of props... hidden stuff here. 
+  - The route must be configured and updated!!
+  - the first render should pass the route parameter, then the rest do not need as it does not change
+    - pb. is that the first render may vary if the design vary, so good practice is to put a fake render in some init transitions
+      that will always be taken (like if the logic is enclosed in a compound state)
 
 - README
   - **Use [realworld-starter-kit]()https://github.com/gothinkster/realworld-starter-kit)**
@@ -116,3 +119,8 @@ articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' o
 - Demo app bug
   - if I log in, duplicate tab, then log out in second tab, then I still can see the user profile!
 
+## Productivity gains
+- be able to navigate better between chart and code
+- specially when having a factored machine like the form machine
+  - we have double indirection, harder to navigate
+  - if you made a mistake in the abstracted machine, even harder

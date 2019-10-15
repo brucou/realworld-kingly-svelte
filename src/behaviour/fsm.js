@@ -33,10 +33,11 @@ const states = {
 
 // Guards
 function isRoute(hash) {
+  const regExpStr = `^${hash}(/.*|)$`;
   return function(extendedState, eventData, settings) {
+    const regExp = new RegExp(regExpStr, 'g');
     const { url } = allRoutesViewLens(extendedState);
-    // TODO: do a regexp sartsWith and maybe /
-    return url === hash;
+    return Boolean(regExp.exec(url))
   };
 }
 

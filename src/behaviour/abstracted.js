@@ -30,6 +30,7 @@
  * @property {ActionFactory} fallback
  * @property {ActionFactory} retry
  * @property {ActionFactory} finalize
+ * @property {ActionFactory} fetchAuth
  */
 
 /**
@@ -54,7 +55,7 @@ export function getAuthenticatedFormPageTransitions(def) {
     submit,
     fallback: fallbackActionF,
     retry,
-    finalize
+    finalize,
   } = actionFactories;
   const isNotAuthenticatedGuard = complementGuard(isAuthenticatedGuard);
 
@@ -71,13 +72,13 @@ export function getAuthenticatedFormPageTransitions(def) {
       from: enteringData,
       event: SUBMIT_TRIGGERED,
       to: fetchingAuthenticationPreSubmit,
-      action: submit
+      action: showSubmittingForm
     },
     {
       from: fetchingAuthenticationPreSubmit,
       event: AUTH_CHECKED,
       guards: [
-        { predicate: isAuthenticatedGuard, to: submitting, action: showSubmittingForm },
+        { predicate: isAuthenticatedGuard, to: submitting, action: submit },
         { predicate: isNotAuthenticatedGuard, to: fallbackState, action: fallbackActionF }
       ]
     },

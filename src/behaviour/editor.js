@@ -1,4 +1,3 @@
-// TODO: implement modelization
 // TODO: also update docs to add missing commands and events and explain a bit more
 
 import { INIT_EVENT } from "kingly";
@@ -6,9 +5,7 @@ import {
   allRoutesViewLens,
   fetchAuthentication,
   isAuthenticated,
-  isNotAuthenticated,
   redirectToHome,
-  updateURL
 } from "./common";
 import {
   allRoutesUpdate,
@@ -17,37 +14,15 @@ import {
   events,
   routes,
   routeViewLens,
-  signInUpdates
 } from "../constants";
-import { isEditorRoute } from "./fsm";
-import { cleanHash, getSlugFromHash, isNot } from "../shared/helpers";
+import { getSlugFromHash, isNot } from "../shared/helpers";
 import { getAuthenticatedFormPageTransitions } from "./abstracted";
 
 const { editor } = routes;
 export const editorViewLens = routeViewLens(editor);
 
 const {
-  ROUTE_CHANGED,
-  TAGS_FETCHED_OK,
-  TAGS_FETCHED_NOK,
-  ARTICLES_FETCHED_OK,
-  ARTICLES_FETCHED_NOK,
   AUTH_CHECKED,
-  CLICKED_TAG,
-  CLICKED_PAGE,
-  CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED,
-  TOGGLED_FAVORITE,
-  FAVORITE_OK,
-  FAVORITE_NOK,
-  UNFAVORITE_OK,
-  UNFAVORITE_NOK,
-  CLICKED_SIGNUP,
-  FAILED_SIGN_UP,
-  SUCCEEDED_SIGN_UP,
-  CLICKED_SIGN_IN,
-  FAILED_SIGN_IN,
-  SUCCEEDED_SIGN_IN,
   CLICKED_PUBLISH,
   ADDED_TAG,
   REMOVED_TAG,
@@ -57,20 +32,7 @@ const {
   FETCHED_ARTICLE
 } = events;
 const {
-  RENDER_HOME,
-  RENDER_SIGN_UP,
-  RENDER_SIGN_IN,
-  FETCH_GLOBAL_FEED,
-  FETCH_ARTICLES_GLOBAL_FEED,
-  FETCH_ARTICLES_USER_FEED,
-  FETCH_AUTHENTICATION,
-  FETCH_USER_FEED,
-  FETCH_FILTERED_FEED,
-  FAVORITE_ARTICLE,
-  UNFAVORITE_ARTICLE,
   REDIRECT,
-  SIGN_UP,
-  SIGN_IN,
   PUBLISH_ARTICLE,
   FETCH_ARTICLE,
   RENDER_EDITOR,
@@ -90,6 +52,7 @@ export const initialEditorRouteState = {
   description: "",
   body: "",
   tagList: [],
+  currentTag: "",
   errors: null
 };
 
@@ -98,7 +61,7 @@ function isEditorEditArticleRoute(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
   const splitUrl = url.split("/");
 
-  return url.startsWith(cleanHash(editor)) && splitUrl.length === 2 && splitUrl[1].length > 0;
+  return url.startsWith(editor) && splitUrl.length === 3 && splitUrl[1].length > 0;
   // TODO editor/:slug, do it with a regexp
 }
 
@@ -125,7 +88,7 @@ export const editorTransitions = [
     from: "fetching-article-editor",
     event: FETCHED_ARTICLE,
     to: "fetching-authentication-editor-pre-form",
-    action: resetEditorRouteStateAndFetchAuth
+    action: updateEditorRouteStateAndFetchAuth
   },
   {
     from: "fetching-article-editor",
@@ -187,15 +150,24 @@ function resetEditorRouteStateAndFetchAuth(extendedState, eventData, settings) {
   };
 }
 
+function updateEditorRouteStateAndFetchAuth(extendedState, eventData, settings) {
+  const {title, description, body, tagList} = eventData;
+
+  return {
+    updates: editorUpdates([{title, description, body, tagList}]),
+    outputs: fetchAuthentication(extendedState, eventData, settings).outputs
+  };
+}
+
 function fetchArticle(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
 
   return {
     updates: [],
-    outputs: {
+    outputs: [{
       command: FETCH_ARTICLE,
       params: getSlugFromHash(url)
-    }
+    }]
   };
 }
 
@@ -213,13 +185,15 @@ function addTagAndRender(extendedState, eventData, settings) {
   // In both cases, we are good, the behaviour is independent from the UI library
   return {
     updates: editorUpdates([{ tagList: newTagList }]),
-    outputs: {
+    outputs: [
+      {
       command: RENDER_EDITOR,
       params: {
         tagList: newTagList,
         currentTag: ""
       }
     }
+    ]
   };
 }
 
@@ -230,12 +204,12 @@ function removeTagAndRenderTagList(extendedState, eventData, settings) {
 
   return {
     updates: editorUpdates([{ tagList: newTagList }]),
-    outputs: {
+    outputs: [{
       command: RENDER_EDITOR,
       params: {
         tagList: newTagList
       }
-    }
+    }]
   };
 }
 
@@ -244,10 +218,12 @@ function renderEditorForm(extendedState, eventData, settings) {
 
   return {
     updates: [],
-    outputs: {
+    outputs: [
+      {
       command: RENDER_EDITOR,
-      params: { tagList, title, body, currentTag, description, errors }
+      params: { tagList, title, body, currentTag, description, errors, inProgress: false, route:editor }
     }
+    ]
   };
 }
 
@@ -263,10 +239,13 @@ function fetchAuthenticationAndRenderInProgressAndUpdateFormData(
     outputs: [
       {
         command: RENDER_EDITOR,
-        params: { inProgress: true, errors: null }
+        params: {
+          inProgress: true, errors: null,
+          title, description, body, tagList
+        }
       },
       fetchAuthentication(extendedState, eventData, settings).outputs
-    ]
+    ].flat()
   };
 }
 
@@ -275,7 +254,7 @@ function publishArticle(extendedState, eventData, settings) {
   const slug = getSlugFromHash(url);
   const { tagList, title, body, description } = editorViewLens(extendedState);
 
-  const commandStruct = isEditorEditArticleRoute(url)
+  const commandStruct = isEditorEditArticleRoute(extendedState)
     ? { command: UPDATE_ARTICLE, params: { title, description, body, tagList, slug } }
     : { command: PUBLISH_ARTICLE, params: { title, description, body, tagList } };
 
@@ -289,17 +268,17 @@ function renderEditorFormWithErrorsAndFetchAuth(extendedState, eventData, settin
   const errors = eventData;
 
   return {
-    updates: [],
+    updates: editorUpdates([{errors}]),
     outputs: [
       { command: RENDER_EDITOR, params: { inProgress: false, errors } },
       fetchAuthentication(extendedState, eventData, settings).outputs
-    ]
+    ].flat()
   };
 }
 
 function updateUrlAndRedirectToArticle(extendedState, eventData, settings) {
   const { slug } = eventData;
-  const redirectTo = ["article", slug].join("/");
+  const redirectTo = ["", "article", slug].join("/");
 
   return {
     updates: allRoutesUpdate([{ url: redirectTo }]),

@@ -9,6 +9,7 @@ const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
+  RENDER_EDITOR
 } = commands;
 
 export function formatIndex(i) {
@@ -21,11 +22,12 @@ export function formatIndex(i) {
     : i.map(formatIndex).join(', ')
 }
 
-const { home, signUp, signIn, allRoutes } = routes;
+const { home, signUp, signIn, editor, allRoutes } = routes;
 const renderCommandRouteMap={
   [RENDER_HOME]: home,
   [RENDER_SIGN_UP]: signUp,
   [RENDER_SIGN_IN]: signIn,
+  [RENDER_EDITOR]: editor,
 };
 
 /**
@@ -43,7 +45,7 @@ export function processRenderCommands(cleanedMachineOutputsSeq) {
       return cleanedMachineOutputs.map(cleanedMachineOutput => {
       const { command, params } = cleanedMachineOutput;
 
-      if ([RENDER_HOME, RENDER_SIGN_UP].indexOf(command) === -1) {
+      if ([RENDER_HOME, RENDER_SIGN_UP, RENDER_SIGN_IN, RENDER_EDITOR].indexOf(command) === -1) {
         return cleanedMachineOutput
       } else {
         const route = renderCommandRouteMap[command];

@@ -1,4 +1,10 @@
-import {  fetchAuthentication,  isAuthenticated,  isNotAuthenticated,  redirectToHome,  updateURL} from "./common";
+import {
+  fetchAuthentication,
+  isAuthenticated,
+  isNotAuthenticated,
+  redirectToHome,
+  updateURL
+} from "./common";
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT } from "kingly";
 import { commands, events, routes, routeViewLens, signUpUpdates } from "../constants";
 
@@ -15,7 +21,7 @@ export const signUpStates = {
   "signing-up": ""
 };
 
-export const initialSignUpRouteState = {  email: "",  password: "",  username: "",  errors: null};
+export const initialSignUpRouteState = { email: "", password: "", username: "", errors: null };
 
 // TODO: try to see if I can use event data instead of state for the user and if yes remove it from extended state
 // the user state source of truth is not in the machine, so don't duplicate!! this risks desynchronization
@@ -88,7 +94,7 @@ export function renderSignUpForm(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER_SIGN_UP,
-        params: { route: signUp, inProgress: false, errors }
+        params: { route: signUp, user:null, inProgress: false, errors }
       }
     ]
   };

@@ -1,9 +1,25 @@
+// TODO: analyze size impact of ramda functions... better to get all ramda then rollup tree-shaking?
+import mergeDeepWith from "ramda.mergedeepwith";
+import concat from "ramda.concat";
+
 const API_ROOT = "https://conduit.productionready.io/api";
+
+const authHeader = sessionRepository => {
+  const session = sessionRepository.load();
+  return session && session.token
+    ? {
+      headers: {
+        Authorization: `Token ${session.token}`
+      }
+    }
+    : {};
+};
 
 const isJson = response => response.headers.get("content-type").indexOf("application/json") !== -1;
 
 const configureFetch = (fetch, sessionRepository) => (url, options = {}) => {
-  return fetch(API_ROOT + url, options).then(response => {
+  return fetch(API_ROOT + url, mergeDeepWith(concat, authHeader(sessionRepository), options))
+    .then(response => {
     if (isJson(response)) {
       if (response.status === 200) {
         return response.json();
@@ -25,7 +41,6 @@ const jsonBody = body => ({
 
 const apiGateway = (fetch, sessionRepository) => {
   const fetchWithToken = configureFetch(fetch, sessionRepository);
-  const { load, clear, save, onChange } = sessionRepository;
 
   const get = url => fetchWithToken(url);
   const del = url => fetchWithToken(url, { method: "DELETE" });
@@ -43,6 +58,8 @@ const apiGateway = (fetch, sessionRepository) => {
 
   const fetchUserFeed = ({ page }) => get(`/articles/feed?${pagination({ page, limit: 10 })}`);
 
+  // TODO: refactor: move it to a shared.js. This is not part of the Conduit API...
+  const { load, clear, save, onChange } = sessionRepository;
   const fetchAuthentication = () => {
     console.debug("fetchAuthentication> user", load());
     return load();

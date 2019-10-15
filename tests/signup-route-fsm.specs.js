@@ -42,6 +42,7 @@ const UNAUTH_USER_ON_SIGNUP_COMMANDS = [
         route: signUp,
         inProgress: false,
         errors: null,
+        user: null,
       }
     },
   ]
@@ -80,7 +81,7 @@ const UNAUTH_USER_ON_SIGNUP_SEES_FORM_SIGNS_UP_AND_SEES_HOME_FEED_INPUTS= [
 ].flat();
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_SIGNS_UP_AND_SEES_HOME_FEED_COMMANDS = UNAUTH_USER_ON_SIGNUP_COMMANDS.concat([
   [
-    {[RENDER_SIGN_UP]: {route: signUp, inProgress:true, errors: null}},
+    {[RENDER_SIGN_UP]: {route: signUp, inProgress:true, errors: null, user:null}},
     {[FETCH_AUTHENTICATION]: void 0},
   ],
   [  {[SIGN_UP]: signUpUserFixture}],
@@ -100,13 +101,13 @@ const UNAUTH_USER_ON_SIGNUP_SEES_FORM_FAILS_SIGN_UP_AND_SEES_FORM_WITH_ERRORS_IN
 ].flat();
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_FAILS_SIGN_UP_AND_SEES_FORM_WITH_ERRORS_COMMANDS= UNAUTH_USER_ON_SIGNUP_COMMANDS.concat([
   [
-    {[RENDER_SIGN_UP]: {route: signUp, inProgress:true, errors: null}},
+    {[RENDER_SIGN_UP]: {route: signUp, inProgress:true, errors: null, user:null}},
     {[FETCH_AUTHENTICATION]: void 0},
   ],
   [  {[SIGN_UP]: signUpUserFixture}],
   [
     {[FETCH_AUTHENTICATION]: void 0},
-    {[RENDER_SIGN_UP]: {route: signUp, inProgress:false, errors: signUpErrorsFixture}},
+    {[RENDER_SIGN_UP]: {route: signUp, inProgress:false, errors: signUpErrorsFixture, user:null}},
   ].flat()
 ]);
 

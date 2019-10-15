@@ -4,16 +4,28 @@
 
   export let _fsm;
   export let _shouldRender = false;
-  export let route;
-  export let page;
-  export let tags;
-  export let articles;
-  export let activeFeed;
-  export let user;
-  export let selectedTag;
-  export let favoriteStatus;
-  export let inProgress;
-  export let errors;
+
+    // Props
+    // Common props
+    export let dispatch;
+    export let user;
+    export let route;
+    // Home route props
+    export let tags;
+    export let articles;
+    export let page;
+    export let activeFeed;
+    export let selectedTag;
+    export let favoriteStatus;
+    // Sign up, sign in, editor common props
+    export let inProgress;
+    export let errors;
+    // Editor props
+    export let title;
+    export let description;
+    export let body;
+    export let currentTag;
+    export let tagList;
 
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
@@ -33,6 +45,12 @@
       {selectedTag}
       {favoriteStatus}
       {inProgress}
-      {errors} />
+      {errors}
+      {title}
+      {description}
+      {body}
+      {currentTag}
+      {tagList}
+      />
   {/if}
 </Fsm>

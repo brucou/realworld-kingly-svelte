@@ -33,6 +33,8 @@
  * @property {ActionFactory} fetchAuth
  */
 
+import { isNot } from "../shared/helpers"
+
 /**
  * @param {{events: AuthFormEvents, actionFactories: AuthFormActionFactories, states: AuthFormStates,
  *   isAuthenticatedGuard: Guard}} def
@@ -55,9 +57,9 @@ export function getAuthenticatedFormPageTransitions(def) {
     submit,
     fallback: fallbackActionF,
     retry,
-    finalize,
+    finalize
   } = actionFactories;
-  const isNotAuthenticatedGuard = complementGuard(isAuthenticatedGuard);
+  const isNotAuthenticatedGuard = isNot(isAuthenticatedGuard);
 
   return [
     {
@@ -86,5 +88,3 @@ export function getAuthenticatedFormPageTransitions(def) {
     { from: submitting, event: FAILED_SUBMISSION, to: fetchingAuthenticationPreForm, action: retry }
   ];
 }
-
-const complementGuard = g => (a, b, c) => !g(a, b, c);

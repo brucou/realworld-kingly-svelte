@@ -96,7 +96,7 @@ function render(route, props) {
 const renderRoute = route => (dispatch, params, effectHandlers) => {
   const { render } = effectHandlers;
   render(route, params);
-}
+};
 const commandHandlers = {
   [RENDER_HOME]: renderRoute(home),
   [RENDER_SIGN_UP]: renderRoute(signUp),

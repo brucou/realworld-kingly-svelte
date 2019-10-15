@@ -12,7 +12,6 @@
   // Common props
   export let dispatch;
   export let user;
-  export let route;
   // Home route props
   export let tags;
   export let articles;

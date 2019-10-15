@@ -35,9 +35,9 @@ const states = {
 function isRoute(hash) {
   const regExpStr = `^${hash}(/.*|)$`;
   return function(extendedState, eventData, settings) {
-    const regExp = new RegExp(regExpStr, 'g');
+    const regExp = new RegExp(regExpStr, "g");
     const { url } = allRoutesViewLens(extendedState);
-    return Boolean(regExp.exec(url))
+    return Boolean(regExp.exec(url));
   };
 }
 

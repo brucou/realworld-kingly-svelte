@@ -1,19 +1,14 @@
 // TODO: also update docs to add missing commands and events and explain a bit more
 
 import { INIT_EVENT } from "kingly";
-import {
-  allRoutesViewLens,
-  fetchAuthentication,
-  isAuthenticated,
-  redirectToHome,
-} from "./common";
+import { allRoutesViewLens, fetchAuthentication, isAuthenticated, redirectToHome } from "./common";
 import {
   allRoutesUpdate,
   commands,
   editorUpdates,
   events,
   routes,
-  routeViewLens,
+  routeViewLens
 } from "../constants";
 import { getSlugFromHash, isNot } from "../shared/helpers";
 import { getAuthenticatedFormPageTransitions } from "./abstracted";
@@ -31,13 +26,7 @@ const {
   FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE
 } = events;
-const {
-  REDIRECT,
-  PUBLISH_ARTICLE,
-  FETCH_ARTICLE,
-  RENDER_EDITOR,
-  UPDATE_ARTICLE
-} = commands;
+const { REDIRECT, PUBLISH_ARTICLE, FETCH_ARTICLE, RENDER_EDITOR, UPDATE_ARTICLE } = commands;
 
 export const editorStates = {
   "fetching-article-editor": "",
@@ -151,10 +140,10 @@ function resetEditorRouteStateAndFetchAuth(extendedState, eventData, settings) {
 }
 
 function updateEditorRouteStateAndFetchAuth(extendedState, eventData, settings) {
-  const {title, description, body, tagList} = eventData;
+  const { title, description, body, tagList } = eventData;
 
   return {
-    updates: editorUpdates([{title, description, body, tagList}]),
+    updates: editorUpdates([{ title, description, body, tagList }]),
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
   };
 }
@@ -164,10 +153,12 @@ function fetchArticle(extendedState, eventData, settings) {
 
   return {
     updates: [],
-    outputs: [{
-      command: FETCH_ARTICLE,
-      params: getSlugFromHash(url)
-    }]
+    outputs: [
+      {
+        command: FETCH_ARTICLE,
+        params: getSlugFromHash(url)
+      }
+    ]
   };
 }
 
@@ -187,12 +178,12 @@ function addTagAndRender(extendedState, eventData, settings) {
     updates: editorUpdates([{ tagList: newTagList }]),
     outputs: [
       {
-      command: RENDER_EDITOR,
-      params: {
-        tagList: newTagList,
-        currentTag: ""
+        command: RENDER_EDITOR,
+        params: {
+          tagList: newTagList,
+          currentTag: ""
+        }
       }
-    }
     ]
   };
 }
@@ -204,25 +195,38 @@ function removeTagAndRenderTagList(extendedState, eventData, settings) {
 
   return {
     updates: editorUpdates([{ tagList: newTagList }]),
-    outputs: [{
-      command: RENDER_EDITOR,
-      params: {
-        tagList: newTagList
+    outputs: [
+      {
+        command: RENDER_EDITOR,
+        params: {
+          tagList: newTagList
+        }
       }
-    }]
+    ]
   };
 }
 
 function renderEditorForm(extendedState, eventData, settings) {
   const { tagList, title, body, currentTag, description, errors } = editorViewLens(extendedState);
+  const user = eventData;
 
   return {
     updates: [],
     outputs: [
       {
-      command: RENDER_EDITOR,
-      params: { tagList, title, body, currentTag, description, errors, inProgress: false, route:editor }
-    }
+        command: RENDER_EDITOR,
+        params: {
+          tagList,
+          title,
+          body,
+          currentTag,
+          description,
+          errors,
+          inProgress: false,
+          route: editor,
+          user
+        }
+      }
     ]
   };
 }
@@ -240,8 +244,12 @@ function fetchAuthenticationAndRenderInProgressAndUpdateFormData(
       {
         command: RENDER_EDITOR,
         params: {
-          inProgress: true, errors: null,
-          title, description, body, tagList
+          inProgress: true,
+          errors: null,
+          title,
+          description,
+          body,
+          tagList
         }
       },
       fetchAuthentication(extendedState, eventData, settings).outputs
@@ -268,7 +276,7 @@ function renderEditorFormWithErrorsAndFetchAuth(extendedState, eventData, settin
   const errors = eventData;
 
   return {
-    updates: editorUpdates([{errors}]),
+    updates: editorUpdates([{ errors }]),
     outputs: [
       { command: RENDER_EDITOR, params: { inProgress: false, errors } },
       fetchAuthentication(extendedState, eventData, settings).outputs

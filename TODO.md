@@ -87,7 +87,7 @@ NOTE: once the machine confidently works, it cn be used with stateful PBT to tes
 - still necessary
   - mistake in the `href` of links, issues with the trailing `/` which cannot be found through unit testing alone
   - also issue with back button not working! have to add event handler to detect popState? but not pushState ?
-  
+
 ## Bug found in other versions
 - open a window, log in there
 - duplicate the window
@@ -124,3 +124,22 @@ articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' o
 - specially when having a factored machine like the form machine
   - we have double indirection, harder to navigate
   - if you made a mistake in the abstracted machine, even harder
+
+## Integration tests justification
+- works with unit tests
+- fails when running in dev
+  - hash change event handler gives the wrong hash!! while in tests I pass the good one!
+
+## Bug
+- Svelte does not update input field with `value`
+  - editor route, tag field is not reset when clicking enter to add tag
+- issue with 401 on some http requests
+  - auth problem, should I use mergeDeepWith from ramdda like hyperapp?
+- Editor should not have the header displayed with signin/signup... the user is authed
+- I NEED A RENDEER MAIN TO UPDATE USER AT TOP Level app!! or have header in each component? means passing user to every component too!
+  - NOOOO works for editor. If I pass a user props, it is passed to RealWorld, which selects props for the chosen component so good!! pass user in render route that works fine, the render route is for merging props right (and picking main component but hearder alaways runs)
+  - EXPLAIN THAT, AS IT IS A CONFUSION FOR ME, IMAGINE THE REST!!!!!
+  - PUT USER = NULL in renderForm in sing in and sign up and repass tests!!
+## TRy to find these bugs with PBT
+- editor route displays sign up sign in and not new article!
+- ??

@@ -4,7 +4,7 @@ export default function apiRouterFactory(location, addEventListener) {
       addEventListener(
         "hashchange",
         ({ newURL, oldURL }) => {
-          const hash = location.hash.replace(/^#\/?|\/$/g, "");
+          const hash = api.getCurrentHash();
           listener({ newURL, oldURL, hash });
         },
         false

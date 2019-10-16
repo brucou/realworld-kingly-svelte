@@ -39,16 +39,14 @@
     [editor]: Editor
   };
   // Props for the component which will be displayed
+  $: component = componentRoutes[route]
   $: componentRoutesProps={
     [home]: {user, tags, articles, page, activeFeed, selectedTag, favoriteStatus},
     [signUp]: {inProgress, errors},
     [signIn]: {inProgress, errors},
     [editor]: {inProgress, errors, title, description, body, tagList, currentTag},
   };
-
-  $: component = componentRoutes[route]
   $: componentProps = componentRoutesProps[route]
-  $: console.info(`Realworld`, component.name, componentProps, {tags, articles, page, activeFeed, selectedTag, favoriteStatus})
 </script>
 
 <div>

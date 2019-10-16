@@ -16,17 +16,17 @@ storiesOf('Sign in route', module)
 storiesOf('Sign in route', module)
   .add('inProgress = false, no errors', () => ({
     Component: RealWorld,
-    props: { route: signIn, dispatch, inProgress: false, errors: null },
+    props: { route: signIn, user: null, dispatch, inProgress: false, errors: null },
     on: { },
   }))
   .add('inProgress = true, no errors', () => ({
     Component: RealWorld,
-    props: { route: signIn, dispatch, inProgress: true, errors: null },
+    props: { route: signIn, user: null, dispatch, inProgress: true, errors: null },
     on: { },
   }))
 storiesOf('Sign in route', module)
   .add('inProgress = false, errors', () => ({
     Component: RealWorld,
-    props: { route: signIn, dispatch, inProgress: false, errors: signInErrorsFixture },
+    props: { route: signIn, user: null, dispatch, inProgress: false, errors: signInErrorsFixture },
     on: { },
   }))

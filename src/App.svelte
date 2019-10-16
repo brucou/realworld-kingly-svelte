@@ -7,7 +7,6 @@
 
     // Props
     // Common props
-    export let dispatch;
     export let user;
     export let route;
     // Home route props
@@ -31,9 +30,6 @@
 
   const next = eventBus.next.bind(eventBus);
 
-  $: {
-    console.log(`currentTAg`, currentTag)
-  }
 </script>
 
 <Fsm {fsmFactory} {env} {eventBus} {commandHandlers} {effectHandlers} {initEvent}>

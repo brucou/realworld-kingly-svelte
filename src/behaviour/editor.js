@@ -1,7 +1,7 @@
 // TODO: also update docs to add missing commands and events and explain a bit more
 
 import { INIT_EVENT } from "kingly";
-import { allRoutesViewLens, fetchAuthentication, isAuthenticated, redirectToHome } from "./common";
+import { allRoutesViewLens, fetchAuthentication, isAuthenticated, redirectToHome, updateURL } from "./common";
 import { allRoutesUpdate, commands, editorUpdates, events, routes, routeViewLens } from "../constants";
 import { getSlugFromHash, isNot } from "../shared/helpers";
 import { getAuthenticatedFormPageTransitions } from "./abstracted";
@@ -10,6 +10,7 @@ const { editor } = routes;
 export const editorViewLens = routeViewLens(editor);
 
 const {
+  ROUTE_CHANGED,
   AUTH_CHECKED,
   CLICKED_PUBLISH,
   ADDED_TAG,
@@ -67,6 +68,7 @@ export const editorTransitions = [
       }
     ]
   },
+  { from: "editor", event: ROUTE_CHANGED, to: "routing", action: updateURL },
   {
     from: "fetching-article-editor",
     event: FETCHED_ARTICLE,

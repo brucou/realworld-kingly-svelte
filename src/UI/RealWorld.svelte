@@ -32,35 +32,26 @@
   const { home, signUp, signIn, editor } = routes;
 
   // Component which will be displayed depending on the route
-  /*
   const componentRoutes= {
     [home]: Home,
-    // [signUp]: Signup
+    [signUp]: SignUp,
+    [signIn]: SignIn,
+    [editor]: Editor
   };
-  Props for the component which will be displayed
-  const componentRoutesProps={
-    [home]: {tags, articles, page, activeFeed, selectedTag, favoriteStatus}
+  // Props for the component which will be displayed
+  $: componentRoutesProps={
+    [home]: {user, tags, articles, page, activeFeed, selectedTag, favoriteStatus},
+    [signUp]: {inProgress, errors},
+    [signIn]: {inProgress, errors},
+    [editor]: {inProgress, errors, title, description, body, tagList, currentTag},
   };
 
   $: component = componentRoutes[route]
   $: componentProps = componentRoutesProps[route]
-  $: commonProps = {dispatch, user, route}
-  $: console.info(`Realworld`, component.name, componentProps, commonProps, {tags, articles, page, activeFeed, selectedTag, favoriteStatus})
-*/
+  $: console.info(`Realworld`, component.name, componentProps, {tags, articles, page, activeFeed, selectedTag, favoriteStatus})
 </script>
 
 <div>
   <Header {user} />
-  {#if route === home}
-    <Home {dispatch} {user} {tags} {articles} {page} {activeFeed} {selectedTag} {favoriteStatus} />
-  {/if}
-  {#if route === signUp}
-    <SignUp {dispatch} {inProgress} {errors} />
-  {/if}
-  {#if route === signIn}
-    <SignIn {dispatch} {inProgress} {errors} />
-  {/if}
-  {#if route === editor}
-    <Editor {dispatch} {inProgress} {errors} {title} {description} {body} {currentTag} {tagList} />
-  {/if}
+  <svelte:component this="{component}" {...componentProps}  {dispatch} />
 </div>

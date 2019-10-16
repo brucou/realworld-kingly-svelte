@@ -7,29 +7,7 @@
   export let inProgress;
   export let errors;
 
-  const {
-    ROUTE_CHANGED,
-    TAGS_FETCHED_OK,
-    TAGS_FETCHED_NOK,
-    ARTICLES_FETCHED_OK,
-    ARTICLES_FETCHED_NOK,
-    AUTH_CHECKED,
-    CLICKED_TAG,
-    CLICKED_PAGE,
-    CLICKED_USER_FEED,
-    CLICKED_GLOBAL_FEED,
-    TOGGLED_FAVORITE,
-    FAVORITE_OK,
-    FAVORITE_NOK,
-    UNFAVORITE_OK,
-    UNFAVORITE_NOK,
-    CLICKED_SIGNUP,
-    FAILED_SIGN_UP,
-    SUCCEEDED_SIGN_UP,
-    CLICKED_SIGN_IN,
-    FAILED_SIGN_IN,
-    SUCCEEDED_SIGN_IN
-  } = events;
+  const {    CLICKED_SIGN_IN  } = events;
   const onSubmit = ev => {
     ev.preventDefault();
     const formData = new FormData(ev.target);

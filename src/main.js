@@ -95,6 +95,7 @@ function render(route, props) {
 // Command and effect handlers
 const renderRoute = route => (dispatch, params, effectHandlers) => {
   const { render } = effectHandlers;
+  console.log(`currentTag`, params.currentTag);
   render(route, params);
 };
 const commandHandlers = {

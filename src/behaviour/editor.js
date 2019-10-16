@@ -2,14 +2,7 @@
 
 import { INIT_EVENT } from "kingly";
 import { allRoutesViewLens, fetchAuthentication, isAuthenticated, redirectToHome } from "./common";
-import {
-  allRoutesUpdate,
-  commands,
-  editorUpdates,
-  events,
-  routes,
-  routeViewLens
-} from "../constants";
+import { allRoutesUpdate, commands, editorUpdates, events, routes, routeViewLens } from "../constants";
 import { getSlugFromHash, isNot } from "../shared/helpers";
 import { getAuthenticatedFormPageTransitions } from "./abstracted";
 
@@ -21,6 +14,7 @@ const {
   CLICKED_PUBLISH,
   ADDED_TAG,
   REMOVED_TAG,
+  EDITED_TAG,
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
@@ -84,6 +78,12 @@ export const editorTransitions = [
     event: FAILED_FETCH_ARTICLE,
     to: "routing",
     action: redirectToHome
+  },
+  {
+    from: "editing-new-article",
+    event: EDITED_TAG,
+    to: "editing-new-article",
+    action: renderTagField
   },
   {
     from: "editing-new-article",
@@ -188,9 +188,26 @@ function addTagAndRender(extendedState, eventData, settings) {
   };
 }
 
+function renderTagField(extendedState, eventData, settings) {
+  const tag = eventData;
+
+  // The form field `currentTag` is controlled, the other fields are not
+  // We do not pass uncontrolled fields data in the render command
+  // so as not to trigger rerendering of those fields with desynchronized values
+  // VDom-based UI libraries will see the same *props* for those fields,
+  // and thus skip rendering. Surgical-DOM UI libraries will not merge new props
+  // with past props and thus only act on the props passed in the render
+  // In both cases, we are good, the behaviour is independent from the UI library
+  return {
+    updates: editorUpdates([{currentTag:tag}]),
+    outputs: [{ command: RENDER_EDITOR, params: { currentTag: tag } }]
+  };
+}
+
 function removeTagAndRenderTagList(extendedState, eventData, settings) {
-  const { tag, index } = eventData;
+  const tag = eventData;
   const { tagList } = editorViewLens(extendedState);
+  const index = tagList.indexOf(tag);
   const newTagList = tagList.slice(0, index).concat(tagList.slice(index + 1));
 
   return {
@@ -249,7 +266,7 @@ function fetchAuthenticationAndRenderInProgressAndUpdateFormData(
           title,
           description,
           body,
-          tagList
+          tagList,
         }
       },
       fetchAuthentication(extendedState, eventData, settings).outputs

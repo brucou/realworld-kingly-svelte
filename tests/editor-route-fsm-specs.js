@@ -16,6 +16,7 @@ const {
   CLICKED_PUBLISH,
   ADDED_TAG,
   REMOVED_TAG,
+  EDITED_TAG,
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
@@ -117,12 +118,17 @@ const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_INPUTS = [
 ].flat();
 const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_COMMANDS = UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS;
 
+// TODO: use EDITED_TAG with one char
 // Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills
 // in the fields, publishes the article, and is redirected to the article page
 const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES = ` Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills in the fields, publishes the article, and is redirected to the article page`;
 const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES_INPUTS = [
   AUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS,
+  { [EDITED_TAG]: newArticleFixture.tagList[0][0] },
+  { [EDITED_TAG]: newArticleFixture.tagList[0] },
   { [ADDED_TAG]: newArticleFixture.tagList[0] },
+  { [EDITED_TAG]: newArticleFixture.tagList[0][0] },
+  { [EDITED_TAG]: newArticleFixture.tagList[0] },
   { [ADDED_TAG]: newArticleFixture.tagList[0] },
   { [CLICKED_PUBLISH]: newArticleFixture },
   { [AUTH_CHECKED]: userFixture },
@@ -138,8 +144,68 @@ const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISH
         title: "",
         description: "",
         body: "",
+        tagList: [],
+        currentTag: newArticleFixture.tagList[0][0],
+        route: editor,
+      }
+    }
+  ],
+  [
+    {
+      [RENDER_EDITOR]: {
+        user: userFixture,
+        inProgress: false,
+        errors: null,
+        title: "",
+        description: "",
+        body: "",
+        tagList: [],
+        currentTag: newArticleFixture.tagList[0],
+        route: editor,
+      }
+    }
+  ],
+  [
+    {
+      [RENDER_EDITOR]: {
+        user: userFixture,
+        inProgress: false,
+        errors: null,
+        title: "",
+        description: "",
+        body: "",
         tagList: newArticleFixture.tagList,
         currentTag: "",
+        route: editor,
+      }
+    }
+  ],
+  [
+    {
+      [RENDER_EDITOR]: {
+        user: userFixture,
+        inProgress: false,
+        errors: null,
+        title: "",
+        description: "",
+        body: "",
+        tagList: newArticleFixture.tagList,
+        currentTag: newArticleFixture.tagList[0][0],
+        route: editor,
+      }
+    }
+  ],
+  [
+    {
+      [RENDER_EDITOR]: {
+        user: userFixture,
+        inProgress: false,
+        errors: null,
+        title: "",
+        description: "",
+        body: "",
+        tagList: newArticleFixture.tagList,
+        currentTag: newArticleFixture.tagList[0],
         route: editor,
       }
     }
@@ -156,7 +222,7 @@ const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISH
         description: newArticleFixture.description,
         body: newArticleFixture.body,
         tagList: newArticleFixture.tagList,
-        currentTag: "",
+        currentTag: newArticleFixture.tagList[0],
       }
     },
     { [FETCH_AUTHENTICATION]: void 0 }
@@ -170,7 +236,7 @@ const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISH
 const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS = `Authenticated user navigates to the editor route (edit article), sees the editor form with prefilled values, removes a tag, publishes the article with empty fields, and sees the editor form with errors and no tag`;
 const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS_INPUTS = [
   AUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS,
-  { [REMOVED_TAG]: { tag: fetchedArticleFixture.tagList[0], index: 0 } },
+  { [REMOVED_TAG]: fetchedArticleFixture.tagList[0]},
   { [CLICKED_PUBLISH]: { tagList: [fetchedArticleFixture.tagList[1]], description: "", title: "", body: "" } },
   { [AUTH_CHECKED]: userFixture },
   { [FAILED_PUBLISHING]: submitErrorArticleFixture },

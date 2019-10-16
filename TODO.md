@@ -82,11 +82,7 @@ NOTE: once the machine confidently works, it cn be used with stateful PBT to tes
 - I was able to do search and replace so that may indicates the space for tooling to solve the problem automatically
   - could be const piecesState = view(route, [props], extendedState), with pieceState with normal destructuring, view a kind of lens?
   - have individual lenses for each prop and combine that: that would define view. The individual lenses may be automatically generated?
-
-## Integration tests
-- still necessary
-  - mistake in the `href` of links, issues with the trailing `/` which cannot be found through unit testing alone
-  - also issue with back button not working! have to add event handler to detect popState? but not pushState ?
+- the view concern spills into the machine... Controlled field require listening to keyup. This impacts the machine!
 
 ## Bug found in other versions
 - open a window, log in there
@@ -125,21 +121,27 @@ articles.js:79 Uncaught (in promise) TypeError: Cannot read property 'article' o
   - we have double indirection, harder to navigate
   - if you made a mistake in the abstracted machine, even harder
 
-## Integration tests justification
-- works with unit tests
-- fails when running in dev
-  - hash change event handler gives the wrong hash!! while in tests I pass the good one!
-
 ## Bug
-- Svelte does not update input field with `value`
+Integration tests justification:
+- also issue with back button not working! have to add event handler to detect popState? but not pushState ?
+- [x] hash change event handler gives the wrong hash!! while in tests I pass the good one!
+  - integration tests? hash change handler wrong format 
+- [x] Svelte does not update input field with `value`
   - editor route, tag field is not reset when clicking enter to add tag
-- issue with 401 on some http requests
+  - EXPLAIN CONTROLLED FIELDS: needs to add an event to handle keyup
+  - this bug was integration test: it is a bug about svelte behaviour, well not really a bug but still integration level
+- [x] Bug with index in {#each}
+  - adding three, and removing first three times gives the wrong index and removes the wrong or nothing
+  - NOT USING INDEX! use a key!!!! the key here was the tag itself
+  - also integration level bug
+- [x] issue with 401 on some http requests
   - auth problem, should I use mergeDeepWith from ramdda like hyperapp?
-- Editor should not have the header displayed with signin/signup... the user is authed
-- I NEED A RENDEER MAIN TO UPDATE USER AT TOP Level app!! or have header in each component? means passing user to every component too!
+  - integration level bug
+- [-] I NEED A RENDER MAIN TO UPDATE USER AT TOP Level app!! or have header in each component? means passing user to every component too!
   - NOOOO works for editor. If I pass a user props, it is passed to RealWorld, which selects props for the chosen component so good!! pass user in render route that works fine, the render route is for merging props right (and picking main component but hearder alaways runs)
   - EXPLAIN THAT, AS IT IS A CONFUSION FOR ME, IMAGINE THE REST!!!!!
   - PUT USER = NULL in renderForm in sing in and sign up and repass tests!!
-## TRy to find these bugs with PBT
+  
+## Try to find these bugs with PBT
 - editor route displays sign up sign in and not new article!
 - ??

@@ -27,7 +27,7 @@ export const newArticleFixture = {
   title : 'filledInArticleFixture',
   body: "body",
   description: "description",
-  tagList: ['taggy']
+  tagList: ['ta']
 };
 export const createdNewArticleFixture = {
   "title": "filledInArticleFixture",

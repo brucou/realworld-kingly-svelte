@@ -30,6 +30,10 @@
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
   const next = eventBus.next.bind(eventBus);
+
+  $: {
+    console.log(`currentTAg`, currentTag)
+  }
 </script>
 
 <Fsm {fsmFactory} {env} {eventBus} {commandHandlers} {effectHandlers} {initEvent}>

@@ -8,7 +8,7 @@ import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
 import { events, commands, routes } from "./constants";
 
-const { home, signUp, signIn, editor, allRoutes } = routes;
+const { home, signUp, signIn, editor } = routes;
 
 // Commands
 const {
@@ -287,12 +287,11 @@ const app = new App({
     body: void 0,
     currentTag: void 0,
     tagList: void 0,
-image: void 0,
-username: void 0,
-bio: void 0,
-email: void 0,
-password: void 0,
-
+    image: void 0,
+    username: void 0,
+    bio: void 0,
+    email: void 0,
+    password: void 0,
 }
 });
 

@@ -26,11 +26,11 @@
   export let currentTag;
   export let tagList;
   // Settings props
-    export let image;
-    export let username;
-    export let bio;
-    export let email;
-    export let password;
+  export let image;
+  export let username;
+  export let bio;
+  export let email;
+  export let password;
 
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
@@ -60,7 +60,6 @@
       {username}
       {bio}
       {email]
-      {password}
-      />
+      {password} />
   {/if}
 </Fsm>

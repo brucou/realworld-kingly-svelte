@@ -30,12 +30,11 @@
   export let currentTag;
   export let tagList;
   // Settings props
-      export let image;
-      export let username;
-      export let bio;
-      export let email;
-      export let password;
-
+  export let image;
+  export let username;
+  export let bio;
+  export let email;
+  export let password;
 
   const { home, signUp, signIn, editor, settings } = routes;
 

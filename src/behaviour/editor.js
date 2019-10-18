@@ -1,5 +1,3 @@
-// TODO: also update docs to add missing commands and events and explain a bit more
-
 import { INIT_EVENT } from "kingly";
 import { allRoutesViewLens, fetchAuthentication, isAuthenticated, redirectToHome, updateURL } from "./common";
 import { allRoutesUpdate, commands, editorUpdates, events, routes, routeViewLens } from "../constants";
@@ -45,8 +43,8 @@ function isEditorEditArticleRoute(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
   const splitUrl = url.split("/");
 
+  // A regexp would probably handle parsing editor/:slug in a nicer way...
   return url.startsWith(editor) && splitUrl.length === 3 && splitUrl[1].length > 0;
-  // TODO editor/:slug, do it with a regexp
 }
 
 // Transitions

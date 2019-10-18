@@ -355,7 +355,6 @@ export const articlesFilteredFixture = {
 };
 
 // Ideally we would get real data for this instead of repeating previous data
-// TODO: get fake articles for page1
 export const articlesPage1Fixture = {
   "articles": articlesFilteredFixture.articles,
   "articlesCount": 500

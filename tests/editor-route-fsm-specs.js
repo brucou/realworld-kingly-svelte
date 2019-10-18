@@ -26,8 +26,6 @@ const { RENDER_EDITOR, FETCH_AUTHENTICATION, REDIRECT, PUBLISH_ARTICLE, FETCH_AR
 
 const { home, editor } = routes;
 
-// TODO: Scenarios
-
 const hashFixture = [editor, articleSlugFixture].join('/');
 
 const UNAUTH_USER = null;

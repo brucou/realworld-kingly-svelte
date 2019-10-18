@@ -8,10 +8,10 @@ const authHeader = sessionRepository => {
   const session = sessionRepository.load();
   return session && session.token
     ? {
-        headers: {
-          Authorization: `Token ${session.token}`
-        }
+      headers: {
+        Authorization: `Token ${session.token}`
       }
+    }
     : {};
 };
 
@@ -81,6 +81,8 @@ const apiGateway = (fetch, sessionRepository) => {
   const updateArticle = ({ slug, tagList, title, body, description }) =>
     put("/articles/${slug}", { tagList, title, body, description });
 
+  const updateSettings = ({ user }) => put(`/user`, { user });
+
   return {
     fetchGlobalFeed,
     fetchUserFeed,
@@ -93,7 +95,8 @@ const apiGateway = (fetch, sessionRepository) => {
     login,
     fetchArticle,
     saveArticle,
-    updateArticle
+    updateArticle,
+    updateSettings
   };
 };
 

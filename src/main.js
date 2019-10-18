@@ -29,7 +29,9 @@ const {
   PUBLISH_ARTICLE,
   FETCH_ARTICLE,
   RENDER_EDITOR,
-  UPDATE_ARTICLE
+  UPDATE_ARTICLE,
+  UPDATE_SETTINGS,
+  LOG_OUT
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -49,7 +51,10 @@ const {
   FAILED_PUBLISHING,
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
-  FETCHED_ARTICLE
+  FETCHED_ARTICLE,
+  REMOVED_USER_SESSION,
+  UPDATED_SETTINGS,
+  FAILED_UPDATE_SETTINGS
 } = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -73,7 +78,8 @@ const {
   login,
   fetchArticle,
   saveArticle,
-  updateArticle
+  updateArticle,
+  updateSettings
 } = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
@@ -240,7 +246,24 @@ const commandHandlers = {
       .catch(({ errors }) => {
         dispatch({ [FAILED_PUBLISHING]: errors });
       });
-  }
+  },
+  [UPDATE_SETTINGS]: (dispatch, params, effectHandlers) => {
+    const {image, username, bio, email, password} = params;
+    const {updateSettings} = effectHandlers;
+
+    updateSettings({image, username, bio, email, password})
+      .then(({user}) => {
+        dispatch({[UPDATED_SETTINGS]: user});
+      })
+      .catch(({errors}) => {
+        dispatch({ [FAILED_UPDATE_SETTINGS]: errors });
+      })
+  },
+  [LOG_OUT]: (dispatch, params, effectHandlers) => {
+    const {removeUserSession} = effectHandlers;
+    removeUserSession();
+    dispatch({ [REMOVED_USER_SESSION]: void 0 });
+  },
 };
 
 const effectHandlers = {
@@ -258,7 +281,9 @@ const effectHandlers = {
   login,
   fetchArticle,
   saveArticle,
-  updateArticle
+  updateArticle,
+  removeUserSession: sessionRepository.clear,
+  updateSettings
 };
 
 const app = new App({

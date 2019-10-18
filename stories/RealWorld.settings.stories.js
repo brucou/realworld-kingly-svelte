@@ -13,10 +13,10 @@ const settingsErrorsFixture = {
   body: ["can't be blank"],
   description: ["can't be blank", "too short (minimum is 1 character)"]
 };
-const emptyFormFixture = {
+const emptyUserFixture = {
   // TODO!! this may not be a string??
   image: "",
-  username:"",
+  username:"ss",
   bio:"",
   email:"",
   password:""
@@ -32,21 +32,21 @@ const filledFormFixture = {
 storiesOf('Settings route', module)
   .add('inProgress = false, no errors, empty form', () => ({
     Component: RealWorld,
-    props: { route: settings, user: userFixture, ...emptyFormFixture, dispatch, inProgress: false, errors: null },
+    props: { route: settings, user: emptyUserFixture, dispatch, inProgress: false, errors: null },
     on: { },
   }))
   .add('inProgress = false, no errors, filled form', () => ({
     Component: RealWorld,
-    props: { route: settings, user: userFixture, ...filledFormFixture , dispatch, inProgress: false, errors: null },
+    props: { route: settings, user: filledFormFixture, dispatch, inProgress: false, errors: null },
     on: { },
   }))
   .add('inProgress = true, no errors', () => ({
     Component: RealWorld,
-    props: { route: settings, user: userFixture, ...filledFormFixture, dispatch, inProgress: true, errors: null },
+    props: { route: settings, user: filledFormFixture, dispatch, inProgress: true, errors: null },
     on: { },
   }))
   .add('inProgress = false, errors', () => ({
     Component: RealWorld,
-    props: { route: settings, user: userFixture, ...emptyFormFixture,  dispatch, inProgress: false, errors: settingsErrorsFixture },
+    props: { route: settings, user: emptyUserFixture,   dispatch, inProgress: false, errors: settingsErrorsFixture },
     on: { },
   }))

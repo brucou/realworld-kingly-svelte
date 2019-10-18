@@ -7,11 +7,7 @@
   export let errors;
   // Initial value for the form fields
   // All fields are uncontrolled here
-  export let image;
-  export let username;
-  export let bio;
-  export let email;
-  export let password;
+  export let user;
 
   const { CLICKED_LOG_OUT, CLICKED_UPDATE_SETTINGS } = events;
 
@@ -31,6 +27,12 @@
   const logout = ev => {
     dispatch({[CLICKED_LOG_OUT]: void 0})
   };
+
+$: image = user.image
+$: username = user.username
+$: bio = user.bio
+$: email = user.email
+
 </script>
 
 <div class="settings-page">

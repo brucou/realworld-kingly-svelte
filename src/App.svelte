@@ -30,7 +30,6 @@
   export let username;
   export let bio;
   export let email;
-  export let password;
 
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
@@ -59,7 +58,6 @@
       {image}
       {username}
       {bio}
-      {email]
-      {password} />
+      {email] />
   {/if}
 </Fsm>

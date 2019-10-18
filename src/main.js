@@ -8,13 +8,14 @@ import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
 import { events, commands, routes } from "./constants";
 
-const { home, signUp, signIn, editor } = routes;
+const { home, signUp, signIn, editor, settings } = routes;
 
 // Commands
 const {
   RENDER_HOME,
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
+  RENDER_SETTINGS,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,
@@ -31,7 +32,7 @@ const {
   RENDER_EDITOR,
   UPDATE_ARTICLE,
   UPDATE_SETTINGS,
-  LOG_OUT
+  LOG_OUT,
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -109,6 +110,7 @@ const commandHandlers = {
   [RENDER_SIGN_UP]: renderRoute(signUp),
   [RENDER_SIGN_IN]: renderRoute(signIn),
   [RENDER_EDITOR]: renderRoute(editor),
+  [RENDER_SETTINGS]: renderRoute(settings),
   [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
     const { page } = params;
     const { fetchGlobalFeed, fetchTags } = effectHandlers;
@@ -316,7 +318,6 @@ const app = new App({
     username: void 0,
     bio: void 0,
     email: void 0,
-    password: void 0,
 }
 });
 

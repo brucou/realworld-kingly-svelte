@@ -27,7 +27,6 @@ const { RENDER_EDITOR, FETCH_AUTHENTICATION, REDIRECT, PUBLISH_ARTICLE, FETCH_AR
 const { home, editor } = routes;
 
 // TODO: Scenarios
-// tag failed fetched article not tested? do it by hand in here, only used once
 
 const hashFixture = [editor, articleSlugFixture].join('/');
 
@@ -118,7 +117,6 @@ const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_INPUTS = [
 ].flat();
 const UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_COMMANDS = UNAUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS;
 
-// TODO: use EDITED_TAG with one char
 // Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills
 // in the fields, publishes the article, and is redirected to the article page
 const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES = ` Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills in the fields, publishes the article, and is redirected to the article page`;
@@ -316,28 +314,19 @@ const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLI
   ]
 ]);
 
-
-// Authenticated user navigates to sign in route and is redirected to home route
-// const AUTH_USER_ON_SIGNIN_SEES_FORM = `Authenticated user navigates to sign in route and is redirected to home
-// route`; const AUTH_USER_ON_SIGNIN_SEES_FORM_INPUTS = [ AUTH_USER_ON_EDITOR_INPUTS, ].flat(); const
-// AUTH_USER_ON_SIGNIN_SEES_FORM_COMMANDS = AUTH_USER_ON_EDITOR_COMMANDS(0);  // Unauthenticated user navigates to sign
-// in route and sees sign in form, successfully signs and is redirected to home const
-// UNAUTH_USER_ON_SIGNIN_SEES_FORM_SIGNS_IN_AND_SEES_HOME_FEED = `Unauthenticated user navigates to sign in route and
-// sees sign in form, successfully signs and is redirected to home and sees home feed`; const
-// UNAUTH_USER_ON_SIGNIN_SEES_FORM_SIGNS_IN_AND_SEES_HOME_FEED_INPUTS= [ UNAUTH_USER_ON_EDITOR_INPUTS,
-// {[CLICKED_SIGN_IN]: signInUserFixture}, {[AUTH_CHECKED]: null}, {[SUCCEEDED_SIGN_IN]: signedInUserFixture} ].flat();
-// const UNAUTH_USER_ON_SIGNIN_SEES_FORM_SIGNS_IN_AND_SEES_HOME_FEED_COMMANDS = UNAUTH_USER_ON_EDITOR_COMMANDS.concat([
-// [ {[RENDER_EDITOR]: {route: signIn, inProgress:true, errors: null}}, {[FETCH_AUTHENTICATION]: void 0}, ], [
-// {[SIGN_IN]: signInUserFixture}], [ {[REDIRECT]: home}, AUTH_USER_ON_EDITOR_COMMANDS(0).flat() ].flat() ]);  //
-// Unauthenticated user navigates to sign in route and sees sign in form, fails to sign in, sees error messages const
-// UNAUTH_USER_ON_SIGNIN_SEES_FORM_FAILS_SIGN_IN_AND_SEES_FORM_WITH_ERRORS = `Unauthenticated user navigates to sign in
-// route and sees sign in form, fails to sign in, sees error messages`; const
-// UNAUTH_USER_ON_SIGNIN_SEES_FORM_FAILS_SIGN_IN_AND_SEES_FORM_WITH_ERRORS_INPUTS= [ UNAUTH_USER_ON_EDITOR_INPUTS,
-// {[CLICKED_SIGN_IN]: signInUserFixture}, {[AUTH_CHECKED]: null}, {[FAILED_SIGN_IN]: signInErrorsFixture} ].flat();
-// const UNAUTH_USER_ON_SIGNIN_SEES_FORM_FAILS_SIGN_IN_AND_SEES_FORM_WITH_ERRORS_COMMANDS=
-// UNAUTH_USER_ON_EDITOR_COMMANDS.concat([ [ {[RENDER_EDITOR]: {route: signIn, inProgress:true, errors: null}},
-// {[FETCH_AUTHENTICATION]: void 0}, ], [  {[SIGN_IN]: signInUserFixture}], [ {[FETCH_AUTHENTICATION]: void 0},
-// {[RENDER_EDITOR]: {route: signIn, inProgress:false, errors: signInErrorsFixture}}, ].flat() ]);
+// tag failed fetched article not tested? do it by hand in here, only used once
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_FAILED_FETCH_AND_IS_REDIRECTED = `Authenticated user navigates to the editor route (edit article), and is redirected to the home route, as the article could not be fetched`;
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_FAILED_FETCH_AND_IS_REDIRECTED_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: hashFixture } },
+  { [FAILED_FETCH_ARTICLE]: fetchedArticleFixture },
+].flat();
+const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_FAILED_FETCH_AND_IS_REDIRECTED_COMMANDS = [
+  [{ [FETCH_ARTICLE]: articleSlugFixture }],
+  [
+      { [REDIRECT]: home },
+      AUTH_USER_ON_HOME_COMMANDS(0)[0]
+  ].flat(),
+];
 
 const userStories = [
   [
@@ -359,6 +348,11 @@ const userStories = [
     AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS,
     AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS_INPUTS,
     AUTH_USER_ON_EDITOR_EDIT_ARTICLE_SEES_FORM_ADDS_TWO_TAGS_REMOVES_ONE_PUBLISHES_EMPTY_SEES_ERRORS_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_EDITOR_EDIT_ARTICLE_FAILED_FETCH_AND_IS_REDIRECTED,
+    AUTH_USER_ON_EDITOR_EDIT_ARTICLE_FAILED_FETCH_AND_IS_REDIRECTED_INPUTS,
+    AUTH_USER_ON_EDITOR_EDIT_ARTICLE_FAILED_FETCH_AND_IS_REDIRECTED_COMMANDS
   ]
 ];
 

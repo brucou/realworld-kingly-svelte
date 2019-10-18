@@ -8,26 +8,27 @@ const authHeader = sessionRepository => {
   const session = sessionRepository.load();
   return session && session.token
     ? {
-      headers: {
-        Authorization: `Token ${session.token}`
+        headers: {
+          Authorization: `Token ${session.token}`
+        }
       }
-    }
     : {};
 };
 
 const isJson = response => response.headers.get("content-type").indexOf("application/json") !== -1;
 
 const configureFetch = (fetch, sessionRepository) => (url, options = {}) => {
-  return fetch(API_ROOT + url, mergeDeepWith(concat, authHeader(sessionRepository), options))
-    .then(response => {
-    if (isJson(response)) {
-      if (response.status === 200) {
-        return response.json();
-      } else {
-        return response.json().then(body => Promise.reject(body));
+  return fetch(API_ROOT + url, mergeDeepWith(concat, authHeader(sessionRepository), options)).then(
+    response => {
+      if (isJson(response)) {
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          return response.json().then(body => Promise.reject(body));
+        }
       }
     }
-  });
+  );
 };
 
 const pagination = ({ page, limit }) => `limit=${limit}&offset=${page * 10}`;

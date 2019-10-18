@@ -11,12 +11,7 @@
   export let currentTag;
   export let tagList;
 
-  const {
-    CLICKED_PUBLISH,
-    ADDED_TAG,
-    REMOVED_TAG,
-    EDITED_TAG
-  } = events;
+  const { CLICKED_PUBLISH, ADDED_TAG, REMOVED_TAG, EDITED_TAG } = events;
 
   const watchForEnter = ev => {
     if (ev.keyCode === 13) {
@@ -27,7 +22,7 @@
     }
   };
   const updateCurrentTag = ev => {
-    dispatch({[EDITED_TAG]: ev.target.value})
+    dispatch({ [EDITED_TAG]: ev.target.value });
   };
   const removeTag = tag => ev => dispatch({ [REMOVED_TAG]: tag });
   const onSubmit = ev => {

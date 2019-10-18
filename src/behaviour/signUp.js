@@ -94,7 +94,7 @@ export function renderSignUpForm(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER_SIGN_UP,
-        params: { route: signUp, user:null, inProgress: false, errors }
+        params: { route: signUp, user: null, inProgress: false, errors }
       }
     ]
   };

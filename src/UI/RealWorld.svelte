@@ -5,6 +5,7 @@
   import SignUp from "./SignUp.svelte";
   import SignIn from "./SignIn.svelte";
   import Editor from "./Editor.svelte";
+  import Settings from "./Settings.svelte";
   import { routes } from "../constants";
 
   // Props
@@ -28,28 +29,37 @@
   export let body;
   export let currentTag;
   export let tagList;
+  // Settings props
+      export let image;
+      export let username;
+      export let bio;
+      export let email;
+      export let password;
 
-  const { home, signUp, signIn, editor } = routes;
+
+  const { home, signUp, signIn, editor, settings } = routes;
 
   // Component which will be displayed depending on the route
-  const componentRoutes= {
+  const componentRoutes = {
     [home]: Home,
     [signUp]: SignUp,
     [signIn]: SignIn,
-    [editor]: Editor
+    [editor]: Editor,
+    [settings]: Settings
   };
   // Props for the component which will be displayed
-  $: component = componentRoutes[route]
-  $: componentRoutesProps={
-    [home]: {user, tags, articles, page, activeFeed, selectedTag, favoriteStatus},
-    [signUp]: {inProgress, errors},
-    [signIn]: {inProgress, errors},
-    [editor]: {inProgress, errors, title, description, body, tagList, currentTag},
+  $: component = componentRoutes[route];
+  $: componentRoutesProps = {
+    [home]: { user, tags, articles, page, activeFeed, selectedTag, favoriteStatus },
+    [signUp]: { inProgress, errors },
+    [signIn]: { inProgress, errors },
+    [editor]: { inProgress, errors, title, description, body, tagList, currentTag },
+    [settings]: { inProgress, errors, image, username, bio, email, password }
   };
-  $: componentProps = componentRoutesProps[route]
+  $: componentProps = componentRoutesProps[route];
 </script>
 
 <div>
   <Header {user} />
-  <svelte:component this="{component}" {...componentProps}  {dispatch} />
+  <svelte:component this={component} {...componentProps} {dispatch} />
 </div>

@@ -12,10 +12,7 @@ const { signIn } = routes;
 export const signInRouteViewLens = routeViewLens(signIn);
 
 const { ROUTE_CHANGED, AUTH_CHECKED, CLICKED_SIGN_IN, FAILED_SIGN_IN, SUCCEEDED_SIGN_IN } = events;
-const {
-  RENDER_SIGN_IN,
-  SIGN_IN
-} = commands;
+const { RENDER_SIGN_IN, SIGN_IN } = commands;
 
 export const signInStates = {
   "fetching-authentication-sign-in-form-entry": "",
@@ -98,7 +95,7 @@ export function renderSignInForm(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER_SIGN_IN,
-        params: { route: signIn, user:null, inProgress: false, errors }
+        params: { route: signIn, user: null, inProgress: false, errors }
       }
     ]
   };

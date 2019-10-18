@@ -13,7 +13,6 @@ const signInErrorsFixture = {
 }
 
 storiesOf('Sign in route', module)
-storiesOf('Sign in route', module)
   .add('inProgress = false, no errors', () => ({
     Component: RealWorld,
     props: { route: signIn, user: null, dispatch, inProgress: false, errors: null },

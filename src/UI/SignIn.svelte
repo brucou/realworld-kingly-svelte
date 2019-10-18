@@ -7,7 +7,7 @@
   export let inProgress;
   export let errors;
 
-  const {    CLICKED_SIGN_IN  } = events;
+  const { CLICKED_SIGN_IN } = events;
   const onSubmit = ev => {
     ev.preventDefault();
     const formData = new FormData(ev.target);

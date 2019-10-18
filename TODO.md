@@ -1,4 +1,7 @@
 # TODO
+- DOC: find a nomenclatur for events, should refer to the UI domain, 
+  - i.e. CLICKED_LOG_OUT, more than LOG_OUT (command) or LOGGED_OUT (it is not logged out yet...)
+  - note that this may require having to change the events I have now, but that is easy now
 - DOC: link user scenarios and paths in the machine
 - DOC: the merge of props... hidden stuff here. 
   - The route must be configured and updated!!

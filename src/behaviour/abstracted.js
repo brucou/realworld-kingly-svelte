@@ -33,7 +33,7 @@
  * @property {ActionFactory} fetchAuth
  */
 
-import { isNot } from "../shared/helpers"
+import { isNot } from "../shared/helpers";
 
 /**
  * @param {{events: AuthFormEvents, actionFactories: AuthFormActionFactories, states: AuthFormStates,

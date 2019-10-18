@@ -286,8 +286,14 @@ const app = new App({
     description: void 0,
     body: void 0,
     currentTag: void 0,
-    tagList: void 0
-  }
+    tagList: void 0,
+image: void 0,
+username: void 0,
+bio: void 0,
+email: void 0,
+password: void 0,
+
+}
 });
 
 // kick start the app with the routing event corresponding to the current route

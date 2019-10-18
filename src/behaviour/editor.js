@@ -1,6 +1,19 @@
 import { INIT_EVENT } from "kingly";
-import { allRoutesViewLens, fetchAuthentication, isAuthenticated, redirectToHome, updateURL } from "./common";
-import { allRoutesUpdate, commands, editorUpdates, events, routes, routeViewLens } from "../constants";
+import {
+  allRoutesViewLens,
+  fetchAuthentication,
+  isAuthenticated,
+  redirectToHome,
+  updateURL
+} from "./common";
+import {
+  allRoutesUpdate,
+  commands,
+  editorUpdates,
+  events,
+  routes,
+  routeViewLens
+} from "../constants";
 import { getSlugFromHash, isNot } from "../shared/helpers";
 import { getAuthenticatedFormPageTransitions } from "./abstracted";
 
@@ -199,7 +212,7 @@ function renderTagField(extendedState, eventData, settings) {
   // with past props and thus only act on the props passed in the render
   // In both cases, we are good, the behaviour is independent from the UI library
   return {
-    updates: editorUpdates([{currentTag:tag}]),
+    updates: editorUpdates([{ currentTag: tag }]),
     outputs: [{ command: RENDER_EDITOR, params: { currentTag: tag } }]
   };
 }
@@ -266,7 +279,7 @@ function fetchAuthenticationAndRenderInProgressAndUpdateFormData(
           title,
           description,
           body,
-          tagList,
+          tagList
         }
       },
       fetchAuthentication(extendedState, eventData, settings).outputs

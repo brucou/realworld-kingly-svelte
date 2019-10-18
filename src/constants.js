@@ -9,7 +9,8 @@ export const routes = {
   signUp: "/register",
   allRoutes: "all routes",
   signIn: "/login",
-  editor: "/editor"
+  editor: "/editor",
+  settings: "/settings"
 };
 
 export function routeViewLens(route) {
@@ -68,7 +69,9 @@ export const events = {
   FAILED_PUBLISHING: "FAILED_PUBLISHING",
   SUCCEEDED_PUBLISHING: "SUCCEEDED_PUBLISHING",
   FAILED_FETCH_ARTICLE: "FAILED_FETCH_ARTICLE",
-  FETCHED_ARTICLE: "FETCHED_ARTICLE"
+  FETCHED_ARTICLE: "FETCHED_ARTICLE",
+  CLICKED_LOG_OUT:"CLICKED_LOG_OUT",
+  CLICKED_UPDATE_SETTINGS: "CLICKED_UPDATE_SETTINGS"
 };
 
 export const commands = {

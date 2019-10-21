@@ -106,13 +106,12 @@ const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_COMMANDS = [
   [{ [FETCH_AUTHENTICATION]: void 0 },],
   [{ [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: false, errors: null } },],
   [
-    { [AUTH_CHECKED]: void 0 },
+    { [FETCH_AUTHENTICATION]: void 0 },
     { [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: true, errors: null } },
   ],
   [{ [UPDATE_SETTINGS]: { ...updatedSettingsFixture } },],
   [{ [REDIRECT]: `/@${updatedSettingsFixture.username}` },]
 ];
-
 
 const userStories = [
   [

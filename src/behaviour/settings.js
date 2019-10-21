@@ -97,7 +97,7 @@ function resetSettingsRouteStateAndFetchAuth(extendedState, eventData, settings)
   };
 }
 
-function renderSettingsForm(extendedState, eventData, settings) {
+function renderSettingsForm(extendedState, eventData, fsmSettings) {
   const user = eventData;
 
   return {
@@ -111,12 +111,8 @@ function renderSettingsForm(extendedState, eventData, settings) {
           // which is the correct behaviour
           user,
           route: settings,
-          bio: user.bio,
-          email: user.email,
-          image: user.image,
-          username: user.username,
-          password: "",
           inProgress: false,
+          errors: null,
         }
       }
     ]

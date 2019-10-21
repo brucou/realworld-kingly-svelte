@@ -58,6 +58,6 @@
       {image}
       {username}
       {bio}
-      {email] />
+      {email} />
   {/if}
 </Fsm>

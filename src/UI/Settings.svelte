@@ -86,8 +86,7 @@ $: email = user.email
                 name="password"
                 class="form-control form-control-lg"
                 type="password"
-                placeholder="New Password"
-                value={password} />
+                placeholder="New Password" />
             </fieldset>
 
             <button

@@ -26,10 +26,6 @@
   export let currentTag;
   export let tagList;
   // Settings props
-  export let image;
-  export let username;
-  export let bio;
-  export let email;
 
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
@@ -54,10 +50,6 @@
       {description}
       {body}
       {currentTag}
-      {tagList}
-      {image}
-      {username}
-      {bio}
-      {email} />
+      {tagList} />
   {/if}
 </Fsm>

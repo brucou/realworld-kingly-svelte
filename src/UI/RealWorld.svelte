@@ -30,10 +30,6 @@
   export let currentTag;
   export let tagList;
   // Settings props
-  export let image;
-  export let username;
-  export let bio;
-  export let email;
 
   const { home, signUp, signIn, editor, settings } = routes;
 
@@ -52,7 +48,7 @@
     [signUp]: { inProgress, errors },
     [signIn]: { inProgress, errors },
     [editor]: { inProgress, errors, title, description, body, tagList, currentTag },
-    [settings]: { user, inProgress, errors, image, username, bio, email }
+    [settings]: { user, inProgress, errors }
   };
   $: componentProps = componentRoutesProps[route];
 </script>

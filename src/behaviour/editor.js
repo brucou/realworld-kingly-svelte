@@ -43,11 +43,11 @@ export const editorStates = {
 };
 
 export const initialEditorRouteState = {
-  title: "",
-  description: "",
   body: "",
-  tagList: [],
   currentTag: "",
+  description: "",
+  title: "",
+  tagList:[],
   errors: null
 };
 

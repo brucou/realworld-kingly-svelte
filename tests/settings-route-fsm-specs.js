@@ -25,10 +25,8 @@ const {
   ROUTE_CHANGED,
   AUTH_CHECKED,
   SUCCEEDED_PUBLISHING,
-  FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE,
   CLICKED_UPDATE_SETTINGS,
-  REMOVED_USER_SESSION,
   UPDATED_SETTINGS,
   FAILED_UPDATE_SETTINGS
 } = events;
@@ -48,7 +46,7 @@ const updatedUserFixture = {
   email: "the@dust.uh",
   password: "123456"
 };
-const updatedSettingsFixture = {  ...updatedUserFixture,  password: "123456"};
+const updatedSettingsFixture = { ...updatedUserFixture, password: "123456" };
 
 // TODO: scenarios
 // Authenticated user navigates to settings route, sees form, fails to update settings and sees errors
@@ -78,30 +76,6 @@ const AUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS = [
     },
   ]
 ];
-const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_INPUTS = [
-  { [ROUTE_CHANGED]: { hash: hashFixture } },
-  { [FETCHED_ARTICLE]: fetchedArticleFixture },
-  { [AUTH_CHECKED]: userFixture }
-];
-const AUTH_USER_ON_EDITOR_EDIT_ARTICLE_COMMANDS = [
-  [{ [FETCH_ARTICLE]: articleSlugFixture }],
-  [{ [FETCH_AUTHENTICATION]: void 0 }],
-  [
-    {
-      [RENDER_EDITOR]: {
-        route: editor,
-        user: userFixture,
-        inProgress: false,
-        errors: null,
-        title: fetchedArticleFixture.title,
-        description: fetchedArticleFixture.description,
-        body: fetchedArticleFixture.body,
-        currentTag: "",
-        tagList: fetchedArticleFixture.tagList,
-      }
-    }
-  ]
-];
 
 // Unauthenticated user navigates to the settings route and is redirected to the home route
 const UNAUTH_USER_ON_SETTINGS_IS_REDIRECTED = `Unauthenticated user navigates to the settings route and is redirected to the home route`;
@@ -119,8 +93,8 @@ const UNAUTH_USER_ON_SETTINGS_IS_REDIRECTED_COMMANDS = [
 
 // Authenticated user navigates to settings route, sees form, successfully updates settings and is redirected to the
 // user profile page
-const AUTH_USER_ON_EDITOR_UPDATES_SETTINGS = `Authenticated user navigates to settings route, sees form, successfully updates settings and is redirected to the user profile page`;
-const AUTH_USER_ON_EDITOR_UPDATES_SETTINGS_INPUTS = [
+const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS = `Authenticated user navigates to settings route, sees form, successfully updates settings and is redirected to the user profile page`;
+const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_INPUTS = [
   { [ROUTE_CHANGED]: { hash: settings } },
   { [AUTH_CHECKED]: userFixture },
   { [CLICKED_UPDATE_SETTINGS]: updatedSettingsFixture },
@@ -128,135 +102,17 @@ const AUTH_USER_ON_EDITOR_UPDATES_SETTINGS_INPUTS = [
   { [UPDATED_SETTINGS]: updatedUserFixture },
 ];
 
-const AUTH_USER_ON_EDITOR_UPDATES_SETTINGS_COMMANDS = [
+const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_COMMANDS = [
   [{ [FETCH_AUTHENTICATION]: void 0 },],
-  [
-    { [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: false, errors: null } },
-  ],
+  [{ [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: false, errors: null } },],
   [
     { [AUTH_CHECKED]: void 0 },
     { [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: true, errors: null } },
   ],
-  [
-    { [UPDATE_SETTINGS]: { ...updatedSettingsFixture } },
-  ],
-  // TODO: update when I know the route
-  [
-    { [REDIRECT]: void 0 },
-  ]
+  [{ [UPDATE_SETTINGS]: { ...updatedSettingsFixture } },],
+  [{ [REDIRECT]: `/@${updatedSettingsFixture.username}` },]
 ];
 
-// Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills
-// in the fields, publishes the article, and is redirected to the article page
-const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES = ` Authenticated user navigates to the editor route (new article), sees the editor form, adds twice the same tag, fills in the fields, publishes the article, and is redirected to the article page`;
-const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES_INPUTS = [
-  AUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS,
-  { [EDITED_TAG]: newArticleFixture.tagList[0][0] },
-  { [EDITED_TAG]: newArticleFixture.tagList[0] },
-  { [ADDED_TAG]: newArticleFixture.tagList[0] },
-  { [EDITED_TAG]: newArticleFixture.tagList[0][0] },
-  { [EDITED_TAG]: newArticleFixture.tagList[0] },
-  { [ADDED_TAG]: newArticleFixture.tagList[0] },
-  { [CLICKED_PUBLISH]: newArticleFixture },
-  { [AUTH_CHECKED]: userFixture },
-  { [SUCCEEDED_PUBLISHING]: createdNewArticleFixture },
-].flat();
-const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISHES_COMMANDS = AUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS.concat([
-  [
-    {
-      [RENDER_EDITOR]: {
-        user: userFixture,
-        inProgress: false,
-        errors: null,
-        title: "",
-        description: "",
-        body: "",
-        tagList: [],
-        currentTag: newArticleFixture.tagList[0][0],
-        route: editor,
-      }
-    }
-  ],
-  [
-    {
-      [RENDER_EDITOR]: {
-        user: userFixture,
-        inProgress: false,
-        errors: null,
-        title: "",
-        description: "",
-        body: "",
-        tagList: [],
-        currentTag: newArticleFixture.tagList[0],
-        route: editor,
-      }
-    }
-  ],
-  [
-    {
-      [RENDER_EDITOR]: {
-        user: userFixture,
-        inProgress: false,
-        errors: null,
-        title: "",
-        description: "",
-        body: "",
-        tagList: newArticleFixture.tagList,
-        currentTag: "",
-        route: editor,
-      }
-    }
-  ],
-  [
-    {
-      [RENDER_EDITOR]: {
-        user: userFixture,
-        inProgress: false,
-        errors: null,
-        title: "",
-        description: "",
-        body: "",
-        tagList: newArticleFixture.tagList,
-        currentTag: newArticleFixture.tagList[0][0],
-        route: editor,
-      }
-    }
-  ],
-  [
-    {
-      [RENDER_EDITOR]: {
-        user: userFixture,
-        inProgress: false,
-        errors: null,
-        title: "",
-        description: "",
-        body: "",
-        tagList: newArticleFixture.tagList,
-        currentTag: newArticleFixture.tagList[0],
-        route: editor,
-      }
-    }
-  ],
-  [],
-  [
-    {
-      [RENDER_EDITOR]: {
-        route: editor,
-        user: userFixture,
-        inProgress: true,
-        errors: null,
-        title: newArticleFixture.title,
-        description: newArticleFixture.description,
-        body: newArticleFixture.body,
-        tagList: newArticleFixture.tagList,
-        currentTag: newArticleFixture.tagList[0],
-      }
-    },
-    { [FETCH_AUTHENTICATION]: void 0 }
-  ],
-  [{ [PUBLISH_ARTICLE]: newArticleFixture },],
-  [{ [REDIRECT]: '/article/' + createdNewArticleFixture.slug },]
-]);
 
 const userStories = [
   [
@@ -265,9 +121,9 @@ const userStories = [
     UNAUTH_USER_ON_SETTINGS_IS_REDIRECTED_COMMANDS
   ],
   [
-    AUTH_USER_ON_EDITOR_UPDATES_SETTINGS,
-    AUTH_USER_ON_EDITOR_UPDATES_SETTINGS_INPUTS,
-    AUTH_USER_ON_EDITOR_UPDATES_SETTINGS_COMMANDS
+    AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS,
+    AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_INPUTS,
+    AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_COMMANDS
   ]
 ];
 

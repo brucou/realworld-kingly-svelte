@@ -29,6 +29,7 @@ export const homeUpdates = routeUpdateLens(routes.home);
 export const signInUpdates = routeUpdateLens(routes.signIn);
 export const signUpUpdates = routeUpdateLens(routes.signUp);
 export const editorUpdates = routeUpdateLens(routes.editor);
+export const settingsUpdates = routeUpdateLens(routes.settings);
 
 export function allRoutesUpdate(updates) {
   return [[routes.allRoutes, updates]];
@@ -72,9 +73,8 @@ export const events = {
   FETCHED_ARTICLE: "FETCHED_ARTICLE",
   CLICKED_LOG_OUT:"CLICKED_LOG_OUT",
   CLICKED_UPDATE_SETTINGS: "CLICKED_UPDATE_SETTINGS",
-  REMOVED_USER_SESSION: "REMOVED_USER_SESSION",
   UPDATED_SETTINGS: "UPDATED_SETTINGS",
-  FAILED_UPDATE_SETTINGS: "UPDATED_SETTINGS"
+  FAILED_UPDATE_SETTINGS: "FAILED_UPDATE_SETTINGS"
 };
 
 export const commands = {

@@ -8,6 +8,8 @@ import './settings-route-fsm-specs'
 
 QUnit.dump.maxDepth = 50;
 
+QUnit.module("Testing QUnit", {});
+
 QUnit.test("QUnit works", function exec_test(assert) {
   assert.ok(true)
 });

@@ -6,11 +6,12 @@ import { initialSignUpRouteState, signUpStates, signUpTransitions } from "./sign
 import { cleanHash } from "../shared/helpers";
 import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
+import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;
 
-const { home, allRoutes, signUp, signIn, editor } = routes;
+const { home, allRoutes, signUp, signIn, editor, settings } = routes;
 
 const INIT = "start";
 const initialControlState = INIT;
@@ -19,7 +20,8 @@ const initialExtendedState = {
   [home]: initialHomeRouteState,
   [allRoutes]: initialAllRoutesState,
   [signUp]: initialSignUpRouteState,
-  [editor]: initialEditorRouteState
+  [editor]: initialEditorRouteState,
+  [settings]: initialSettingsRouteState
 };
 
 const states = {
@@ -28,7 +30,8 @@ const states = {
   home: homeStates,
   signUp: signUpStates,
   signIn: signInStates,
-  editor: editorStates
+  editor: editorStates,
+  settings: settingsStates
 };
 
 // Guards
@@ -45,6 +48,7 @@ export const isHomeRoute = isRoute(home);
 export const isSignUpRoute = isRoute(signUp);
 export const isSignInRoute = isRoute(signIn);
 export const isEditorRoute = isRoute(editor);
+export const isSettingsRoute = isRoute(settings);
 
 /** @type {Array<Transition>} */
 const transitions = [
@@ -56,13 +60,15 @@ const transitions = [
       { predicate: isHomeRoute, to: "home", action: ACTION_IDENTITY },
       { predicate: isSignUpRoute, to: "signUp", action: ACTION_IDENTITY },
       { predicate: isSignInRoute, to: "signIn", action: ACTION_IDENTITY },
-      { predicate: isEditorRoute, to: "editor", action: ACTION_IDENTITY }
+      { predicate: isEditorRoute, to: "editor", action: ACTION_IDENTITY },
+      { predicate: isSettingsRoute, to: "settings", action: ACTION_IDENTITY }
     ]
   },
   homeTransitions,
   signUpTransitions,
   signInTransitions,
-  editorTransitions
+  editorTransitions,
+  settingsTransitions
 ].flat();
 
 /**

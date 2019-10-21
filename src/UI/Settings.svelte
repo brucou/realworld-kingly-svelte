@@ -101,7 +101,7 @@ $: email = user.email
 
         <hr />
 
-        <button class="btn btn-outline-danger" onclick={logout}>Or click here to logout.</button>
+        <button class="btn btn-outline-danger" on:click={logout}>Or click here to logout.</button>
       </div>
     </div>
   </div>

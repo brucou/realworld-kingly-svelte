@@ -145,6 +145,17 @@ Integration tests justification:
   - EXPLAIN THAT, AS IT IS A CONFUSION FOR ME, IMAGINE THE REST!!!!!
   - PUT USER = NULL in renderForm in sing in and sign up and repass tests!!
   
+- UI tests
+  - I often forget to check that button clicks work correctly
+    - resulting in not detecting that the form submit did not work
+
 ## Try to find these bugs with PBT
 - editor route displays sign up sign in and not new article!
 - ??
+
+## Whn something odoes not work
+- can be UI tests wrong
+- can be machine tests wrong
+- can be commands wrong
+  - happened with wrong return from promise not {errors} but errors
+- can be integration wrong, i.e. the rest of the app interaces (routing etc.) 

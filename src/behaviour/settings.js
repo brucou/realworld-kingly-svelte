@@ -98,6 +98,7 @@ function resetSettingsRouteStateAndFetchAuth(extendedState, eventData, settings)
 }
 
 function renderSettingsForm(extendedState, eventData, fsmSettings) {
+  const { errors} = settingsViewLens(extendedState);
   const user = eventData;
 
   return {
@@ -112,7 +113,7 @@ function renderSettingsForm(extendedState, eventData, fsmSettings) {
           user,
           route: settings,
           inProgress: false,
-          errors: null,
+          errors
         }
       }
     ]
@@ -167,7 +168,6 @@ function renderSettingsFormWithErrorsAndFetchAuth(extendedState, eventData, sett
 function updateUrlAndRedirectToProfilePage(extendedState, eventData, settings) {
   const user = eventData;
   const redirectTo = `/@${user.username}`;
-  debugger
 
   return {
     updates: allRoutesUpdate([{ url: redirectTo }]),

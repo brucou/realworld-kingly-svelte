@@ -252,9 +252,8 @@ const commandHandlers = {
   [UPDATE_SETTINGS]: (dispatch, params, effectHandlers) => {
     const {image, username, bio, email, password} = params;
     const {updateSettings} = effectHandlers;
-    debugger
 
-    updateSettings({image, username, bio, email, password})
+    updateSettings({user: {image, username, bio, email, password}})
       .then(({user}) => {
         dispatch({[UPDATED_SETTINGS]: user});
       })

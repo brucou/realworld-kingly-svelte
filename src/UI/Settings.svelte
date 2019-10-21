@@ -21,6 +21,7 @@
     const bio = formData.get("bio");
     const email = formData.get("email");
     const password = formData.get("password");
+    console.log(`updateSettings: dispatching`, { image, username, bio, email, password })
     dispatch({ [CLICKED_UPDATE_SETTINGS]: { image, username, bio, email, password } });
   };
 
@@ -43,7 +44,7 @@ $: email = user.email
 
         <ListErrors {errors} />
 
-        <form onsubmit={updateSettings}>
+        <form on:submit="{updateSettings}">
           <fieldset>
             <fieldset class="form-group">
               <input

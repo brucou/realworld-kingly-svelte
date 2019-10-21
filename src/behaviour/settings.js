@@ -41,7 +41,6 @@ export const initialSettingsRouteState = {
 
 // Transitions
 
-// TODO: add log out !!
 export const settingsTransitions = [
   {
     from: "settings",
@@ -168,6 +167,7 @@ function renderSettingsFormWithErrorsAndFetchAuth(extendedState, eventData, sett
 function updateUrlAndRedirectToProfilePage(extendedState, eventData, settings) {
   const user = eventData;
   const redirectTo = `/@${user.username}`;
+  debugger
 
   return {
     updates: allRoutesUpdate([{ url: redirectTo }]),

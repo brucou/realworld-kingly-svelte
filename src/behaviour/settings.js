@@ -85,7 +85,8 @@ function logOutAndRedirectHome(extendedState, eventData, settings) {
   return {
     updates: allRoutesUpdate([{ url: home }]),
     outputs: [
-      {command: LOG_OUT, params: void 0}
+      {command: LOG_OUT, params: void 0},
+      {command: REDIRECT, params: home}
     ]
   };
 }

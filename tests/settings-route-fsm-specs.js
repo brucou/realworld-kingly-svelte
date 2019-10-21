@@ -4,9 +4,7 @@ import { commands, events, routes } from "../src/constants"
 import { userFixture, } from "./fixtures/user"
 import { runUserStories } from "./common"
 import { UNAUTH_USER_ON_HOME_COMMANDS } from "./home-route-fsm.specs"
-import {
-  articleSlugFixture, createdNewArticleFixture, fetchedArticleFixture, newArticleFixture
-} from "./fixtures/article"
+import { settingsErrorsFixture } from "./fixtures/settings"
 
 QUnit.module("Testing settings route fsm", {});
 
@@ -14,9 +12,6 @@ QUnit.module("Testing settings route fsm", {});
 const {
   FETCH_AUTHENTICATION,
   REDIRECT,
-  PUBLISH_ARTICLE,
-  FETCH_ARTICLE,
-  RENDER_EDITOR,
   UPDATE_SETTINGS,
   LOG_OUT,
   RENDER_SETTINGS,
@@ -24,21 +19,13 @@ const {
 const {
   ROUTE_CHANGED,
   AUTH_CHECKED,
-  SUCCEEDED_PUBLISHING,
-  FETCHED_ARTICLE,
   CLICKED_UPDATE_SETTINGS,
   UPDATED_SETTINGS,
-  FAILED_UPDATE_SETTINGS
+  FAILED_UPDATE_SETTINGS,
+  CLICKED_LOG_OUT
 } = events;
 
 const { home, settings } = routes;
-const settingsFixture = {
-  image: userFixture.image,
-  username: userFixture.username,
-  bio: userFixture.bio,
-  email: userFixture.email,
-  password: ""
-};
 const updatedUserFixture = {
   image: "another",
   username: "one",
@@ -48,34 +35,7 @@ const updatedUserFixture = {
 };
 const updatedSettingsFixture = { ...updatedUserFixture, password: "123456" };
 
-// TODO: scenarios
-// Authenticated user navigates to settings route, sees form, fails to update settings and sees errors
-// Authenticated user navigates to settings route, sees form, and logs out
-
 const UNAUTH_USER = null;
-
-const AUTH_USER_ON_EDITOR_NEW_ARTICLE_INPUTS = [
-  { [ROUTE_CHANGED]: { hash: settings } },
-  { [AUTH_CHECKED]: userFixture }
-];
-const AUTH_USER_ON_EDITOR_NEW_ARTICLE_COMMANDS = [
-  [{ [FETCH_AUTHENTICATION]: void 0 },],
-  [
-    {
-      [RENDER_EDITOR]: {
-        route: settings,
-        user: userFixture,
-        inProgress: false,
-        errors: null,
-        title: "",
-        description: "",
-        body: "",
-        currentTag: "",
-        tagList: [],
-      }
-    },
-  ]
-];
 
 // Unauthenticated user navigates to the settings route and is redirected to the home route
 const UNAUTH_USER_ON_SETTINGS_IS_REDIRECTED = `Unauthenticated user navigates to the settings route and is redirected to the home route`;
@@ -113,6 +73,52 @@ const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_COMMANDS = [
   [{ [REDIRECT]: `/@${updatedSettingsFixture.username}` },]
 ];
 
+// Authenticated user navigates to settings route, sees form, fails to update settings and sees errors
+const AUTH_USER_ON_SETTINGS_FAILS_UPDATE_SETTINGS = `Authenticated user navigates to settings route, sees form, fails to update settings and sees errors`;
+const AUTH_USER_ON_SETTINGS_FAILS_UPDATE_SETTINGS_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: settings } },
+  { [AUTH_CHECKED]: userFixture },
+  { [CLICKED_UPDATE_SETTINGS]: updatedSettingsFixture },
+  { [AUTH_CHECKED]: userFixture },
+  { [FAILED_UPDATE_SETTINGS]: settingsErrorsFixture },
+];
+
+const AUTH_USER_ON_SETTINGS_FAILS_UPDATE_SETTINGS_COMMANDS = [
+  [{ [FETCH_AUTHENTICATION]: void 0 },],
+  [{ [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: false, errors: null } },],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+    { [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: true, errors: null } },
+  ],
+  [{ [UPDATE_SETTINGS]: { ...updatedSettingsFixture } },],
+  [
+    {
+      [RENDER_SETTINGS]: {
+        route: settings, user: userFixture, inProgress: false, errors: settingsErrorsFixture
+      }
+    },
+    { [FETCH_AUTHENTICATION]: void 0 }
+  ]
+];
+
+// Authenticated user navigates to settings route, sees form, and logs out
+const AUTH_USER_ON_SETTINGS_AND_LOGS_OUT = `Authenticated user navigates to settings route, sees form, and logs out`;
+const AUTH_USER_ON_SETTINGS_AND_LOGS_OUT_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: settings } },
+  { [AUTH_CHECKED]: userFixture },
+  { [CLICKED_LOG_OUT]: void 0 }
+];
+
+const AUTH_USER_ON_SETTINGS_AND_LOGS_OUT_COMMANDS = [
+  [{ [FETCH_AUTHENTICATION]: void 0 },],
+  [{ [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: false, errors: null } },],
+  [
+    { [LOG_OUT]: void 0 },
+    { [REDIRECT]: home },
+    UNAUTH_USER_ON_HOME_COMMANDS(0)[0]
+  ].flat()
+];
+
 const userStories = [
   [
     UNAUTH_USER_ON_SETTINGS_IS_REDIRECTED,
@@ -123,6 +129,16 @@ const userStories = [
     AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS,
     AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_INPUTS,
     AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_SETTINGS_FAILS_UPDATE_SETTINGS,
+    AUTH_USER_ON_SETTINGS_FAILS_UPDATE_SETTINGS_INPUTS,
+    AUTH_USER_ON_SETTINGS_FAILS_UPDATE_SETTINGS_COMMANDS
+  ],
+  [
+    AUTH_USER_ON_SETTINGS_AND_LOGS_OUT,
+    AUTH_USER_ON_SETTINGS_AND_LOGS_OUT_INPUTS,
+    AUTH_USER_ON_SETTINGS_AND_LOGS_OUT_COMMANDS
   ]
 ];
 

@@ -14,7 +14,6 @@ const settingsErrorsFixture = {
   description: ["can't be blank", "too short (minimum is 1 character)"]
 };
 const emptyUserFixture = {
-  // TODO!! this may not be a string??
   image: "",
   username:"ss",
   bio:"",

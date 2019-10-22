@@ -264,7 +264,6 @@ const commandHandlers = {
   [LOG_OUT]: (dispatch, params, effectHandlers) => {
     const {removeUserSession} = effectHandlers;
     removeUserSession();
-    dispatch({ [REMOVED_USER_SESSION]: void 0 });
   },
 };
 

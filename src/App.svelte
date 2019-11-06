@@ -26,6 +26,10 @@
   export let currentTag;
   export let tagList;
   // Settings props
+    // Profile props
+    export let profile;
+    export let profileTab;
+
 
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
@@ -50,6 +54,9 @@
       {description}
       {body}
       {currentTag}
-      {tagList} />
+      {tagList}
+      {profile}
+      {profileTab}
+      />
   {/if}
 </Fsm>

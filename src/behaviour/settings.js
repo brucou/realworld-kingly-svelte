@@ -1,17 +1,25 @@
 import { INIT_EVENT } from "kingly";
-import { allRoutesViewLens, fetchAuthentication, isAuthenticated, redirectToHome, updateURL } from "./common";
-import { allRoutesUpdate, commands, events, routes, routeViewLens, settingsUpdates } from "../constants";
+import {
+  allRoutesViewLens,
+  fetchAuthentication,
+  isAuthenticated,
+  redirectToHome,
+  updateURL
+} from "./common";
+import {
+  allRoutesUpdate,
+  commands,
+  events,
+  routes,
+  routeViewLens,
+  settingsUpdates
+} from "../constants";
 import { getAuthenticatedFormPageTransitions } from "./abstracted";
 
 const { home, settings } = routes;
 export const settingsViewLens = routeViewLens(settings);
 
-const {
-  REDIRECT,
-  UPDATE_SETTINGS,
-  LOG_OUT,
-  RENDER_SETTINGS,
-} = commands;
+const { REDIRECT, UPDATE_SETTINGS, LOG_OUT, RENDER_SETTINGS } = commands;
 const {
   ROUTE_CHANGED,
   AUTH_CHECKED,
@@ -49,7 +57,12 @@ export const settingsTransitions = [
     action: resetSettingsRouteStateAndFetchAuth
   },
   { from: "settings", event: ROUTE_CHANGED, to: "routing", action: updateURL },
-  { from: "editing-settings", event: CLICKED_LOG_OUT, to: "routing", action: logOutAndRedirectHome },
+  {
+    from: "editing-settings",
+    event: CLICKED_LOG_OUT,
+    to: "routing",
+    action: logOutAndRedirectHome
+  },
   getAuthenticatedFormPageTransitions({
     events: {
       AUTH_CHECKED,
@@ -83,10 +96,7 @@ export const settingsTransitions = [
 function logOutAndRedirectHome(extendedState, eventData, settings) {
   return {
     updates: allRoutesUpdate([{ url: home }]),
-    outputs: [
-      {command: LOG_OUT, params: void 0},
-      {command: REDIRECT, params: home}
-    ]
+    outputs: [{ command: LOG_OUT, params: void 0 }, { command: REDIRECT, params: home }]
   };
 }
 
@@ -98,7 +108,7 @@ function resetSettingsRouteStateAndFetchAuth(extendedState, eventData, settings)
 }
 
 function renderSettingsForm(extendedState, eventData, fsmSettings) {
-  const { errors} = settingsViewLens(extendedState);
+  const { errors } = settingsViewLens(extendedState);
   const user = eventData;
 
   return {
@@ -134,7 +144,7 @@ function fetchAuthenticationAndRenderInProgressAndUpdateFormData(
         command: RENDER_SETTINGS,
         params: {
           inProgress: true,
-          errors: null,
+          errors: null
         }
       },
       fetchAuthentication(extendedState, eventData, settings).outputs
@@ -147,9 +157,7 @@ function updateSettings(extendedState, eventData, settings) {
 
   return {
     updates: [],
-    outputs: [
-      { command: UPDATE_SETTINGS, params: { image, username, bio, email, password } }
-    ]
+    outputs: [{ command: UPDATE_SETTINGS, params: { image, username, bio, email, password } }]
   };
 }
 

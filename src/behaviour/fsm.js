@@ -6,7 +6,7 @@ import { initialSignUpRouteState, signUpStates, signUpTransitions } from "./sign
 import { cleanHash } from "../shared/helpers";
 import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
-import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings"
+import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings";
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;

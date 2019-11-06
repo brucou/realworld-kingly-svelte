@@ -7,6 +7,7 @@
   import UserFeedTab from "./UserFeedTab.svelte";
   import TagFilterTab from "./TagFilterTab.svelte";
   import { events, viewModel } from "../constants";
+  import { computeFetchStatus } from "./shared";
 
   // Props
   // Common props
@@ -54,18 +55,6 @@
     tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
     fetchStatus: [LOADING, NOK, OK]
   } = viewModel;
-
-  function computeFetchStatus(obj) {
-    if (obj instanceof Error) {
-      return NOK;
-    } else if (typeof obj === "string") {
-      return LOADING;
-    } else if (typeof obj === "object") {
-      return OK;
-    } else {
-      throw `computeFetchStatus: invalid parameter!`;
-    }
-  }
 
   $: articleList = typeof articles === "object" ? articles && articles.articles : void 0;
   $: articlesCount = typeof articles === "object" ? articles && articles.articlesCount : 0;

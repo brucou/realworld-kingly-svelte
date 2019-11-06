@@ -1,4 +1,10 @@
-import {  fetchAuthentication,  isAuthenticated,  isNotAuthenticated, redirectToHome,  updateURL} from "./common";
+import {
+  fetchAuthentication,
+  isAuthenticated,
+  isNotAuthenticated,
+  redirectToHome,
+  updateURL
+} from "./common";
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT } from "kingly";
 import { commands, events, routes, routeViewLens, signUpUpdates } from "../constants";
 

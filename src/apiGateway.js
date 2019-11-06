@@ -8,10 +8,10 @@ const authHeader = sessionRepository => {
   const session = sessionRepository.load();
   return session && session.token
     ? {
-      headers: {
-        Authorization: `Token ${session.token}`
+        headers: {
+          Authorization: `Token ${session.token}`
+        }
       }
-    }
     : {};
 };
 

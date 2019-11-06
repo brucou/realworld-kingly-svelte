@@ -8,7 +8,7 @@ import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
 import { events, commands, routes } from "./constants";
 
-const { home, signUp, signIn, editor, settings } = routes;
+const { home, signUp, signIn, editor, settings, profile } = routes;
 
 // Commands
 const {
@@ -32,7 +32,7 @@ const {
   RENDER_EDITOR,
   UPDATE_ARTICLE,
   UPDATE_SETTINGS,
-  LOG_OUT,
+  LOG_OUT
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -53,7 +53,6 @@ const {
   SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE,
-  REMOVED_USER_SESSION,
   UPDATED_SETTINGS,
   FAILED_UPDATE_SETTINGS
 } = events;
@@ -102,7 +101,6 @@ function render(route, props) {
 // Command and effect handlers
 const renderRoute = route => (dispatch, params, effectHandlers) => {
   const { render } = effectHandlers;
-  console.log(`currentTag`, params.currentTag);
   render(route, params);
 };
 const commandHandlers = {
@@ -111,6 +109,7 @@ const commandHandlers = {
   [RENDER_SIGN_IN]: renderRoute(signIn),
   [RENDER_EDITOR]: renderRoute(editor),
   [RENDER_SETTINGS]: renderRoute(settings),
+  [RENDER_PROFILE]: renderRoute(profile),
   [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
     const { page } = params;
     const { fetchGlobalFeed, fetchTags } = effectHandlers;
@@ -250,21 +249,21 @@ const commandHandlers = {
       });
   },
   [UPDATE_SETTINGS]: (dispatch, params, effectHandlers) => {
-    const {image, username, bio, email, password} = params;
-    const {updateSettings} = effectHandlers;
+    const { image, username, bio, email, password } = params;
+    const { updateSettings } = effectHandlers;
 
-    updateSettings({user: {image, username, bio, email, password}})
-      .then(({user}) => {
-        dispatch({[UPDATED_SETTINGS]: user});
+    updateSettings({ user: { image, username, bio, email, password } })
+      .then(({ user }) => {
+        dispatch({ [UPDATED_SETTINGS]: user });
       })
-      .catch(({errors}) => {
+      .catch(({ errors }) => {
         dispatch({ [FAILED_UPDATE_SETTINGS]: errors });
-      })
+      });
   },
   [LOG_OUT]: (dispatch, params, effectHandlers) => {
-    const {removeUserSession} = effectHandlers;
+    const { removeUserSession } = effectHandlers;
     removeUserSession();
-  },
+  }
 };
 
 const effectHandlers = {
@@ -312,7 +311,10 @@ const app = new App({
     description: void 0,
     body: void 0,
     currentTag: void 0,
-    tagList: void 0, }
+    tagList: void 0,
+    profile: void 0,
+    profileTab: null,
+  }
 });
 
 // kick start the app with the routing event corresponding to the current route

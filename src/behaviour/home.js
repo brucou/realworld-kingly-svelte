@@ -19,7 +19,7 @@ import {
 } from "../constants";
 import { not } from "../shared/hof";
 
-const { home, signUp, allRoutes } = routes;
+const { home, allRoutes } = routes;
 export const homeRouteViewLens = routeViewLens(home);
 const {
   ROUTE_CHANGED,
@@ -40,8 +40,6 @@ const {
 } = events;
 const {
   RENDER_HOME,
-  RENDER_SIGN_UP,
-  RENDER_SIGN_IN,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,

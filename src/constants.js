@@ -10,7 +10,9 @@ export const routes = {
   allRoutes: "all routes",
   signIn: "/login",
   editor: "/editor",
-  settings: "/settings"
+  settings: "/settings",
+  // TODO: this is a dynamic one... @username.. how to handle this?
+  profile: "/@"
 };
 
 export function routeViewLens(route) {
@@ -30,6 +32,7 @@ export const signInUpdates = routeUpdateLens(routes.signIn);
 export const signUpUpdates = routeUpdateLens(routes.signUp);
 export const editorUpdates = routeUpdateLens(routes.editor);
 export const settingsUpdates = routeUpdateLens(routes.settings);
+// TODO: profileUpdates
 
 export function allRoutesUpdate(updates) {
   return [[routes.allRoutes, updates]];
@@ -41,6 +44,10 @@ export const viewModel = {
   fetchStatus: ["LOADING", "NOK", "OK"],
   tabs: ["USER_FEED", "GLOBAL_FEED", "TAG_FILTER_FEED"]
 };
+
+export const USER_PROFILE_PAGE = "UserProfile";
+export const FAVORITE_PROFILE_PAGE = "FavoriteProfile";
+
 export const events = {
   ROUTE_CHANGED: "ROUTE_CHANGED",
   TAGS_FETCHED_OK: "TAGS_FETCHED_OK",
@@ -71,10 +78,11 @@ export const events = {
   SUCCEEDED_PUBLISHING: "SUCCEEDED_PUBLISHING",
   FAILED_FETCH_ARTICLE: "FAILED_FETCH_ARTICLE",
   FETCHED_ARTICLE: "FETCHED_ARTICLE",
-  CLICKED_LOG_OUT:"CLICKED_LOG_OUT",
+  CLICKED_LOG_OUT: "CLICKED_LOG_OUT",
   CLICKED_UPDATE_SETTINGS: "CLICKED_UPDATE_SETTINGS",
   UPDATED_SETTINGS: "UPDATED_SETTINGS",
-  FAILED_UPDATE_SETTINGS: "FAILED_UPDATE_SETTINGS"
+  FAILED_UPDATE_SETTINGS: "FAILED_UPDATE_SETTINGS",
+  TOGGLED_FOLLOW: "TOGGLED_FOLLOW",
 };
 
 export const commands = {
@@ -98,5 +106,5 @@ export const commands = {
   FETCH_ARTICLE: "FETCH_ARTICLE",
   UPDATE_ARTICLE: "UPDATE_ARTICLE",
   UPDATE_SETTINGS: "UPDATE_SETTINGS",
-  LOG_OUT: "LOG_OUT",
+  LOG_OUT: "LOG_OUT"
 };

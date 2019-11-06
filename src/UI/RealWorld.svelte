@@ -6,6 +6,7 @@
   import SignIn from "./SignIn.svelte";
   import Editor from "./Editor.svelte";
   import Settings from "./Settings.svelte";
+  import UserProfile from "./UserProfile.svelte";
   import { routes } from "../constants";
 
   // Props
@@ -30,8 +31,11 @@
   export let currentTag;
   export let tagList;
   // Settings props
+  // Profile props
+  export let profile;
+  export let profileTab;
 
-  const { home, signUp, signIn, editor, settings } = routes;
+  const { home, signUp, signIn, editor, settings, profile: userProfile } = routes;
 
   // Component which will be displayed depending on the route
   const componentRoutes = {
@@ -39,7 +43,8 @@
     [signUp]: SignUp,
     [signIn]: SignIn,
     [editor]: Editor,
-    [settings]: Settings
+    [settings]: Settings,
+    [userProfile]: UserProfile,
   };
   // Props for the component which will be displayed
   $: component = componentRoutes[route];
@@ -48,7 +53,8 @@
     [signUp]: { inProgress, errors },
     [signIn]: { inProgress, errors },
     [editor]: { inProgress, errors, title, description, body, tagList, currentTag },
-    [settings]: { user, inProgress, errors }
+    [settings]: { user, inProgress, errors },
+    [userProfile]: {user, profile, articles, favoriteStatus, page, profileTab}
   };
   $: componentProps = componentRoutesProps[route];
 </script>

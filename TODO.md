@@ -1,4 +1,8 @@
 # TODO
+- DO THE COMMANDS FIRST THEN THE VIEW??
+  - the commands give me the parameters I need to pass in the view event handlers!
+- publish integration with vue, react, svelte, lit first
+  - then do ember and angular! 
 - DOC: find a nomenclatur for events, should refer to the UI domain, 
   - i.e. CLICKED_LOG_OUT, more than LOG_OUT (command) or LOGGED_OUT (it is not logged out yet...)
   - note that this may require having to change the events I have now, but that is easy now
@@ -87,6 +91,14 @@ NOTE: once the machine confidently works, it cn be used with stateful PBT to tes
   - have individual lenses for each prop and combine that: that would define view. The individual lenses may be automatically generated?
 - the view concern spills into the machine... Controlled field require listening to keyup. This impacts the machine!
 
+## Ordering
+- start with commands before UI! maybe before the events!! It helps figure out the event data for the events
+  - then that becomes a point of coupling which makes separation of UI and logic not full
+  - so if given to different team, they still have to communicate somewhat
+  - unless one team does only Ui, no event handling, and the logic team makes the event handling and pass it as props
+  - SO POSSIBILITY, pass the handler as props with currying: evH:: dispatch => event => {...dispatch(...)...}
+    - that way the view does no logic, has no dependency with the commands/events of the machine, or the fsm, but logic dependency wih event data
+    
 ## Bug found in other versions
 - open a window, log in there
 - duplicate the window
@@ -144,18 +156,24 @@ Integration tests justification:
   - NOOOO works for editor. If I pass a user props, it is passed to RealWorld, which selects props for the chosen component so good!! pass user in render route that works fine, the render route is for merging props right (and picking main component but hearder alaways runs)
   - EXPLAIN THAT, AS IT IS A CONFUSION FOR ME, IMAGINE THE REST!!!!!
   - PUT USER = NULL in renderForm in sing in and sign up and repass tests!!
-  
+
 - UI tests
   - I often forget to check that button clicks work correctly
     - resulting in not detecting that the form submit did not work
 
 ## Try to find these bugs with PBT
 - editor route displays sign up sign in and not new article!
-- ??
+- find the bug that I cannot concurrently like several articles (typical concurrency stuff like search-as-you-type inputs )
+  - there will be problems to generate the input sequences though, unless I improve my testing library?
+- what else ?
 
-## Whn something odoes not work
+## Whn something does not work
 - can be UI tests wrong
 - can be machine tests wrong
 - can be commands wrong
   - happened with wrong return from promise not {errors} but errors
 - can be integration wrong, i.e. the rest of the app interaces (routing etc.) 
+
+## Default of state emachine impl.
+See what applies from there: https://kentcdodds.com/blog/when-to-break-up-a-component-into-multiple-components
+- the part about modification same machine by several engineers??

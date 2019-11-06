@@ -21,19 +21,18 @@
     const bio = formData.get("bio");
     const email = formData.get("email");
     const password = formData.get("password");
-    console.log(`updateSettings: dispatching`, { image, username, bio, email, password })
+    console.log(`updateSettings: dispatching`, { image, username, bio, email, password });
     dispatch({ [CLICKED_UPDATE_SETTINGS]: { image, username, bio, email, password } });
   };
 
   const logout = ev => {
-    dispatch({[CLICKED_LOG_OUT]: void 0})
+    dispatch({ [CLICKED_LOG_OUT]: void 0 });
   };
 
-$: image = user.image
-$: username = user.username
-$: bio = user.bio
-$: email = user.email
-
+  $: image = user.image;
+  $: username = user.username;
+  $: bio = user.bio;
+  $: email = user.email;
 </script>
 
 <div class="settings-page">
@@ -44,7 +43,7 @@ $: email = user.email
 
         <ListErrors {errors} />
 
-        <form on:submit="{updateSettings}">
+        <form on:submit={updateSettings}>
           <fieldset>
             <fieldset class="form-group">
               <input

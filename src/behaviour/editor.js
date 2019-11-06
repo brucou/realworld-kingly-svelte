@@ -47,7 +47,7 @@ export const initialEditorRouteState = {
   currentTag: "",
   description: "",
   title: "",
-  tagList:[],
+  tagList: [],
   errors: null
 };
 

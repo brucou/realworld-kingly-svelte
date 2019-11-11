@@ -6,7 +6,7 @@ import apiGatewayFactory from "./apiGateway";
 import apiRouterFactory from "./apiRouter";
 import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
-import { events, commands, routes } from "./constants";
+import { events, commands, routes, USER_PROFILE_PAGE } from "./constants";
 
 const { home, signUp, signIn, editor, settings, profile } = routes;
 
@@ -32,7 +32,12 @@ const {
   RENDER_EDITOR,
   UPDATE_ARTICLE,
   UPDATE_SETTINGS,
-  LOG_OUT
+  LOG_OUT,
+  RENDER_PROFILE,
+  FETCH_PROFILE,
+  FETCH_AUTHOR_FEED,
+  FOLLOW_PROFILE,
+  UNFOLLOW_PROFILE,
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -79,7 +84,12 @@ const {
   fetchArticle,
   saveArticle,
   updateArticle,
-  updateSettings
+  updateSettings,
+  fetchProfile,
+  follow,
+  unfollow,
+  fetchAuthorFeed,
+  fetchFavoritedFeed,
 } = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
@@ -263,7 +273,48 @@ const commandHandlers = {
   [LOG_OUT]: (dispatch, params, effectHandlers) => {
     const { removeUserSession } = effectHandlers;
     removeUserSession();
-  }
+  },
+  [FETCH_PROFILE]:(dispatch, params, effectHandlers) => {
+    const { fetchProfile } = effectHandlers;
+    const username = params;
+
+    fetchProfile({username})
+      .then(({profile}) => dispatch({[FETCHED_PROFILE]: profile}))
+      .catch((err) => dispatch({[FETCH_PROFILE_NOK]: err}))
+    },
+  [FETCH_AUTHOR_FEED]: (dispatch, params, effectHandlers) => {
+    const { fetchAuthorFeed, fetchFavoritedFeed } = effectHandlers;
+    const {username, page, feedType} = params;
+    const fetchFn = {USER_PROFILE_PAGE: fetchAuthorFeed, FAVORITE_PROFILE_PAGE: fetchFavoritedFeed}[feedType];
+
+    fetchFn({username, page})
+      .then (({articles, articlesCount}) => dispatch({[ARTICLES_FETCHED_OK]: {articles, articlesCount}}))
+      .catch(err => dispatch({[ARTICLES_FETCHED_NOK]: err}))
+    // TODO:
+    // In the original Conduit demo app, profile and articles are fetched in parallel and displayed together
+    // On tab navigation, the profile data is not refetched, but articles are
+    // 1. Memoize
+    // Ok, but then I do not guarantee at the modelization level that profile data is not fetched twice
+    // That is ok if that is not understood to be a part of the specifications.
+    // What a man to do? memoize? but then we have to invalidate the cache (on leaving the route maybe?)
+    // TODO DOC: do that as a refactoring after modelizing the machine, for now just don't worry about those concerns, we can always couple later
+  },
+  [FOLLOW_PROFILE]: (dispatch, params, effectHandlers) => {
+    const { follow } = effectHandlers;
+    const username = params;
+
+    follow({username})
+      .then (({profile}) => dispatch({[FOLLOW_OK]: profile}))
+      .catch(err => dispatch({[FOLLOW_NOK]: err}))
+  },
+  [UNFOLLOW_PROFILE]: (dispatch, params, effectHandlers) => {
+    const { unfollow } = effectHandlers;
+    const username = params;
+
+    unfollow({username})
+      .then (({profile}) => dispatch({[UNFOLLOW_OK]: profile}))
+      .catch(err => dispatch({[UNFOLLOW_NOK]: err}))
+  },
 };
 
 const effectHandlers = {
@@ -283,7 +334,12 @@ const effectHandlers = {
   saveArticle,
   updateArticle,
   removeUserSession: sessionRepository.clear,
-  updateSettings
+  updateSettings,
+  fetchProfile,
+  follow,
+  unfollow,
+  fetchAuthorFeed,
+  fetchFavoritedFeed
 };
 
 const app = new App({

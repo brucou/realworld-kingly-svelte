@@ -11,6 +11,7 @@ const {
   RENDER_SIGN_IN,
   RENDER_EDITOR,
   RENDER_SETTINGS,
+  RENDER_PROFILE
 } = commands;
 
 export function formatIndex(i) {

@@ -17,7 +17,6 @@
   export let favoriteStatus;
   export let page;
 
-  // TODO : add TOGGLED_FOLLOW
   const { CLICKED_PAGE, TOGGLED_FAVORITE, TOGGLED_FOLLOW } = events;
   const onClickPage = page => {
     dispatch({ [CLICKED_PAGE]: page });

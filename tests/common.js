@@ -1,18 +1,8 @@
 import { NO_OUTPUT } from "kingly"
-import { commands, routes } from "../src/constants"
+import { renderCommands, routes  } from "../src/constants"
 import { equals as deepEqual } from "ramda"
 import { fsmFactory } from "../src/behaviour/fsm"
 import prettyFormat from 'pretty-format'
-
-export const NO_COMMAND = "none!"
-const {
-  RENDER_HOME,
-  RENDER_SIGN_UP,
-  RENDER_SIGN_IN,
-  RENDER_EDITOR,
-  RENDER_SETTINGS,
-  RENDER_PROFILE
-} = commands;
 
 export function formatIndex(i) {
   return typeof i === 'number'
@@ -26,12 +16,12 @@ export function formatIndex(i) {
 
 const { home, signUp, signIn, editor, settings, profile } = routes;
 const renderCommandRouteMap={
-  [RENDER_HOME]: home,
-  [RENDER_SIGN_UP]: signUp,
-  [RENDER_SIGN_IN]: signIn,
-  [RENDER_EDITOR]: editor,
-  [RENDER_SETTINGS]: settings,
-  [RENDER_PROFILE]: profile,
+  RENDER_HOME: home,
+  RENDER_SIGN_UP: signUp,
+  RENDER_SIGN_IN: signIn,
+  RENDER_EDITOR: editor,
+  RENDER_SETTINGS: settings,
+  RENDER_PROFILE: profile,
 };
 
 /**
@@ -49,7 +39,7 @@ export function processRenderCommands(cleanedMachineOutputsSeq) {
       return cleanedMachineOutputs.map(cleanedMachineOutput => {
       const { command, params } = cleanedMachineOutput;
 
-      if ([RENDER_HOME, RENDER_SIGN_UP, RENDER_SIGN_IN, RENDER_EDITOR, RENDER_SETTINGS, RENDER_PROFILE].indexOf(command) === -1) {
+      if (Object.keys(renderCommands).indexOf(command) === -1) {
         return cleanedMachineOutput
       } else {
         const route = renderCommandRouteMap[command];

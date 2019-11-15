@@ -11,6 +11,8 @@ import { initialSettingsRouteState, settingsStates, settingsTransitions } from "
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;
 
+// TODO: make the machine to pass the tests
+
 const { home, allRoutes, signUp, signIn, editor, settings } = routes;
 
 const INIT = "start";

@@ -13,18 +13,19 @@ QUnit.module("Testing editor route fsm", {});
 const {
   ROUTE_CHANGED,
   AUTH_CHECKED,
-  CLICKED_PUBLISH,
-  ADDED_TAG,
-  REMOVED_TAG,
-  EDITED_TAG,
-  FAILED_PUBLISHING,
-  SUCCEEDED_PUBLISHING,
   FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE,
+  ARTICLES_FETCHED_NOK,
+  ARTICLES_FETCHED_OK,
+  TOGGLED_FOLLOW,
+  FETCH_PROFILE_NOK,
+  FETCHED_PROFILE,
 } = events;
 const { RENDER_EDITOR, FETCH_AUTHENTICATION, REDIRECT, PUBLISH_ARTICLE, FETCH_ARTICLE, UPDATE_ARTICLE } = commands;
 
 const { home, editor } = routes;
+
+
 
 const hashFixture = [editor, articleSlugFixture].join('/');
 

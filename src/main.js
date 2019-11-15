@@ -59,7 +59,13 @@ const {
   FAILED_FETCH_ARTICLE,
   FETCHED_ARTICLE,
   UPDATED_SETTINGS,
-  FAILED_UPDATE_SETTINGS
+  FAILED_UPDATE_SETTINGS,
+  FETCHED_PROFILE,
+  FETCH_PROFILE_NOK,
+  FOLLOW_OK,
+  FOLLOW_NOK,
+  UNFOLLOW_OK,
+  UNFOLLOW_NOK,
 } = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 

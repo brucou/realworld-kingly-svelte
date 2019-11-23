@@ -5,8 +5,8 @@ export const SETTINGS = "#/settings";
 export const NEW_EDITOR = "#/editor";
 export const EDITOR = "#/editor/:slug";
 export const ARTICLE = "#/article/:slug";
-export const PROFILE = "#/profile/:username";
-export const PROFILE_FAVORITED = "#/profile/:username/favorited";
+export const PROFILE = "#/@:username";
+export const PROFILE_FAVORITED = "#/@:username/favorited";
 
 export const editorLink = slug => EDITOR.replace(":slug", slug);
 export const userArticlesLink = username => PROFILE.replace(":username", username);

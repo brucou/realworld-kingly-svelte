@@ -7,13 +7,14 @@ import { cleanHash } from "../shared/helpers";
 import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
 import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings";
+import { initialProfileRouteState, profileStates, profileTransitions } from "./profile"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;
 
 // TODO: make the machine to pass the tests
 
-const { home, allRoutes, signUp, signIn, editor, settings } = routes;
+const { home, allRoutes, signUp, signIn, editor, settings, profile } = routes;
 
 const INIT = "start";
 const initialControlState = INIT;
@@ -23,7 +24,8 @@ const initialExtendedState = {
   [allRoutes]: initialAllRoutesState,
   [signUp]: initialSignUpRouteState,
   [editor]: initialEditorRouteState,
-  [settings]: initialSettingsRouteState
+  [settings]: initialSettingsRouteState,
+  [profile]: initialProfileRouteState,
 };
 
 const states = {
@@ -33,16 +35,19 @@ const states = {
   signUp: signUpStates,
   signIn: signInStates,
   editor: editorStates,
-  settings: settingsStates
+  settings: settingsStates,
+  profile: profileStates
 };
 
 // Guards
 function isRoute(hash) {
   const regExpStr = `^${hash}(/.*|)$`;
+  const regExp = new RegExp(regExpStr);
   return function(extendedState, eventData, settings) {
-    const regExp = new RegExp(regExpStr, "g");
+    // NOTE: regexp computation has to be inside the function
+    // because regexps are mutable objects!! We need to create it new everytime.
     const { url } = allRoutesViewLens(extendedState);
-    return Boolean(regExp.exec(url));
+    return Boolean(url.match(regExp));
   };
 }
 
@@ -51,6 +56,9 @@ export const isSignUpRoute = isRoute(signUp);
 export const isSignInRoute = isRoute(signIn);
 export const isEditorRoute = isRoute(editor);
 export const isSettingsRoute = isRoute(settings);
+// NOTE: here we assume username can be any sequence of characters, but not an empty one
+// That may be a bit weak, but we have no specifications for usernames so we keep it broad
+export const isProfileRoute = isRoute('/@.+');
 
 /** @type {Array<Transition>} */
 const transitions = [
@@ -63,14 +71,16 @@ const transitions = [
       { predicate: isSignUpRoute, to: "signUp", action: ACTION_IDENTITY },
       { predicate: isSignInRoute, to: "signIn", action: ACTION_IDENTITY },
       { predicate: isEditorRoute, to: "editor", action: ACTION_IDENTITY },
-      { predicate: isSettingsRoute, to: "settings", action: ACTION_IDENTITY }
+      { predicate: isSettingsRoute, to: "settings", action: ACTION_IDENTITY },
+      { predicate: isProfileRoute, to: "profile", action: ACTION_IDENTITY },
     ]
   },
   homeTransitions,
   signUpTransitions,
   signInTransitions,
   editorTransitions,
-  settingsTransitions
+  settingsTransitions,
+  profileTransitions,
 ].flat();
 
 /**

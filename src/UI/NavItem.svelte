@@ -3,7 +3,7 @@
 </script>
 
 <li class="nav-item">
-  <a class={'nav-link '} href={path}>
+  <a class={'nav-link'} href={path}>
     <slot />
   </a>
 </li>

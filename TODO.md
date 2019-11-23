@@ -1,4 +1,5 @@
 # TODO
+- TEEMP: bad UI, bad header, bad follow, unless I am not connected, but I am, so prob. fetching user auth failed, also no tab selected
 - DO THE COMMANDS FIRST THEN THE VIEW??
   - the commands give me the parameters I need to pass in the view event handlers!
 - publish integration with vue, react, svelte, lit first
@@ -72,6 +73,11 @@ NOTE: once the machine confidently works, it cn be used with stateful PBT to tes
   - but if activeFeed === TAG that belongs to Tags' parent component
 - Actions:
   - storybook display the list of arguments received by the handlers, i.e. an array 
+- Issues with controlled components: if using additive props, pass the controlled props as in React
+- Issues with stale props: pick up a source of truth (value returned from the database stored in state) rather than prop.
+// - this happened to me because ?? I am not sure really, but the props passed was stale. Probably because we did a deep update in an object,
+//   that object is scattered through components, and probably one reference was the same and did not trigger redraw.
+//   so to avoid dependency between view and machine, just use always the source of truth not linked to the view if I have one
 
 ## Maintainability
 - changing view props (added route) => changing commands, potentially everywhere
@@ -98,7 +104,7 @@ NOTE: once the machine confidently works, it cn be used with stateful PBT to tes
   - unless one team does only Ui, no event handling, and the logic team makes the event handling and pass it as props
   - SO POSSIBILITY, pass the handler as props with currying: evH:: dispatch => event => {...dispatch(...)...}
     - that way the view does no logic, has no dependency with the commands/events of the machine, or the fsm, but logic dependency wih event data
-    
+
 ## Bug found in other versions
 - open a window, log in there
 - duplicate the window
@@ -143,7 +149,7 @@ Integration tests justification:
   - integration tests? hash change handler wrong format 
 - [x] Svelte does not update input field with `value`
   - editor route, tag field is not reset when clicking enter to add tag
-  - EXPLAIN CONTROLLED FIELDS: needs to add an event to handle keyup
+  - **EXPLAIN CONTROLLED FIELDS**: needs to add an event to handle keyup
   - this bug was integration test: it is a bug about svelte behaviour, well not really a bug but still integration level
 - [x] Bug with index in {#each}
   - adding three, and removing first three times gives the wrong index and removes the wrong or nothing
@@ -165,15 +171,24 @@ Integration tests justification:
 - editor route displays sign up sign in and not new article!
 - find the bug that I cannot concurrently like several articles (typical concurrency stuff like search-as-you-type inputs )
   - there will be problems to generate the input sequences though, unless I improve my testing library?
-- what else ?
+  - actually the way I modelized I cannot concurrently like several articles through code but user can try!! 
+  - Concurrency bug, would be nice if the PBT could find it
+- use the home like/unlike succession not working scenarios bug to find it with automatically generated tests!
+  - take the home version from the last commit of the home route. Or take the last commit of the editor route
+- what else?
 
-## Whn something does not work
+## When something does not work
 - can be UI tests wrong
 - can be machine tests wrong
 - can be commands wrong
   - happened with wrong return from promise not {errors} but errors
-- can be integration wrong, i.e. the rest of the app interaces (routing etc.) 
+- can be integration wrong, i.e. the rest of the app interfaces (routing etc.) 
 
-## Default of state emachine impl.
+## Default of state machine impl.
 See what applies from there: https://kentcdodds.com/blog/when-to-break-up-a-component-into-multiple-components
 - the part about modification same machine by several engineers??
+
+## ...
+incredible bug with synchronous event emission...
+render null -> fetch auth -> render sth. Bcause sync., render sth run first, then render null. So out of seq!
+think about microtask / macro? which? 

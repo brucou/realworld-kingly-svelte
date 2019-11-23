@@ -4,9 +4,8 @@ import {articlesErrorFixture as _aEF, articlesFixture as _aF, articlesEmptyFixtu
 import RealWorld from '../src/UI/RealWorld.svelte';
 import { viewModel, routes, FAVORITE_PROFILE_PAGE, USER_PROFILE_PAGE } from "../src/constants"
 
-const { home, profile } = routes;
+const { profile } = routes;
 const {
-  tabs: [USER_FEED, GLOBAL_FEED, TAG_FILTER_FEED],
   fetchStatus: [LOADING, NOK, OK]
 } = viewModel;
 

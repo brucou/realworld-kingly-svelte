@@ -1,7 +1,7 @@
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
 import {
   allRoutesViewLens,
-  fetchAuthentication,
+  fetchAuthentication, getFavoritedFromSlug,
   isAuthenticated,
   isNotAuthenticated,
   redirectToSignUp,
@@ -15,7 +15,7 @@ import {
   loadingStates,
   routes,
   routeViewLens,
-  viewModel
+  viewModel,
 } from "../constants";
 import { not } from "../shared/hof";
 
@@ -441,9 +441,9 @@ export function renderGlobalFeedArticlesFetchError(extendedState, eventData, set
 }
 
 export function fetchAuthenticationAndUpdateFavoriteStatus(extendedState, eventData, settings) {
-  const { slug, isFavorited } = eventData;
+  const { slug } = eventData;
   return {
-    updates: homeUpdates([{ favoriteStatus: { slug, isFavorited } }]),
+    updates: homeUpdates([{ favoriteStatus: { slug, isFavorited: getFavoritedFromSlug(homeRouteViewLens(extendedState), eventData, settings) } }]),
     outputs: [{ command: FETCH_AUTHENTICATION, params: void 0 }]
   };
 }
@@ -609,6 +609,9 @@ export function resetPageAndSetTag(extendedState, eventData, settings) {
   };
 }
 
+// TODO: think if I have to update auth too in this function
+// Edge case: could still be authed but under a different user... edgy but possible
+// DOC: find the issue with tests? Can I generate those failing tests automatically?
 export function unlikeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState);
@@ -623,6 +626,7 @@ export function unlikeArticleAndRender(extendedState, eventData, settings) {
   };
 }
 
+// TODO: think if I have to update auth too in this function
 export function likeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState);

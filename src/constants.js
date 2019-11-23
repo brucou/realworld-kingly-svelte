@@ -32,7 +32,7 @@ export const signInUpdates = routeUpdateLens(routes.signIn);
 export const signUpUpdates = routeUpdateLens(routes.signUp);
 export const editorUpdates = routeUpdateLens(routes.editor);
 export const settingsUpdates = routeUpdateLens(routes.settings);
-// TODO: profileUpdates
+export const profileUpdates = routeUpdateLens(routes.profile);
 
 export function allRoutesUpdate(updates) {
   return [[routes.allRoutes, updates]];

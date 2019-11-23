@@ -84,3 +84,10 @@ export function updateAuth(extendedState, eventData, settings) {
     outputs: NO_OUTPUT
   };
 }
+
+// NOTE: extended state here comes already focused on (e.g. with a lens previously applied)
+export function getFavoritedFromSlug(extendedState, eventData, settings) {
+  const { slug } = eventData;
+  const { articles: {articles} } = extendedState;
+  return articles.find(article => article.slug === slug).favorited
+}

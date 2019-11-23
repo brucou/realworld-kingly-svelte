@@ -6,7 +6,7 @@ import apiGatewayFactory from "./apiGateway";
 import apiRouterFactory from "./apiRouter";
 import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
-import { events, commands, routes, USER_PROFILE_PAGE } from "./constants";
+import { events, commands, routes, USER_PROFILE_PAGE, FAVORITE_PROFILE_PAGE } from "./constants";
 
 const { home, signUp, signIn, editor, settings, profile } = routes;
 
@@ -291,7 +291,7 @@ const commandHandlers = {
   [FETCH_AUTHOR_FEED]: (dispatch, params, effectHandlers) => {
     const { fetchAuthorFeed, fetchFavoritedFeed } = effectHandlers;
     const {username, page, feedType} = params;
-    const fetchFn = {USER_PROFILE_PAGE: fetchAuthorFeed, FAVORITE_PROFILE_PAGE: fetchFavoritedFeed}[feedType];
+    const fetchFn = {[USER_PROFILE_PAGE]: fetchAuthorFeed, [FAVORITE_PROFILE_PAGE]: fetchFavoritedFeed}[feedType];
 
     fetchFn({username, page})
       .then (({articles, articlesCount}) => dispatch({[ARTICLES_FETCHED_OK]: {articles, articlesCount}}))

@@ -20,7 +20,11 @@
 <div class="article-preview">
   <div class="article-meta">
     <a href={profileLink(authorUserName)}>
+    {#if authorImage}
       <img src={authorImage} alt="post's author image" />
+      {:else}
+      <img />
+      {/if}
     </a>
     <div class="info">
       <a class="author" href={profileLink(authorUserName)}>{authorUserName}</a>

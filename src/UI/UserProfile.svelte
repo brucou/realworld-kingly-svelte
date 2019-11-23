@@ -22,9 +22,10 @@
     dispatch({ [CLICKED_PAGE]: page });
   };
   const onClickFavorite = ({ slug, article }) => {
-    dispatch({ [TOGGLED_FAVORITE]: { slug, isFavorited: article.favorited } });
+    dispatch({ [TOGGLED_FAVORITE]: { slug } });
   };
   // TODO: put in constants/events, pass user too?
+  // TODO: remove following? take it from the profile data in state instead of in the UI?
   const handleClick = ev => {
     dispatch({ [TOGGLED_FOLLOW]: {username: profile.username, following: profile.following }});
   };
@@ -35,17 +36,18 @@
   $: articleList = typeof articles === "object" ? articles && articles.articles : void 0;
   $: articlesCount = typeof articles === "object" ? articles && articles.articlesCount : 0;
   $: articlesFetchStatus = articles && computeFetchStatus(articles);
-  $: disabled=profile && profile.following === null
+  $: disabled = Boolean(profile && profile.pending)
   $: following = profile && profile.following
   $: username = profile && profile.username
   $: image = profile && profile.image
   $: bio = profile && profile.bio
-  $: {console.log('articles', articles && computeFetchStatus(articles))}
-
+  $:{
+    console.log(`own profile`, user, profile, isUser)
+  }
 </script>
 
-<div class="profile-page" key={'profile-' + profileTab}>
   {#if username}
+<div class="profile-page" key={'profile-' + profileTab}>
     <div>
       <div class="user-info">
         <div class="container">
@@ -83,7 +85,7 @@
             </div>
 
             <ArticleList
-              articles = {articles.articles}
+              articles = {articleList}
               {articlesCount}
               currentPage = {page}
               fetchStatus={articlesFetchStatus}
@@ -94,5 +96,5 @@
         </div>
       </div>
     </div>
-  {/if}
 </div>
+  {/if}

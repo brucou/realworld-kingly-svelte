@@ -63,7 +63,6 @@ export const initialProfileRouteState = {
   profileTab: null,
   profile: null,
   feedType: null,
-  // TODO maybe more?
 };
 
 export const profileStates = {
@@ -215,7 +214,7 @@ export const profileTransitions = [
     from: "user-profile-rendering",
     event: CLICKED_PAGE,
     to: "fetching-auth-for-profile",
-    action: fetchArticlesPage // TODO:NOOOOO, fetch auth, update page
+    action: fetchArticlesPage
   },
   { from: "profile", event: ROUTE_CHANGED, to: "routing", action: updateURL },
 ];
@@ -248,11 +247,12 @@ export function isOwnProfile(extendedState, eventData, settings) {
   const { profile } = profileRouteViewLens(extendedState);
   const { user } = allRoutesViewLens(extendedState);
 
-  return user.username === profile.username
+  return user && user.username === profile.username
 }
 
 export function isFollowed(extendedState, eventData, settings) {
-  const { following} = eventData;
+  const { profile } = profileRouteViewLens(extendedState);
+  const { following} = profile;
 
   return Boolean(following)
 }
@@ -269,6 +269,7 @@ export function isArticleLiked(extendedState, eventData, settings) {
 
 export function fetchAuthenticationAndProfileUsername(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
+  const { profile } = profileRouteViewLens(extendedState);
   // NOTE: by machine construction, the url will match, i.e. `url.match` is not null
   const username = url.match(profileCaptureRegexp)[1];
 
@@ -278,7 +279,7 @@ export function fetchAuthenticationAndProfileUsername(extendedState, eventData, 
       fetchAuthentication(extendedState, eventData, settings).outputs,
       [{
           command: RENDER_PROFILE,
-          params: {            user: null,            profileTab: null,            profile: null,            articles: null,            page: 0,           favoriteStatus: null          }
+          params: {            user: null,            profileTab: null,            profile: profile,            articles: null,            page: 0,           favoriteStatus: null          }
       }]
     )
   }
@@ -289,7 +290,6 @@ function fetchArticlesAndProfileAndRender(feedType){
     const user = eventData;
     const { profile: {username}, currentPage } = profileRouteViewLens(extendedState);
     return {
-      // TODO: gonna have to test that shit
       updates: [].concat(
         updateAuth(extendedState, eventData, settings).updates,
         [[routes.profile, [{feedType}]]]
@@ -355,14 +355,12 @@ export function renderFetchArticlesFailed(extendedState, eventData, settings) {
     outputs: [      {        command: RENDER_PROFILE,        params: {          articles: articlesFailed,        }      }    ]  };
 }
 
-// TODO: I am here
-// TODO: I might not need to keep profile in state? already memoized by the render handler
 export function renderFetchedProfile(extendedState, eventData, settings) {
   const profile = eventData;
 
   return {
     updates: profileUpdates([{profile}]),
-    outputs: [      {        command: RENDER_PROFILE,        params: {          profile,        }      }    ]
+    outputs: [ { command: RENDER_PROFILE, params: {          profile,        }      }    ]
   };
 }
 
@@ -373,11 +371,7 @@ export function renderFetchedProfileFailed(extendedState, eventData, settings) {
   };
 }
 
-// TODO: set profile to null for pending profile does not work!! needs new field
 // TODO: repass storybook tests!!
-// TODO: will have to set pending to false at some point
-// TODO: also update the returned profile by the API, so following is updated there
-// TODO: think about duplication: I already have the profile info in state right? not needed in event
 export function followProfileAndRender(extendedState, eventData, settings) {
   const { profile } = profileRouteViewLens(extendedState);
   const pendingProfile = Object.assign({}, profile, {pending: true});
@@ -498,7 +492,7 @@ export function likeAuthorArticleAndRender(extendedState, eventData, settings) {
   };
 }
 
-// TODO: cf. updateFavoritedAndRender
+// TODO: this is the same function as renderUnliked !!!
 export function renderLiked(extendedState, eventData, settings) {
   const { articles } = profileRouteViewLens(extendedState);
   const { article: updatedArticle }  = eventData;
@@ -528,7 +522,6 @@ export function renderLikeFailed(extendedState, eventData, settings) {
   };
 }
 
-// TODO: cf. updateFavoritedAndRender, this is the same function!!!
 export function renderUnliked(extendedState, eventData, settings) {
   const { articles } = profileRouteViewLens(extendedState);
   const { article: updatedArticle }  = eventData;

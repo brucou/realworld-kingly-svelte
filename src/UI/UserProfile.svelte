@@ -13,7 +13,7 @@
   // profile.following is Boolean | null (null iff pending a follow/unfollow request)
   export let profile;
   export let articles;
-  // TODO: actually that is the slug of the article - should change the name really
+  // Actually that is the slug of the article - should change the name really
   export let favoriteStatus;
   export let page;
 
@@ -24,10 +24,8 @@
   const onClickFavorite = ({ slug, article }) => {
     dispatch({ [TOGGLED_FAVORITE]: { slug } });
   };
-  // TODO: put in constants/events, pass user too?
-  // TODO: remove following? take it from the profile data in state instead of in the UI?
   const handleClick = ev => {
-    dispatch({ [TOGGLED_FOLLOW]: {username: profile.username, following: profile.following }});
+    dispatch({ [TOGGLED_FOLLOW]: {username: profile.username }});
   };
 
   $: classes =
@@ -40,10 +38,7 @@
   $: following = profile && profile.following
   $: username = profile && profile.username
   $: image = profile && profile.image
-  $: bio = profile && profile.bio
-  $:{
-    console.log(`own profile`, user, profile, isUser)
-  }
+  $: bio = profile && profile.bio || ""
 </script>
 
   {#if username}

@@ -6,7 +6,7 @@ export const NEW_EDITOR = "#/editor";
 export const EDITOR = "#/editor/:slug";
 export const ARTICLE = "#/article/:slug";
 export const PROFILE = "#/@:username";
-export const PROFILE_FAVORITED = "#/@:username/favorited";
+export const PROFILE_FAVORITED = "#/@:username/favorites";
 
 export const editorLink = slug => EDITOR.replace(":slug", slug);
 export const userArticlesLink = username => PROFILE.replace(":username", username);

@@ -1,10 +1,11 @@
 import QUnit from "qunit"
 import { fsmContracts } from "kingly"
-import { commands, events, routes } from "../src/constants"
+import { commands, events, routes, USER_PROFILE_PAGE } from "../src/constants"
 import { userFixture, } from "./fixtures/user"
 import { runUserStories } from "./common"
 import { UNAUTH_USER_ON_HOME_COMMANDS } from "./home-route-fsm.specs"
 import { settingsErrorsFixture } from "./fixtures/settings"
+import { articlesFixture } from "./fixtures/articles"
 
 QUnit.module("Testing settings route fsm", {});
 
@@ -15,6 +16,7 @@ const {
   UPDATE_SETTINGS,
   LOG_OUT,
   RENDER_SETTINGS,
+  RENDER_PROFILE
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -25,7 +27,7 @@ const {
   CLICKED_LOG_OUT
 } = events;
 
-const { home, settings } = routes;
+const { home, profile, settings } = routes;
 const updatedUserFixture = {
   image: "another",
   username: "one",
@@ -61,7 +63,6 @@ const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_INPUTS = [
   { [AUTH_CHECKED]: userFixture },
   { [UPDATED_SETTINGS]: updatedUserFixture },
 ];
-
 const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_COMMANDS = [
   [{ [FETCH_AUTHENTICATION]: void 0 },],
   [{ [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: false, errors: null } },],
@@ -70,7 +71,13 @@ const AUTH_USER_ON_SETTINGS_UPDATES_SETTINGS_COMMANDS = [
     { [RENDER_SETTINGS]: { route: settings, user: userFixture, inProgress: true, errors: null } },
   ],
   [{ [UPDATE_SETTINGS]: { ...updatedSettingsFixture } },],
-  [{ [REDIRECT]: `/@${updatedSettingsFixture.username}` },]
+  [
+    { [REDIRECT]: `/@${updatedSettingsFixture.username}` },
+    { [FETCH_AUTHENTICATION]: void 0 },
+    { [RENDER_PROFILE]: {
+        route: profile, profileTab: null, user: null, profile: null, articles: null, favoriteStatus: null, page: 0
+      } },
+  ]
 ];
 
 // Authenticated user navigates to settings route, sees form, fails to update settings and sees errors

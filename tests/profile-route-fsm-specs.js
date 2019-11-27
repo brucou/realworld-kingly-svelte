@@ -592,6 +592,121 @@ const USER_NAVIGATES_TO_PROFILE_FAILS_FOLLOW_LIKE_UNLIKE_COMMANDS = [
   ],
 ];
 
+// |(own profile, my articles)| unfollow user fails, like article fails, unlike article fails|
+const USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE = `User navigates to own profile route (My articles), sees articles and fails to unfollow profile, fails to like and unlike articles`;
+const USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: PROFILE_MY_ARTICLES } },
+  { [AUTH_CHECKED]: userFixture },
+  {[FETCHED_PROFILE]: followedProfileFixture},
+  {[ARTICLES_FETCHED_OK]: articlesFixture},
+  {[TOGGLED_FOLLOW]: {username: followedProfileFixture.username}},
+  {[UNFOLLOW_NOK]: new Error(`follow error`)},
+  {[TOGGLED_FAVORITE]: {slug: unfavoritedSlugFixture, isFavorited: false}},
+  { [AUTH_CHECKED]: userFixture },
+  {[FAVORITE_NOK]: {err: new Error(`favorite error`), slug: unfavoritedSlugFixture}},
+  {[TOGGLED_FAVORITE]: {slug: favoritedSlugFixture, isFavorited: true}},
+  { [AUTH_CHECKED]: userFixture },
+  {[UNFAVORITE_NOK]: {err: new Error(`unfavorite error`), slug: favoritedSlugFixture}},
+].flat();
+const USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+    { [RENDER_PROFILE]: {
+        "articles": null,
+        "favoriteStatus": null,
+        "page": 0,
+        "profile": null,
+        "profileTab": null,
+        "route": profile,
+        "user": null
+      } },
+  ],
+  [
+    {[FETCH_PROFILE]: followedProfileFixture.username},
+    {[FETCH_AUTHOR_FEED]: {username: followedProfileFixture.username, page: 0, feedType: USER_PROFILE_PAGE }},
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: userFixture, profile: null, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+    },
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: userFixture, profile: followedProfileFixture, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+    },
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: userFixture, profile: followedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+    },
+  ],
+  [
+    {[UNFOLLOW_PROFILE]: userProfileFixture.username},
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: userFixture, profile: pendingFollowedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
+      }},
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: userFixture, profile: followedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+    },
+  ],
+  [
+    {[FETCH_AUTHENTICATION]: void 0},
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile,
+        profileTab: USER_PROFILE_PAGE,
+        user: userFixture,
+        profile: followedProfileFixture,
+        articles: articlesFixture,
+        favoriteStatus: unfavoritedSlugFixture,
+        page: 0
+      }
+    },
+    {[FAVORITE_ARTICLE]: { slug: unfavoritedSlugFixture}},
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile,
+        profileTab: USER_PROFILE_PAGE,
+        user: userFixture,
+        profile: followedProfileFixture,
+        articles: articlesFixture,
+        favoriteStatus: null,
+        page: 0
+      }
+    },
+  ],
+ [
+    {[FETCH_AUTHENTICATION]: void 0},
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile,
+        profileTab: USER_PROFILE_PAGE,
+        user: userFixture,
+        profile: followedProfileFixture,
+        articles: articlesFixture,
+        favoriteStatus: favoritedSlugFixture,
+        page: 0
+      }
+    },
+    {[UNFAVORITE_ARTICLE]: { slug: favoritedSlugFixture}},
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile,
+        profileTab: USER_PROFILE_PAGE,
+        user: userFixture,
+        profile: followedProfileFixture,
+        articles: articlesFixture,
+        favoriteStatus: null,
+        page: 0
+      }
+    },
+  ],
+];
+
 // |(# profile, my articles)| like article fails|
 const USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED = `User navigates to a profile route (My articles), sees articles, attempts to like an article and is redirected to sign up page`;
 const USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED_INPUTS = [
@@ -671,6 +786,11 @@ const userStories = [
     USER_NAVIGATES_TO_PROFILE_FAILS_FOLLOW_LIKE_UNLIKE,
     USER_NAVIGATES_TO_PROFILE_FAILS_FOLLOW_LIKE_UNLIKE_INPUTS,
     USER_NAVIGATES_TO_PROFILE_FAILS_FOLLOW_LIKE_UNLIKE_COMMANDS
+  ],
+  [
+    USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE,
+    USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE_INPUTS,
+    USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE_COMMANDS
   ],
   [
     USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED,

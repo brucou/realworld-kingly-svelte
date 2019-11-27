@@ -554,4 +554,3 @@ export function fetchArticlesPage(extendedState, eventData, settings) {
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
   };
 }
-

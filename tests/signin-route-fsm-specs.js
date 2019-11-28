@@ -9,31 +9,10 @@ QUnit.module("Testing sign in route fsm", {});
 
 const {
   ROUTE_CHANGED,
-  TAGS_FETCHED_OK,
-  TAGS_FETCHED_NOK,
-  ARTICLES_FETCHED_OK,
-  ARTICLES_FETCHED_NOK,
   AUTH_CHECKED,
-  CLICKED_TAG,
-  CLICKED_PAGE,
-  CLICKED_USER_FEED,
-  CLICKED_GLOBAL_FEED,
-  TOGGLED_FAVORITE,
-  FAVORITE_OK,
-  FAVORITE_NOK,
-  UNFAVORITE_OK,
-  UNFAVORITE_NOK,
-  CLICKED_SIGNUP,
-  FAILED_SIGN_UP,
-  SUCCEEDED_SIGN_UP,
   CLICKED_SIGN_IN,
   FAILED_SIGN_IN,
   SUCCEEDED_SIGN_IN,
-  CLICKED_PUBLISH,
-  PRESSED_ENTER,
-  REMOVED_TAG,
-  FAILED_PUBLISHING,
-  SUCCEEDED_PUBLISHING,
 } = events;
 const {
   RENDER_SIGN_IN,
@@ -41,7 +20,7 @@ const {
   REDIRECT,
   SIGN_IN
 } = commands;
-const { home, signUp, signIn, allRoutes } = routes;
+const { home, signIn } = routes;
 
 // Scenarios
 
@@ -79,11 +58,11 @@ const UNAUTH_USER_ON_SIGNIN_SEES_FORM_INPUTS = [
 const UNAUTH_USER_ON_SIGNIN_SEES_FORM_COMMANDS = UNAUTH_USER_ON_SIGNIN_COMMANDS;
 
 // Authenticated user navigates to sign in route and is redirected to home route
-const AUTH_USER_ON_SIGNIN_SEES_FORM = `Authenticated user navigates to sign in route and is redirected to home route`;
-const AUTH_USER_ON_SIGNIN_SEES_FORM_INPUTS = [
+const AUTH_USER_ON_SIGNIN_IS_REDIRECTED = `Authenticated user navigates to sign in route and is redirected to home route`;
+const AUTH_USER_ON_SIGNIN_IS_REDIRECTED_INPUTS = [
   AUTH_USER_ON_SIGNIN_INPUTS,
 ].flat();
-const AUTH_USER_ON_SIGNIN_SEES_FORM_COMMANDS = AUTH_USER_ON_SIGNIN_COMMANDS(0);
+const AUTH_USER_ON_SIGNIN_IS_REDIRECTED_COMMANDS = AUTH_USER_ON_SIGNIN_COMMANDS(0);
 
 // Unauthenticated user navigates to sign in route and sees sign in form, successfully signs and is redirected to home
 const UNAUTH_USER_ON_SIGNIN_SEES_FORM_SIGNS_IN_AND_SEES_HOME_FEED = `Unauthenticated user navigates to sign in route and sees sign in form, successfully signs and is redirected to home and sees home feed`;
@@ -132,9 +111,9 @@ const userStories = [
     UNAUTH_USER_ON_SIGNIN_SEES_FORM_COMMANDS
   ],
   [
-    AUTH_USER_ON_SIGNIN_SEES_FORM,
-    AUTH_USER_ON_SIGNIN_SEES_FORM_INPUTS,
-    AUTH_USER_ON_SIGNIN_SEES_FORM_COMMANDS
+    AUTH_USER_ON_SIGNIN_IS_REDIRECTED,
+    AUTH_USER_ON_SIGNIN_IS_REDIRECTED_INPUTS,
+    AUTH_USER_ON_SIGNIN_IS_REDIRECTED_COMMANDS
   ],
   [
     UNAUTH_USER_ON_SIGNIN_SEES_FORM_SIGNS_IN_AND_SEES_HOME_FEED,

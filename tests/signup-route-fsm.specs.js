@@ -13,12 +13,9 @@ const {
   CLICKED_SIGN_UP,
   FAILED_SIGN_UP,
   SUCCEEDED_SIGN_UP,
-  CLICKED_SIGN_IN,
-  FAILED_SIGN_IN,
-  SUCCEEDED_SIGN_IN,
   } = events;
 const {  RENDER_SIGN_UP,  FETCH_AUTHENTICATION,  REDIRECT,  SIGN_UP} = commands;
-const { home, signUp, allRoutes } = routes;
+const { home, signUp } = routes;
 
 // Scenarios
 
@@ -65,11 +62,11 @@ const UNAUTH_USER_ON_SIGNUP_SEES_FORM_INPUTS = [
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_COMMANDS = UNAUTH_USER_ON_SIGNUP_COMMANDS;
 
 // Authenticated user navigates to sign up route and is redirected to home route
-const AUTH_USER_ON_SIGNUP_SEES_FORM = `Authenticated user navigates to sign up route and is redirected to home route`;
-const AUTH_USER_ON_SIGNUP_SEES_FORM_INPUTS = [
+const AUTH_USER_ON_SIGNUP_IS_REDIRECTED = `Authenticated user navigates to sign up route and is redirected to home route`;
+const AUTH_USER_ON_SIGNUP_IS_REDIRECTED_INPUTS = [
   AUTH_USER_ON_SIGNUP_INPUTS,
 ].flat();
-const AUTH_USER_ON_SIGNUP_SEES_FORM_COMMANDS = AUTH_USER_ON_SIGNUP_COMMANDS(0);
+const AUTH_USER_ON_SIGNUP_IS_REDIRECTED_COMMANDS = AUTH_USER_ON_SIGNUP_COMMANDS(0);
 
 // Unauthenticated user navigates to sign up route and sees sign up form, successfully signs and is redirected to home
 const UNAUTH_USER_ON_SIGNUP_SEES_FORM_SIGNS_UP_AND_SEES_HOME_FEED = `Unauthenticated user navigates to sign up route and sees sign up form, successfully signs and is redirected to home and sees home feed`;
@@ -118,9 +115,9 @@ const userStories = [
     UNAUTH_USER_ON_SIGNUP_SEES_FORM_COMMANDS
   ],
   [
-    AUTH_USER_ON_SIGNUP_SEES_FORM,
-    AUTH_USER_ON_SIGNUP_SEES_FORM_INPUTS,
-    AUTH_USER_ON_SIGNUP_SEES_FORM_COMMANDS
+    AUTH_USER_ON_SIGNUP_IS_REDIRECTED,
+    AUTH_USER_ON_SIGNUP_IS_REDIRECTED_INPUTS,
+    AUTH_USER_ON_SIGNUP_IS_REDIRECTED_COMMANDS
   ],
   [
     UNAUTH_USER_ON_SIGNUP_SEES_FORM_SIGNS_UP_AND_SEES_HOME_FEED,

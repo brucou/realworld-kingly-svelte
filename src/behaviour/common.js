@@ -45,13 +45,6 @@ export function redirectToSignUp(extendedState, eventData, settings) {
   };
 }
 
-export function updateUrlAndRedirectToHome(extendedState, eventData, settings) {
-  return {
-    updates: allRoutesUpdate([{ url: home }]),
-    outputs: []
-  };
-}
-
 export function redirectToHome(extendedState, eventData, settings) {
   return {
     updates: allRoutesUpdate([{ url: home }]),
@@ -80,4 +73,8 @@ export function getFavoritedFromSlug(extendedState, eventData, settings) {
   const { slug } = eventData;
   const { articles: {articles} } = extendedState;
   return articles.find(article => article.slug === slug).favorited
+}
+
+export function alwaysTrue(){
+  return true
 }

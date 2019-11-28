@@ -37,3 +37,11 @@ export const signInErrorsFixture = {
   email: ["can't be blank"],
   password: ["can't be blank"],
 };
+export const randomUserProfileFixture = {
+  "email": "first@afraid.petrified",
+  "token": "jwt.token.righttherenay",
+  username: 'random',
+  bio: `psychology`,
+  image: null,
+  following: false
+};

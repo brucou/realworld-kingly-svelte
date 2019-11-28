@@ -62,10 +62,8 @@ const {
   FAILED_UPDATE_SETTINGS,
   FETCHED_PROFILE,
   FETCH_PROFILE_NOK,
-  FOLLOW_OK,
-  FOLLOW_NOK,
-  UNFOLLOW_OK,
-  UNFOLLOW_NOK,
+  TOGGLE_FOLLOW_OK,
+  TOGGLE_FOLLOW_NOK,
 } = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -313,16 +311,16 @@ const commandHandlers = {
     const username = params;
 
     follow({username})
-      .then (({profile}) => dispatch({[FOLLOW_OK]: profile}))
-      .catch(err => dispatch({[FOLLOW_NOK]: err}))
+      .then (({profile}) => dispatch({[TOGGLE_FOLLOW_OK]: profile}))
+      .catch(err => dispatch({[TOGGLE_FOLLOW_NOK]: err}))
   },
   [UNFOLLOW_PROFILE]: (dispatch, params, effectHandlers) => {
     const { unfollow } = effectHandlers;
     const username = params;
 
     unfollow({username})
-      .then (({profile}) => dispatch({[UNFOLLOW_OK]: profile}))
-      .catch(err => dispatch({[UNFOLLOW_NOK]: err}))
+      .then (({profile}) => dispatch({[TOGGLE_FOLLOW_OK]: profile}))
+      .catch(err => dispatch({[TOGGLE_FOLLOW_NOK]: err}))
   },
 };
 

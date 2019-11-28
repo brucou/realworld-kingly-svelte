@@ -1,8 +1,6 @@
 # TODO
 - TEEMP: no icons? icons are there in dev, just not in storybook
 - TEEMP: publishing does not work in the editor route? check the API call is correct and review tests
-- DO THE COMMANDS FIRST THEN THE VIEW??
-  - the commands give me the parameters I need to pass in the view event handlers!
 - publish integration with vue, react, svelte, lit first
   - then do ember and angular! 
 - DOC: find a nomenclatur for events, should refer to the UI domain, 

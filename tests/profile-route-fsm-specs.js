@@ -1,7 +1,7 @@
 import QUnit from "qunit"
 import { fsmContracts } from "kingly"
 import { commands, events, FAVORITE_PROFILE_PAGE, loadingStates, routes, USER_PROFILE_PAGE } from "../src/constants"
-import { userFixture, } from "./fixtures/user"
+import { randomUserProfileFixture, userFixture, } from "./fixtures/user"
 import { runUserStories } from "./common"
 import { articlesErrorFixture, articlesFixture, articlesPage1Fixture } from "./fixtures/articles"
 import {
@@ -9,6 +9,9 @@ import {
 } from "./fixtures/slugs"
 
 QUnit.module("Testing user profile route fsm", {});
+
+// TODO: rewrite tests for new machine!
+// TODO: update the docs too!
 
 const {
   ROUTE_CHANGED,
@@ -19,10 +22,8 @@ const {
   TOGGLED_FAVORITE,
   FETCHED_PROFILE,
   FETCH_PROFILE_NOK,
-  FOLLOW_OK,
-  FOLLOW_NOK,
-  UNFOLLOW_OK,
-  UNFOLLOW_NOK,
+  TOGGLE_FOLLOW_OK,
+  TOGGLE_FOLLOW_NOK,
   FAVORITE_NOK,
   FAVORITE_OK,
   UNFAVORITE_NOK,
@@ -308,13 +309,15 @@ const USER_SEES_OWN_PROFILE_AND_FAVORITE_ARTICLES_LIKES_UNLIKES_CHANGES_PAGE_COM
 const USER_SEES_PROFILE_ARTICLES_FOLLOWS_UNFOLLOWS = `User navigates to the profile route (My articles), sees profile articles, follows and unfollows profile`;
 const USER_SEES_PROFILE_ARTICLES_FOLLOWS_UNFOLLOWS_INPUTS = [
   { [ROUTE_CHANGED]: { hash: PROFILE_MY_ARTICLES } },
-  { [AUTH_CHECKED]: UNAUTH_USER },
+  { [AUTH_CHECKED]: randomUserProfileFixture },
   {[FETCHED_PROFILE]: userProfileFixture},
   {[ARTICLES_FETCHED_OK]: articlesFixture},
   {[TOGGLED_FOLLOW]: {username: userProfileFixture.username}},
-  {[FOLLOW_OK]: followedProfileFixture},
+  { [AUTH_CHECKED]: randomUserProfileFixture},
+  {[TOGGLE_FOLLOW_OK]: followedProfileFixture},
   {[TOGGLED_FOLLOW]: {username: userProfileFixture.username}},
-  {[UNFOLLOW_OK]: userProfileFixture},
+  { [AUTH_CHECKED]: randomUserProfileFixture },
+  {[TOGGLE_FOLLOW_OK]: userProfileFixture},
 ].flat();
 const USER_SEES_PROFILE_ARTICLES_FOLLOWS_UNFOLLOWS_COMMANDS = [
   [
@@ -333,39 +336,45 @@ const USER_SEES_PROFILE_ARTICLES_FOLLOWS_UNFOLLOWS_COMMANDS = [
     {[FETCH_PROFILE]: userProfileFixture.username},
     {[FETCH_AUTHOR_FEED]: {username: userProfileFixture.username, page: 0, feedType: USER_PROFILE_PAGE }},
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: null, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+        route: profile, profileTab: USER_PROFILE_PAGE, user: randomUserProfileFixture, profile: null, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
     },
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+        route: profile, profileTab: USER_PROFILE_PAGE, user: randomUserProfileFixture, profile: userProfileFixture, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
     },
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+        route: profile, profileTab: USER_PROFILE_PAGE, user: randomUserProfileFixture, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
   ],
   [
     {[FOLLOW_PROFILE]: userProfileFixture.username},
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: pendingUserProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
+        route: profile, profileTab: USER_PROFILE_PAGE, user: randomUserProfileFixture, profile: pendingUserProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
       }},
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: followedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+        route: profile, profileTab: USER_PROFILE_PAGE, user: randomUserProfileFixture, profile: followedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
   ],
   [
     {[UNFOLLOW_PROFILE]: userProfileFixture.username},
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: pendingFollowedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
+        route: profile, profileTab: USER_PROFILE_PAGE, user: randomUserProfileFixture, profile: pendingFollowedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
       }},
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+        route: profile, profileTab: USER_PROFILE_PAGE, user: randomUserProfileFixture, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
   ]
 ];
@@ -374,13 +383,15 @@ const USER_SEES_PROFILE_ARTICLES_FOLLOWS_UNFOLLOWS_COMMANDS = [
 const USER_SEES_PROFILE_FAVORITE_ARTICLES_FOLLOWS_UNFOLLOWS = `User navigates to the profile route (Favorite articles), sees profile articles, follows and unfollows profile`;
 const USER_SEES_PROFILE_FAVORITE_ARTICLES_FOLLOWS_UNFOLLOWS_INPUTS = [
   { [ROUTE_CHANGED]: { hash: PROFILE_FAVORITED_ARTICLES } },
-  { [AUTH_CHECKED]: UNAUTH_USER },
+  { [AUTH_CHECKED]: randomUserProfileFixture },
   {[FETCHED_PROFILE]: userProfileFixture},
   {[ARTICLES_FETCHED_OK]: articlesFixture},
   {[TOGGLED_FOLLOW]: {username: userProfileFixture.username}},
-  {[FOLLOW_OK]: followedProfileFixture},
+  { [AUTH_CHECKED]: randomUserProfileFixture },
+  {[TOGGLE_FOLLOW_OK]: followedProfileFixture},
   {[TOGGLED_FOLLOW]: {username: userProfileFixture.username}},
-  {[UNFOLLOW_OK]: userProfileFixture},
+  { [AUTH_CHECKED]: randomUserProfileFixture },
+  {[TOGGLE_FOLLOW_OK]: userProfileFixture},
 ].flat();
 const USER_SEES_PROFILE_FAVORITE_ARTICLES_FOLLOWS_UNFOLLOWS_COMMANDS = [
   [
@@ -399,39 +410,45 @@ const USER_SEES_PROFILE_FAVORITE_ARTICLES_FOLLOWS_UNFOLLOWS_COMMANDS = [
     {[FETCH_PROFILE]: userProfileFixture.username},
     {[FETCH_AUTHOR_FEED]: {username: userProfileFixture.username, page: 0, feedType: FAVORITE_PROFILE_PAGE }},
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: UNAUTH_USER, profile: null, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: randomUserProfileFixture, profile: null, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
     },
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: randomUserProfileFixture, profile: userProfileFixture, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
     },
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: randomUserProfileFixture, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
   ],
   [
     {[FOLLOW_PROFILE]: userProfileFixture.username},
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: UNAUTH_USER, profile: pendingUserProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
+        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: randomUserProfileFixture, profile: pendingUserProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
       }},
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: UNAUTH_USER, profile: followedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: randomUserProfileFixture, profile: followedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
   ],
   [
     {[UNFOLLOW_PROFILE]: userProfileFixture.username},
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: UNAUTH_USER, profile: pendingFollowedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
+        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: randomUserProfileFixture, profile: pendingFollowedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0
       }},
   ],
   [
     {[RENDER_PROFILE]: {
-        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+        route: profile, profileTab: FAVORITE_PROFILE_PAGE, user: randomUserProfileFixture, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
   ]
 ];
@@ -485,7 +502,8 @@ const USER_NAVIGATES_TO_PROFILE_FAILS_FOLLOW_LIKE_UNLIKE_INPUTS = [
   {[FETCHED_PROFILE]: userProfileFixture},
   {[ARTICLES_FETCHED_OK]: articlesFixture},
   {[TOGGLED_FOLLOW]: {username: userProfileFixture.username}},
-  {[FOLLOW_NOK]: new Error(`follow error`)},
+  { [AUTH_CHECKED]: userFixture },
+  {[TOGGLE_FOLLOW_NOK]: new Error(`follow error`)},
   {[TOGGLED_FAVORITE]: {slug: unfavoritedSlugFixture, isFavorited: false}},
   { [AUTH_CHECKED]: userFixture },
   {[FAVORITE_NOK]: {err: new Error(`favorite error`), slug: unfavoritedSlugFixture}},
@@ -522,6 +540,9 @@ const USER_NAVIGATES_TO_PROFILE_FAILS_FOLLOW_LIKE_UNLIKE_COMMANDS = [
     {[RENDER_PROFILE]: {
         route: profile, profileTab: USER_PROFILE_PAGE, user: userFixture, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
   ],
   [
     {[FOLLOW_PROFILE]: userProfileFixture.username},
@@ -600,7 +621,8 @@ const USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE_INPUTS = [
   {[FETCHED_PROFILE]: followedProfileFixture},
   {[ARTICLES_FETCHED_OK]: articlesFixture},
   {[TOGGLED_FOLLOW]: {username: followedProfileFixture.username}},
-  {[UNFOLLOW_NOK]: new Error(`follow error`)},
+  { [AUTH_CHECKED]: userFixture },
+  {[TOGGLE_FOLLOW_NOK]: new Error(`follow error`)},
   {[TOGGLED_FAVORITE]: {slug: unfavoritedSlugFixture, isFavorited: false}},
   { [AUTH_CHECKED]: userFixture },
   {[FAVORITE_NOK]: {err: new Error(`favorite error`), slug: unfavoritedSlugFixture}},
@@ -637,6 +659,9 @@ const USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE_COMMANDS = [
     {[RENDER_PROFILE]: {
         route: profile, profileTab: USER_PROFILE_PAGE, user: userFixture, profile: followedProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
     },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
   ],
   [
     {[UNFOLLOW_PROFILE]: userProfileFixture.username},
@@ -707,7 +732,7 @@ const USER_NAVIGATES_TO_PROFILE_FAILS_UNFOLLOW_LIKE_UNLIKE_COMMANDS = [
   ],
 ];
 
-// |(# profile, my articles)| like article fails|
+// |(unauth user, my articles)| like article fails|
 const USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED = `User navigates to a profile route (My articles), sees articles, attempts to like an article and is redirected to sign up page`;
 const USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED_INPUTS = [
   { [ROUTE_CHANGED]: { hash: PROFILE_MY_ARTICLES } },
@@ -718,6 +743,55 @@ const USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED_INPUTS = [
   { [AUTH_CHECKED]: UNAUTH_USER},
 ].flat();
 const USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+    { [RENDER_PROFILE]: {
+        "articles": null,
+        "favoriteStatus": null,
+        "page": 0,
+        "profile": null,
+        "profileTab": null,
+        "route": profile,
+        "user": null
+      } },
+  ],
+  [
+    {[FETCH_PROFILE]: userProfileFixture.username},
+    {[FETCH_AUTHOR_FEED]: {username: userProfileFixture.username, page: 0, feedType: USER_PROFILE_PAGE }},
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: null, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+    },
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: ARTICLES_ARE_LOADING, favoriteStatus: null, page: 0}
+    },
+  ],
+  [
+    {[RENDER_PROFILE]: {
+        route: profile, profileTab: USER_PROFILE_PAGE, user: UNAUTH_USER, profile: userProfileFixture, articles: articlesFixture, favoriteStatus: null, page: 0}
+    },
+  ],
+  [
+    {[FETCH_AUTHENTICATION]: void 0},
+  ],
+  [
+    {[REDIRECT]: signUp},
+    {[FETCH_AUTHENTICATION]: void 0},
+  ],
+];
+
+// |(unauth user, my articles)| follow profile fails|
+const USER_NAVIGATES_TO_PROFILE_FOLLOWS_AND_IS_REDIRECTED = `User navigates to a profile route (My articles), sees articles, attempts to follow an article's author and is redirected to sign up page`;
+const USER_NAVIGATES_TO_PROFILE_FOLLOWS_AND_IS_REDIRECTED_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: PROFILE_MY_ARTICLES } },
+  { [AUTH_CHECKED]: UNAUTH_USER },
+  {[FETCHED_PROFILE]: userProfileFixture},
+  {[ARTICLES_FETCHED_OK]: articlesFixture},
+  {[TOGGLED_FOLLOW]: {username: userProfileFixture.username}},
+  { [AUTH_CHECKED]: UNAUTH_USER},
+].flat();
+const USER_NAVIGATES_TO_PROFILE_FOLLOWS_AND_IS_REDIRECTED_COMMANDS = [
   [
     { [FETCH_AUTHENTICATION]: void 0 },
     { [RENDER_PROFILE]: {
@@ -796,6 +870,11 @@ const userStories = [
     USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED,
     USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED_INPUTS,
     USER_NAVIGATES_TO_PROFILE_LIKES_AND_IS_REDIRECTED_COMMANDS
+  ],
+  [
+    USER_NAVIGATES_TO_PROFILE_FOLLOWS_AND_IS_REDIRECTED,
+    USER_NAVIGATES_TO_PROFILE_FOLLOWS_AND_IS_REDIRECTED_INPUTS,
+    USER_NAVIGATES_TO_PROFILE_FOLLOWS_AND_IS_REDIRECTED_COMMANDS
   ]
 ];
 

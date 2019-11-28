@@ -3,7 +3,6 @@ import { events, routes } from "../constants";
 import { allRoutesViewLens, initialAllRoutesState, updateURL } from "./common";
 import { homeStates, homeTransitions, initialHomeRouteState } from "./home";
 import { initialSignUpRouteState, signUpStates, signUpTransitions } from "./signUp";
-import { cleanHash } from "../shared/helpers";
 import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
 import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings";
@@ -11,8 +10,6 @@ import { initialProfileRouteState, profileStates, profileTransitions } from "./p
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;
-
-// TODO: make the machine to pass the tests
 
 const { home, allRoutes, signUp, signIn, editor, settings, profile } = routes;
 

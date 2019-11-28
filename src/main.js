@@ -296,14 +296,17 @@ const commandHandlers = {
     fetchFn({username, page})
       .then (({articles, articlesCount}) => dispatch({[ARTICLES_FETCHED_OK]: {articles, articlesCount}}))
       .catch(err => dispatch({[ARTICLES_FETCHED_NOK]: err}))
-    // TODO:
+    // ADR:
     // In the original Conduit demo app, profile and articles are fetched in parallel and displayed together
     // On tab navigation, the profile data is not refetched, but articles are
     // 1. Memoize
     // Ok, but then I do not guarantee at the modelization level that profile data is not fetched twice
     // That is ok if that is not understood to be a part of the specifications.
-    // What a man to do? memoize? but then we have to invalidate the cache (on leaving the route maybe?)
-    // TODO DOC: do that as a refactoring after modelizing the machine, for now just don't worry about those concerns, we can always couple later
+    // 2. Do the profile API call anew, but do no display a loading indicator while fetching
+    // Even better user-wise. And probably makes the most sense too. After all, the profile
+    // could have been changed in the meanwhile, so getting fresh data is not a bad thing.
+    // Screen-wise, we keep the displayed profile screen till we get the newly fetched profile info.
+    // We chose 2!!
   },
   [FOLLOW_PROFILE]: (dispatch, params, effectHandlers) => {
     const { follow } = effectHandlers;

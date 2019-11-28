@@ -1,17 +1,11 @@
-function makeEnum(enums) {
-  return enums.reduce((acc, _enum) => Object.assign(acc, { [_enum]: _enum }), {});
-}
-
 // TODO: DRY this with src/links.js!! so move that to links.js then change view to add the #
 export const routes = {
-  // Home route will be empty strings. Cf. apiRouter
   home: "/",
   signUp: "/register",
   allRoutes: "all routes",
   signIn: "/login",
   editor: "/editor",
   settings: "/settings",
-  // TODO: this is a dynamic one... @username.. how to handle this?
   profile: "/@"
 };
 

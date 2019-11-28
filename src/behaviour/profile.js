@@ -371,7 +371,6 @@ export function renderFetchedProfileFailed(extendedState, eventData, settings) {
   };
 }
 
-// TODO: repass storybook tests!!
 export function followProfileAndRender(extendedState, eventData, settings) {
   const { profile } = profileRouteViewLens(extendedState);
   const pendingProfile = Object.assign({}, profile, {pending: true});

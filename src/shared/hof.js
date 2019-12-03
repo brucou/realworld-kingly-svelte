@@ -5,6 +5,6 @@ export function not(f) {
 }
 export function and(f, g) {
   return function(...args) {
-    return f(...args) && g(...args)
+    return f(...args) && g(...args);
   };
 }

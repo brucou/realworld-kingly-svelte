@@ -1,7 +1,8 @@
 import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
 import {
   allRoutesViewLens,
-  fetchAuthentication, getFavoritedFromSlug,
+  fetchAuthentication,
+  getFavoritedFromSlug,
   isAuthenticated,
   isNotAuthenticated,
   redirectToSignUp,
@@ -15,7 +16,7 @@ import {
   loadingStates,
   routes,
   routeViewLens,
-  viewModel,
+  viewModel
 } from "../constants";
 import { not } from "../shared/hof";
 
@@ -443,7 +444,14 @@ export function renderGlobalFeedArticlesFetchError(extendedState, eventData, set
 export function fetchAuthenticationAndUpdateFavoriteStatus(extendedState, eventData, settings) {
   const { slug } = eventData;
   return {
-    updates: homeUpdates([{ favoriteStatus: { slug, isFavorited: getFavoritedFromSlug(homeRouteViewLens(extendedState), eventData, settings) } }]),
+    updates: homeUpdates([
+      {
+        favoriteStatus: {
+          slug,
+          isFavorited: getFavoritedFromSlug(homeRouteViewLens(extendedState), eventData, settings)
+        }
+      }
+    ]),
     outputs: [{ command: FETCH_AUTHENTICATION, params: void 0 }]
   };
 }

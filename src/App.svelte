@@ -5,31 +5,38 @@
   export let _fsm;
   export let _shouldRender = false;
 
-  // Props
-  // Common props
+  //// Props
+  /// Common props
   export let user;
   export let route;
-  // Home route props
+  /// Home route props
   export let tags;
   export let articles;
   export let page;
   export let activeFeed;
   export let selectedTag;
   export let favoriteStatus;
-  // Sign up, sign in, editor common props
+  /// Sign up, sign in, editor common props
   export let inProgress;
   export let errors;
-  // Editor props
+  /// Editor props
   export let title;
   export let description;
   export let body;
   export let currentTag;
   export let tagList;
-  // Settings props
-    // Profile props
-    export let profile;
-    export let profileTab;
-
+  /// Settings props
+  /// Profile props
+  export let profile;
+  export let profileTab;
+  /// Article props
+  export let article;
+  // The comments for the article as returned by the API
+  export let comments;
+  // The content of the comment text area (controlled field)
+  export let commentText;
+  // Status for profile following requests
+  export let profileStatus;
 
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
@@ -57,6 +64,9 @@
       {tagList}
       {profile}
       {profileTab}
-      />
+      {article}
+      {comments}
+      {commentText}
+      {profileStatus} />
   {/if}
 </Fsm>

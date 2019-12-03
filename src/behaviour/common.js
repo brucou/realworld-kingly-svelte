@@ -2,10 +2,7 @@ import { allRoutesUpdate, routes, routeViewLens, commands } from "../constants";
 import { NO_OUTPUT } from "kingly";
 
 const { home, signUp, allRoutes } = routes;
-const {
-  FETCH_AUTHENTICATION,
-  REDIRECT
-} = commands;
+const { FETCH_AUTHENTICATION, REDIRECT } = commands;
 
 export const allRoutesViewLens = routeViewLens(allRoutes);
 
@@ -71,10 +68,12 @@ export function updateAuth(extendedState, eventData, settings) {
 // NOTE: extended state here comes already focused on (e.g. with a lens previously applied)
 export function getFavoritedFromSlug(extendedState, eventData, settings) {
   const { slug } = eventData;
-  const { articles: {articles} } = extendedState;
-  return articles.find(article => article.slug === slug).favorited
+  const {
+    articles: { articles }
+  } = extendedState;
+  return articles.find(article => article.slug === slug).favorited;
 }
 
-export function alwaysTrue(){
-  return true
+export function alwaysTrue() {
+  return true;
 }

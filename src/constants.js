@@ -6,7 +6,8 @@ export const routes = {
   signIn: "/login",
   editor: "/editor",
   settings: "/settings",
-  profile: "/@"
+  profile: "/@",
+  article: "/article"
 };
 
 export function routeViewLens(route) {
@@ -27,6 +28,7 @@ export const signUpUpdates = routeUpdateLens(routes.signUp);
 export const editorUpdates = routeUpdateLens(routes.editor);
 export const settingsUpdates = routeUpdateLens(routes.settings);
 export const profileUpdates = routeUpdateLens(routes.profile);
+// TODO article
 
 export function allRoutesUpdate(updates) {
   return [[routes.allRoutes, updates]];
@@ -77,19 +79,24 @@ export const events = {
   UPDATED_SETTINGS: "UPDATED_SETTINGS",
   FAILED_UPDATE_SETTINGS: "FAILED_UPDATE_SETTINGS",
   TOGGLED_FOLLOW: "TOGGLED_FOLLOW",
-  FETCHED_PROFILE:"FETCHED_PROFILE",
+  FETCHED_PROFILE: "FETCHED_PROFILE",
   FETCH_PROFILE_NOK: "FETCH_PROFILE_NOK",
   TOGGLE_FOLLOW_OK: "TOGGLE_FOLLOW_OK",
   TOGGLE_FOLLOW_NOK: "TOGGLE_FOLLOW_NOK",
+  CLICKED_DELETE_ARTICLE: "CLICKED_DELETE_ARTICLE",
+  CLICKED_CREATE_COMMENT: "CLICKED_CREATE_COMMENT",
+  CLICKED_DELETE_COMMENT: "CLICKED_DELETE_COMMENT",
+  UPDATED_COMMENT: "UPDATED_COMMENT"
 };
 
-export const renderCommands= {
+export const renderCommands = {
   RENDER_HOME: "RENDER_HOME",
   RENDER_SIGN_UP: "RENDER_SIGN_UP",
   RENDER_SIGN_IN: "RENDER_SIGN_IN",
   RENDER_EDITOR: "RENDER_EDITOR",
   RENDER_SETTINGS: "RENDER_SETTINGS",
   RENDER_PROFILE: "RENDER_PROFILE",
+  RENDER_ARTICLE: "RENDER_ARTICLE"
 };
 export const commands = {
   ...renderCommands,
@@ -114,5 +121,6 @@ export const commands = {
   FETCH_PROFILE: "FETCH_PROFILE",
   FETCH_AUTHOR_FEED: "FETCH_AUTHOR_FEED",
   FOLLOW_PROFILE: "FOLLOW_PROFILE",
-  UNFOLLOW_PROFILE: "UNFOLLOW_PROFILE",
+  UNFOLLOW_PROFILE: "UNFOLLOW_PROFILE"
+  // TODO article
 };

@@ -2,7 +2,7 @@
   import ArticleList from "./ArticleList.svelte";
   import Tabs from "./Tabs.svelte";
   import { routes, events } from "../constants";
-  import { SETTINGS} from "../links";
+  import { SETTINGS } from "../links";
   import { computeFetchStatus } from "./shared";
 
   export let dispatch;
@@ -25,33 +25,34 @@
     dispatch({ [TOGGLED_FAVORITE]: { slug } });
   };
   const handleClick = ev => {
-    dispatch({ [TOGGLED_FOLLOW]: {username: profile.username }});
+    dispatch({ [TOGGLED_FOLLOW]: { username: profile.username } });
   };
 
   $: classes =
-    "btn btn-sm action-btn" + (profile && profile.following ? " btn-secondary" : " btn-outline-secondary");
+    "btn btn-sm action-btn" +
+    (profile && profile.following ? " btn-secondary" : " btn-outline-secondary");
   $: isUser = profile && Boolean(user && user.username === profile.username);
   $: articleList = typeof articles === "object" ? articles && articles.articles : void 0;
   $: articlesCount = typeof articles === "object" ? articles && articles.articlesCount : 0;
   $: articlesFetchStatus = articles && computeFetchStatus(articles);
-  $: disabled = Boolean(profile && profile.pending)
-  $: following = profile && profile.following
-  $: username = profile && profile.username
-  $: image = profile && profile.image
-  $: bio = profile && profile.bio || ""
+  $: disabled = Boolean(profile && profile.pending);
+  $: following = profile && profile.following;
+  $: username = profile && profile.username;
+  $: image = profile && profile.image;
+  $: bio = (profile && profile.bio) || "";
 </script>
 
-  {#if username}
-<div class="profile-page" key={'profile-' + profileTab}>
+{#if username}
+  <div class="profile-page" key={'profile-' + profileTab}>
     <div>
       <div class="user-info">
         <div class="container">
           <div class="row">
             <div class="col-xs-12 col-md-10 offset-md-1">
-             {#if image}
-              <img class="user-img" src={image} alt={username} />
+              {#if image}
+                <img class="user-img" src={image} alt={username} />
               {:else}
-              <img class="user-img" />
+                <img class="user-img" />
               {/if}
               <h4>{username}</h4>
               <p>{bio}</p>
@@ -76,13 +77,13 @@
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
             <div class="articles-toggle">
-              <Tabs {profile} type="{profileTab}" />
+              <Tabs {profile} type={profileTab} />
             </div>
 
             <ArticleList
-              articles = {articleList}
+              articles={articleList}
               {articlesCount}
-              currentPage = {page}
+              currentPage={page}
               fetchStatus={articlesFetchStatus}
               {onClickPage}
               {onClickFavorite}
@@ -91,5 +92,5 @@
         </div>
       </div>
     </div>
-</div>
-  {/if}
+  </div>
+{/if}

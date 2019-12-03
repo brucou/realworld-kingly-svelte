@@ -14,7 +14,7 @@ export function formatIndex(i) {
     : i.map(formatIndex).join(', ')
 }
 
-const { home, signUp, signIn, editor, settings, profile } = routes;
+const { home, signUp, signIn, editor, settings, profile, article } = routes;
 const renderCommandRouteMap={
   RENDER_HOME: home,
   RENDER_SIGN_UP: signUp,
@@ -22,6 +22,7 @@ const renderCommandRouteMap={
   RENDER_EDITOR: editor,
   RENDER_SETTINGS: settings,
   RENDER_PROFILE: profile,
+  RENDER_ARTICLE: article,
 };
 
 /**

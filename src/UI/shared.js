@@ -15,3 +15,5 @@ export function computeFetchStatus(obj) {
     throw `computeFetchStatus: invalid parameter!`;
   }
 }
+
+export const formatDate = date => new Date(date).toDateString();

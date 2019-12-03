@@ -83,12 +83,9 @@ const apiGateway = (fetch, sessionRepository) => {
 
   const updateSettings = ({ user }) => put(`/user`, { user });
 
-  const fetchProfile = ({ username }) =>
-    get(`/profiles/${encodeURIComponent(username)}`);
-  const follow = ({ username }) =>
-    post(`/profiles/${encodeURIComponent(username)}/follow`);
-  const unfollow = ({ username }) =>
-    del(`/profiles/${encodeURIComponent(username)}/follow`);
+  const fetchProfile = ({ username }) => get(`/profiles/${encodeURIComponent(username)}`);
+  const follow = ({ username }) => post(`/profiles/${encodeURIComponent(username)}/follow`);
+  const unfollow = ({ username }) => del(`/profiles/${encodeURIComponent(username)}/follow`);
   const fetchAuthorFeed = ({ page, username }) =>
     get(
       `/articles?author=${encodeURIComponent(username)}&${pagination({
@@ -122,7 +119,7 @@ const apiGateway = (fetch, sessionRepository) => {
     follow,
     unfollow,
     fetchAuthorFeed,
-    fetchFavoritedFeed,
+    fetchFavoritedFeed
   };
 };
 

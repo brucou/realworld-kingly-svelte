@@ -1,14 +1,26 @@
 import { ACTION_IDENTITY, INIT_EVENT, NO_OUTPUT } from "kingly";
 import {
-  commands, events, FAVORITE_PROFILE_PAGE, loadingStates, profileUpdates, routes, routeViewLens,
-    USER_PROFILE_PAGE
-} from "../constants"
+  commands,
+  events,
+  FAVORITE_PROFILE_PAGE,
+  loadingStates,
+  profileUpdates,
+  routes,
+  routeViewLens,
+  USER_PROFILE_PAGE
+} from "../constants";
 import {
-  allRoutesViewLens, alwaysTrue,
-  fetchAuthentication, getFavoritedFromSlug, isAuthenticated, isNotAuthenticated, redirectToSignUp, updateAuth,
+  allRoutesViewLens,
+  alwaysTrue,
+  fetchAuthentication,
+  getFavoritedFromSlug,
+  isAuthenticated,
+  isNotAuthenticated,
+  redirectToSignUp,
+  updateAuth,
   updateURL
-} from "./common"
-import { and, not } from "../shared/hof"
+} from "./common";
+import { and, not } from "../shared/hof";
 
 const { profile, allRoutes } = routes;
 const profileRouteViewLens = routeViewLens(profile);
@@ -28,7 +40,7 @@ const {
   FETCH_PROFILE_NOK,
   TOGGLED_FOLLOW,
   TOGGLE_FOLLOW_OK,
-  TOGGLE_FOLLOW_NOK,
+  TOGGLE_FOLLOW_NOK
 } = events;
 const {
   RENDER_PROFILE,
@@ -60,11 +72,11 @@ export const initialProfileRouteState = {
   favoriteStatus: null,
   profileTab: null,
   profile: null,
-  feedType: null,
+  feedType: null
 };
 
 export const profileStates = {
-    "fetching-auth-for-profile": "",
+  "fetching-auth-for-profile": "",
   "user-profile-rendering": "",
   "fetch-auth-for-profile-favorite": "",
   "fetch-auth-for-profile-follow": ""
@@ -122,7 +134,7 @@ export const profileTransitions = [
     from: "user-profile-rendering",
     event: TOGGLED_FOLLOW,
     to: "fetch-auth-for-profile-follow",
-    action: fetchAuthentication,
+    action: fetchAuthentication
   },
   {
     from: "fetch-auth-for-profile-follow",
@@ -142,7 +154,7 @@ export const profileTransitions = [
         predicate: isUserAuthenticatedAndUnfollowedProfile,
         to: "user-profile-rendering",
         action: followProfileAndRender
-      },
+      }
     ]
   },
   {
@@ -214,7 +226,7 @@ export const profileTransitions = [
     to: "fetching-auth-for-profile",
     action: fetchArticlesPage
   },
-  { from: "profile", event: ROUTE_CHANGED, to: "routing", action: updateURL },
+  { from: "profile", event: ROUTE_CHANGED, to: "routing", action: updateURL }
 ];
 
 // Guards
@@ -232,56 +244,59 @@ const profileCaptureRegexp = /^\/@(\w+)\/?.*$/;
 export function isUserProfileMyArticlesRoute(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
 
-  return Boolean(!url.match(profileFavoritesRouteRegexp) && url.match(profileRouteRegexp))
+  return Boolean(!url.match(profileFavoritesRouteRegexp) && url.match(profileRouteRegexp));
 }
 
 export function isUserProfileFavoritesRoute(extendedState, eventData, settings) {
   const { url } = allRoutesViewLens(extendedState);
 
-  return Boolean(url.match(profileFavoritesRouteRegexp))
+  return Boolean(url.match(profileFavoritesRouteRegexp));
 }
 
 export function isOwnProfile(extendedState, eventData, settings) {
   const { profile } = profileRouteViewLens(extendedState);
   const { user } = allRoutesViewLens(extendedState);
 
-  return user && user.username === profile.username
+  return user && user.username === profile.username;
 }
 
 export function isFollowed(extendedState, eventData, settings) {
   const { profile } = profileRouteViewLens(extendedState);
-  const { following} = profile;
+  const { following } = profile;
 
-  return Boolean(following)
+  return Boolean(following);
 }
 
 export function isUserAuthenticatedAndFollowedProfile(extendedState, eventData, settings) {
   const { user } = allRoutesViewLens(extendedState);
-  const { profile: {following} } = profileRouteViewLens(extendedState);
+  const {
+    profile: { following }
+  } = profileRouteViewLens(extendedState);
 
-  return Boolean(following && user)
+  return Boolean(following && user);
 }
 
 export function isUserAuthenticatedAndUnfollowedProfile(extendedState, eventData, settings) {
   const { user } = allRoutesViewLens(extendedState);
-  const { profile: {following} } = profileRouteViewLens(extendedState);
+  const {
+    profile: { following }
+  } = profileRouteViewLens(extendedState);
 
-  return Boolean(!following && user)
+  return Boolean(!following && user);
 }
 
 export function isUserNotAuthenticated(extendedState, eventData, settings) {
   const { user } = allRoutesViewLens(extendedState);
 
-  return !Boolean(user)
+  return !Boolean(user);
 }
 
 export function isArticleLiked(extendedState, eventData, settings) {
   const { favoriteStatus } = profileRouteViewLens(extendedState);
-  const {isFavorited} = favoriteStatus;
+  const { isFavorited } = favoriteStatus;
 
-  return isFavorited
+  return isFavorited;
 }
-
 
 // Action factories
 
@@ -293,28 +308,36 @@ export function fetchAuthenticationAndProfileUsername(extendedState, eventData, 
 
   return {
     updates: profileUpdates([initialProfileRouteState, { profile: { username } }]),
-    outputs: [].concat(
-      fetchAuthentication(extendedState, eventData, settings).outputs,
-      [{
-          command: RENDER_PROFILE,
-          params: {            user: null,            profileTab: null,            profile: profile,            articles: null,            page: 0,           favoriteStatus: null          }
-      }]
-    )
-  }
+    outputs: [].concat(fetchAuthentication(extendedState, eventData, settings).outputs, [
+      {
+        command: RENDER_PROFILE,
+        params: {
+          user: null,
+          profileTab: null,
+          profile: profile,
+          articles: null,
+          page: 0,
+          favoriteStatus: null
+        }
+      }
+    ])
+  };
 }
 
-function fetchArticlesAndProfileAndRender(feedType){
+function fetchArticlesAndProfileAndRender(feedType) {
   return function fetchArticlesAndProfileAndRender(extendedState, eventData, settings) {
     const user = eventData;
-    const { profile: {username}, currentPage } = profileRouteViewLens(extendedState);
+    const {
+      profile: { username },
+      currentPage
+    } = profileRouteViewLens(extendedState);
     return {
-      updates: [].concat(
-        updateAuth(extendedState, eventData, settings).updates,
-        [[routes.profile, [{feedType}]]]
-      ),
+      updates: [].concat(updateAuth(extendedState, eventData, settings).updates, [
+        [routes.profile, [{ feedType }]]
+      ]),
       outputs: [
         { command: FETCH_PROFILE, params: username },
-        { command: FETCH_AUTHOR_FEED, params: {username, page: currentPage, feedType: feedType} },
+        { command: FETCH_AUTHOR_FEED, params: { username, page: currentPage, feedType: feedType } },
         {
           command: RENDER_PROFILE,
           params: {
@@ -322,31 +345,35 @@ function fetchArticlesAndProfileAndRender(feedType){
             profileTab: feedType,
             // profile: null,
             articles: ARTICLES_ARE_LOADING,
-            page: currentPage,
+            page: currentPage
             // favoriteStatus: null
           }
         }
       ]
     };
-  }
+  };
 }
 
 export function fetchMyArticlesAndProfileAndRender(extendedState, eventData, settings) {
-  return fetchArticlesAndProfileAndRender(USER_PROFILE_PAGE)(extendedState, eventData, settings)
+  return fetchArticlesAndProfileAndRender(USER_PROFILE_PAGE)(extendedState, eventData, settings);
 }
 
 export function fetchFavoriteArticlesAndProfileAndRender(extendedState, eventData, settings) {
-  return fetchArticlesAndProfileAndRender(FAVORITE_PROFILE_PAGE)(extendedState, eventData, settings)
+  return fetchArticlesAndProfileAndRender(FAVORITE_PROFILE_PAGE)(
+    extendedState,
+    eventData,
+    settings
+  );
 }
 
 // NOTE: could refactor renderFetchedArticles and renderFetchArticlesFailed
 // They are the exact same function!!
 export function renderFetchedArticles(extendedState, eventData, settings) {
-  const {articles, articlesCount} = eventData;
+  const { articles, articlesCount } = eventData;
   const { currentPage } = profileRouteViewLens(extendedState);
 
   return {
-    updates: profileUpdates([{articles: {articles, articlesCount}}]),
+    updates: profileUpdates([{ articles: { articles, articlesCount } }]),
     outputs: [
       {
         command: RENDER_PROFILE,
@@ -354,8 +381,8 @@ export function renderFetchedArticles(extendedState, eventData, settings) {
           // user,
           // profileTab: feedType,
           // profile,
-          articles: {articles, articlesCount},
-          page: currentPage,
+          articles: { articles, articlesCount },
+          page: currentPage
           // favoriteStatus: null
         }
       }
@@ -369,60 +396,59 @@ export function renderFetchArticlesFailed(extendedState, eventData, settings) {
   const { user } = allRoutesViewLens(extendedState);
 
   return {
-    updates: profileUpdates([{articles: articlesFailed}]),
-    outputs: [      {        command: RENDER_PROFILE,        params: {          articles: articlesFailed,        }      }    ]  };
+    updates: profileUpdates([{ articles: articlesFailed }]),
+    outputs: [{ command: RENDER_PROFILE, params: { articles: articlesFailed } }]
+  };
 }
 
 export function renderFetchedProfile(extendedState, eventData, settings) {
   const profile = eventData;
 
   return {
-    updates: profileUpdates([{profile}]),
-    outputs: [ { command: RENDER_PROFILE, params: {          profile,        }      }    ]
+    updates: profileUpdates([{ profile }]),
+    outputs: [{ command: RENDER_PROFILE, params: { profile } }]
   };
 }
 
 export function renderFetchedProfileFailed(extendedState, eventData, settings) {
   return {
-    updates: profileUpdates([{profile}]),
-    outputs: [      {        command: RENDER_PROFILE,        params: {          profile: null,        }      }    ]
+    updates: profileUpdates([{ profile }]),
+    outputs: [{ command: RENDER_PROFILE, params: { profile: null } }]
   };
 }
 
 export function followProfileAndRender(extendedState, eventData, settings) {
   const { profile } = profileRouteViewLens(extendedState);
-  const pendingProfile = Object.assign({}, profile, {pending: true});
+  const pendingProfile = Object.assign({}, profile, { pending: true });
 
   return {
-    updates: profileUpdates([{profile: pendingProfile}]),
+    updates: profileUpdates([{ profile: pendingProfile }]),
     outputs: [
-      {        command: FOLLOW_PROFILE,        params: profile.username},
-      {              command: RENDER_PROFILE,        params: {          profile: pendingProfile,        }      }
+      { command: FOLLOW_PROFILE, params: profile.username },
+      { command: RENDER_PROFILE, params: { profile: pendingProfile } }
     ]
   };
 }
 
 export function unfollowProfileAndRender(extendedState, eventData, settings) {
   const { profile } = profileRouteViewLens(extendedState);
-  const pendingProfile = Object.assign({}, profile, {pending: true});
+  const pendingProfile = Object.assign({}, profile, { pending: true });
 
   return {
-    updates: profileUpdates([{profile: pendingProfile}]),
+    updates: profileUpdates([{ profile: pendingProfile }]),
     outputs: [
-      {        command: UNFOLLOW_PROFILE,        params: profile.username},
-      {              command: RENDER_PROFILE,        params: {          profile: pendingProfile,        }      }
+      { command: UNFOLLOW_PROFILE, params: profile.username },
+      { command: RENDER_PROFILE, params: { profile: pendingProfile } }
     ]
   };
 }
 
 export function renderToggleFollowedProfile(extendedState, eventData, settings) {
-  const profile  = eventData;
+  const profile = eventData;
 
   return {
-    updates: profileUpdates([{profile}]),
-    outputs: [
-      {  command: RENDER_PROFILE, params: { profile: profile, } }
-    ]
+    updates: profileUpdates([{ profile }]),
+    outputs: [{ command: RENDER_PROFILE, params: { profile: profile } }]
   };
 }
 
@@ -430,24 +456,37 @@ export function renderToggleFollowProfileFailed(extendedState, eventData, settin
   const { profile } = profileRouteViewLens(extendedState);
   // NOTE: this removes the pending property (could also have set it to undefined)
   const notPendingProfile = {
-    "username": profile.username,
-    "bio": profile.bio,
-    "image": profile.image,
-    "following": profile.following
+    username: profile.username,
+    bio: profile.bio,
+    image: profile.image,
+    following: profile.following
   };
 
   return {
-    updates: profileUpdates([{profile: notPendingProfile}]),
-    outputs: [
-      { command: RENDER_PROFILE, params: { profile: notPendingProfile, }  }
-    ]
+    updates: profileUpdates([{ profile: notPendingProfile }]),
+    outputs: [{ command: RENDER_PROFILE, params: { profile: notPendingProfile } }]
   };
 }
 
-export function fetchAuthenticationAndUpdateFavoriteStatusForProfile(extendedState, eventData, settings) {
+export function fetchAuthenticationAndUpdateFavoriteStatusForProfile(
+  extendedState,
+  eventData,
+  settings
+) {
   const { slug } = eventData;
   return {
-    updates: profileUpdates([{ favoriteStatus: { slug, isFavorited: getFavoritedFromSlug(profileRouteViewLens(extendedState), eventData, settings) } }]),
+    updates: profileUpdates([
+      {
+        favoriteStatus: {
+          slug,
+          isFavorited: getFavoritedFromSlug(
+            profileRouteViewLens(extendedState),
+            eventData,
+            settings
+          )
+        }
+      }
+    ]),
     outputs: [{ command: FETCH_AUTHENTICATION, params: void 0 }]
   };
 }
@@ -484,7 +523,7 @@ export function likeAuthorArticleAndRender(extendedState, eventData, settings) {
 // TODO: this is the same function as renderUnliked !!!
 export function renderLiked(extendedState, eventData, settings) {
   const { articles } = profileRouteViewLens(extendedState);
-  const { article: updatedArticle }  = eventData;
+  const { article: updatedArticle } = eventData;
   const updatedArticleSlug = updatedArticle.slug;
 
   const updatedArticles = {
@@ -497,7 +536,7 @@ export function renderLiked(extendedState, eventData, settings) {
   return {
     updates: profileUpdates([{ articles: updatedArticles }]),
     outputs: [
-      { command: RENDER_PROFILE, params: { favoriteStatus: null, articles: updatedArticles } },
+      { command: RENDER_PROFILE, params: { favoriteStatus: null, articles: updatedArticles } }
     ]
   };
 }
@@ -505,15 +544,13 @@ export function renderLiked(extendedState, eventData, settings) {
 export function renderLikeFailed(extendedState, eventData, settings) {
   return {
     updates: [],
-    outputs: [
-      { command: RENDER_PROFILE, params: { favoriteStatus: null } },
-    ]
+    outputs: [{ command: RENDER_PROFILE, params: { favoriteStatus: null } }]
   };
 }
 
 export function renderUnliked(extendedState, eventData, settings) {
   const { articles } = profileRouteViewLens(extendedState);
-  const { article: updatedArticle }  = eventData;
+  const { article: updatedArticle } = eventData;
   const updatedArticleSlug = updatedArticle.slug;
 
   const updatedArticles = {
@@ -526,20 +563,20 @@ export function renderUnliked(extendedState, eventData, settings) {
   return {
     updates: profileUpdates([{ articles: updatedArticles }]),
     outputs: [
-      { command: RENDER_PROFILE, params: { favoriteStatus: null, articles: updatedArticles } },
+      { command: RENDER_PROFILE, params: { favoriteStatus: null, articles: updatedArticles } }
     ]
   };
 }
 
 export function renderUnlikeFailed(extendedState, eventData, settings) {
-  return renderLikeFailed(extendedState, eventData, settings)
+  return renderLikeFailed(extendedState, eventData, settings);
 }
 
 export function fetchArticlesPage(extendedState, eventData, settings) {
   const page = eventData;
 
   return {
-    updates: profileUpdates([{ currentPage: page}]),
+    updates: profileUpdates([{ currentPage: page }]),
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
   };
 }

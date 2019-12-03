@@ -7,6 +7,7 @@
   import Editor from "./Editor.svelte";
   import Settings from "./Settings.svelte";
   import UserProfile from "./UserProfile.svelte";
+  import Article from "./Article.svelte";
   import { routes } from "../constants";
 
   // Props
@@ -34,8 +35,24 @@
   // Profile props
   export let profile;
   export let profileTab;
+  /// Article props
+  export let article;
+  // The comments for the article as returned by the API
+  export let comments;
+  // The content of the comment text area (controlled field)
+  export let commentText;
+  // Status for favoriting and following requests
+  export let profileStatus;
 
-  const { home, signUp, signIn, editor, settings, profile: userProfile } = routes;
+  const {
+    home,
+    signUp,
+    signIn,
+    editor,
+    settings,
+    profile: userProfile,
+    article: articleRoute
+  } = routes;
 
   // Component which will be displayed depending on the route
   const componentRoutes = {
@@ -45,6 +62,7 @@
     [editor]: Editor,
     [settings]: Settings,
     [userProfile]: UserProfile,
+    [articleRoute]: Article
   };
   // Props for the component which will be displayed
   $: component = componentRoutes[route];
@@ -54,7 +72,8 @@
     [signIn]: { inProgress, errors },
     [editor]: { inProgress, errors, title, description, body, tagList, currentTag },
     [settings]: { user, inProgress, errors },
-    [userProfile]: {user, profile, articles, favoriteStatus, page, profileTab}
+    [userProfile]: { user, profile, articles, favoriteStatus, page, profileTab },
+    [articleRoute]: { user, article, comments, commentText, favoriteStatus, profileStatus }
   };
   $: componentProps = componentRoutesProps[route];
 </script>

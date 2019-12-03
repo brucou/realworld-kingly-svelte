@@ -8,7 +8,7 @@ import eventEmitterFactory from "./eventEmitter";
 import { fsmFactory } from "./behaviour/fsm";
 import { events, commands, routes, USER_PROFILE_PAGE, FAVORITE_PROFILE_PAGE } from "./constants";
 
-const { home, signUp, signIn, editor, settings, profile } = routes;
+const { home, signUp, signIn, editor, settings, profile, article } = routes;
 
 // Commands
 const {
@@ -16,6 +16,9 @@ const {
   RENDER_SIGN_UP,
   RENDER_SIGN_IN,
   RENDER_SETTINGS,
+  RENDER_EDITOR,
+  RENDER_PROFILE,
+  RENDER_ARTICLE,
   FETCH_GLOBAL_FEED,
   FETCH_ARTICLES_GLOBAL_FEED,
   FETCH_ARTICLES_USER_FEED,
@@ -29,15 +32,13 @@ const {
   SIGN_IN,
   PUBLISH_ARTICLE,
   FETCH_ARTICLE,
-  RENDER_EDITOR,
   UPDATE_ARTICLE,
   UPDATE_SETTINGS,
   LOG_OUT,
-  RENDER_PROFILE,
   FETCH_PROFILE,
   FETCH_AUTHOR_FEED,
   FOLLOW_PROFILE,
-  UNFOLLOW_PROFILE,
+  UNFOLLOW_PROFILE
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -64,6 +65,10 @@ const {
   FETCH_PROFILE_NOK,
   TOGGLE_FOLLOW_OK,
   TOGGLE_FOLLOW_NOK,
+  CLICKED_DELETE_ARTICLE,
+  CLICKED_CREATE_COMMENT,
+  CLICKED_DELETE_COMMENT,
+  UPDATED_COMMENT
 } = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -93,7 +98,7 @@ const {
   follow,
   unfollow,
   fetchAuthorFeed,
-  fetchFavoritedFeed,
+  fetchFavoritedFeed
 } = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
@@ -124,6 +129,7 @@ const commandHandlers = {
   [RENDER_EDITOR]: renderRoute(editor),
   [RENDER_SETTINGS]: renderRoute(settings),
   [RENDER_PROFILE]: renderRoute(profile),
+  [RENDER_ARTICLE]: renderRoute(article),
   [FETCH_GLOBAL_FEED]: (dispatch, params, effectHandlers) => {
     const { page } = params;
     const { fetchGlobalFeed, fetchTags } = effectHandlers;
@@ -278,22 +284,27 @@ const commandHandlers = {
     const { removeUserSession } = effectHandlers;
     removeUserSession();
   },
-  [FETCH_PROFILE]:(dispatch, params, effectHandlers) => {
+  [FETCH_PROFILE]: (dispatch, params, effectHandlers) => {
     const { fetchProfile } = effectHandlers;
     const username = params;
 
-    fetchProfile({username})
-      .then(({profile}) => dispatch({[FETCHED_PROFILE]: profile}))
-      .catch((err) => dispatch({[FETCH_PROFILE_NOK]: err}))
-    },
+    fetchProfile({ username })
+      .then(({ profile }) => dispatch({ [FETCHED_PROFILE]: profile }))
+      .catch(err => dispatch({ [FETCH_PROFILE_NOK]: err }));
+  },
   [FETCH_AUTHOR_FEED]: (dispatch, params, effectHandlers) => {
     const { fetchAuthorFeed, fetchFavoritedFeed } = effectHandlers;
-    const {username, page, feedType} = params;
-    const fetchFn = {[USER_PROFILE_PAGE]: fetchAuthorFeed, [FAVORITE_PROFILE_PAGE]: fetchFavoritedFeed}[feedType];
+    const { username, page, feedType } = params;
+    const fetchFn = {
+      [USER_PROFILE_PAGE]: fetchAuthorFeed,
+      [FAVORITE_PROFILE_PAGE]: fetchFavoritedFeed
+    }[feedType];
 
-    fetchFn({username, page})
-      .then (({articles, articlesCount}) => dispatch({[ARTICLES_FETCHED_OK]: {articles, articlesCount}}))
-      .catch(err => dispatch({[ARTICLES_FETCHED_NOK]: err}))
+    fetchFn({ username, page })
+      .then(({ articles, articlesCount }) =>
+        dispatch({ [ARTICLES_FETCHED_OK]: { articles, articlesCount } })
+      )
+      .catch(err => dispatch({ [ARTICLES_FETCHED_NOK]: err }));
     // ADR:
     // In the original Conduit demo app, profile and articles are fetched in parallel and displayed together
     // On tab navigation, the profile data is not refetched, but articles are
@@ -310,18 +321,19 @@ const commandHandlers = {
     const { follow } = effectHandlers;
     const username = params;
 
-    follow({username})
-      .then (({profile}) => dispatch({[TOGGLE_FOLLOW_OK]: profile}))
-      .catch(err => dispatch({[TOGGLE_FOLLOW_NOK]: err}))
+    follow({ username })
+      .then(({ profile }) => dispatch({ [TOGGLE_FOLLOW_OK]: profile }))
+      .catch(err => dispatch({ [TOGGLE_FOLLOW_NOK]: err }));
   },
   [UNFOLLOW_PROFILE]: (dispatch, params, effectHandlers) => {
     const { unfollow } = effectHandlers;
     const username = params;
 
-    unfollow({username})
-      .then (({profile}) => dispatch({[TOGGLE_FOLLOW_OK]: profile}))
-      .catch(err => dispatch({[TOGGLE_FOLLOW_NOK]: err}))
-  },
+    unfollow({ username })
+      .then(({ profile }) => dispatch({ [TOGGLE_FOLLOW_OK]: profile }))
+      .catch(err => dispatch({ [TOGGLE_FOLLOW_NOK]: err }));
+  }
+  // TODO article
 };
 
 const effectHandlers = {
@@ -377,6 +389,10 @@ const app = new App({
     tagList: void 0,
     profile: void 0,
     profileTab: null,
+    article: null,
+    comments: null,
+    commentText: null,
+    profileStatus: null
   }
 });
 

@@ -18,7 +18,7 @@
   export let user;
   // Status for favoriting and following requests
   export let favoriteStatus;
-  export let profileStatus;
+  export let following;
 
   const {
     CLICKED_DELETE_ARTICLE,
@@ -49,7 +49,6 @@
   };
 
   $: innerHTML = (article && marked(article.body, { sanitize: true })) || "";
-  $: {console.log(`innerHTML`, innerHTML)}
   $: author = (article && article.author) || "";
   $: profileHref =
     (article &&
@@ -80,7 +79,7 @@
           <ArticleActions
             {user}
             {article}
-            {profileStatus}
+            {following}
             {favoriteStatus}
             {onToggleFollowAuthor}
             {onToggleFavorite}

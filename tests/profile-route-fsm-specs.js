@@ -10,9 +10,6 @@ import {
 
 QUnit.module("Testing user profile route fsm", {});
 
-// TODO: rewrite tests for new machine!
-// TODO: update the docs too!
-
 const {
   ROUTE_CHANGED,
   AUTH_CHECKED,

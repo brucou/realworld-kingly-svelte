@@ -34,6 +34,9 @@
  */
 
 import { isNot } from "../shared/helpers";
+import { fetchAuthentication, isAuthenticated, redirectToSignUp, updateAuth } from "./common"
+import { not } from "../shared/hof"
+import { articleUpdates } from "../constants"
 
 /**
  * @param {{events: AuthFormEvents, actionFactories: AuthFormActionFactories, states: AuthFormStates,
@@ -87,4 +90,23 @@ export function getAuthenticatedFormPageTransitions(def) {
     { from: submitting, event: SUCCEEDED_SUBMISSION, to: done, action: finalize },
     { from: submitting, event: FAILED_SUBMISSION, to: fetchingAuthenticationPreForm, action: retry }
   ];
+}
+
+function fetchAuthAndSaveEventData(extendedState, eventData, settings){
+  return {
+    updates: articleUpdates(      [{eventData}]    ),
+    outputs: fetchAuthentication(extendedState, eventData, settings).outputs
+  }
+}
+
+export function getAuthedApiPartialMachine({ states: { fetching, next }, events: { trigger }, actions: { call } }) {
+    return [
+      { from: "article-rendering", event: trigger, to: fetching, action: fetchAuthAndSaveEventData },
+      {
+        from: fetching, event: AUTH_CHECKED, guards: [
+          { to: next, action: call, predicate: isAuthenticated },
+          { to: "routing", action: redirectToSignUp, predicate: not(isAuthenticated) }
+        ]
+      },
+    ];
 }

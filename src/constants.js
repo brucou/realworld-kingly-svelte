@@ -28,7 +28,7 @@ export const signUpUpdates = routeUpdateLens(routes.signUp);
 export const editorUpdates = routeUpdateLens(routes.editor);
 export const settingsUpdates = routeUpdateLens(routes.settings);
 export const profileUpdates = routeUpdateLens(routes.profile);
-// TODO article
+export const articleUpdates = routeUpdateLens(routes.article);
 
 export function allRoutesUpdate(updates) {
   return [[routes.allRoutes, updates]];
@@ -86,7 +86,12 @@ export const events = {
   CLICKED_DELETE_ARTICLE: "CLICKED_DELETE_ARTICLE",
   CLICKED_CREATE_COMMENT: "CLICKED_CREATE_COMMENT",
   CLICKED_DELETE_COMMENT: "CLICKED_DELETE_COMMENT",
-  UPDATED_COMMENT: "UPDATED_COMMENT"
+  UPDATED_COMMENT: "UPDATED_COMMENT",
+  FETCH_COMMENTS_OK: "FETCH_COMMENTS_OK",
+  DELETE_COMMENTS_OK: "DELETE_COMMENTS_OK",
+  POST_COMMENTS_OK: "POST_COMMENTS_OK",
+  DELETE_ARTICLE_OK : "DELETE_ARTICLE_OK",
+  API_REQUEST_FAILED: "API_REQUEST_FAILED"
 };
 
 export const renderCommands = {
@@ -116,11 +121,14 @@ export const commands = {
   UPDATE_ARTICLE: "UPDATE_ARTICLE",
   UPDATE_SETTINGS: "UPDATE_SETTINGS",
   LOG_OUT: "LOG_OUT",
-  FOLLOW_USER: "FOLLOW_USER",
-  UNFOLLOW_USER: "UNFOLLOW_USER",
+  // FOLLOW_USER: "FOLLOW_USER",
+  // UNFOLLOW_USER: "UNFOLLOW_USER",
   FETCH_PROFILE: "FETCH_PROFILE",
   FETCH_AUTHOR_FEED: "FETCH_AUTHOR_FEED",
   FOLLOW_PROFILE: "FOLLOW_PROFILE",
-  UNFOLLOW_PROFILE: "UNFOLLOW_PROFILE"
-  // TODO article
+  UNFOLLOW_PROFILE: "UNFOLLOW_PROFILE",
+  FETCH_COMMENTS: "FETCH_COMMENTS",
+  DELETE_COMMENT: "DELETE_COMMENT",
+  POST_COMMENT:"POST_COMMENT",
+  DELETE_ARTICLE: "DELETE_ARTICLE",
 };

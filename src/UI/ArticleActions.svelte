@@ -3,8 +3,9 @@
 
   export let user;
   // TODO: true (followed), false (not followed), or null (pending) i.e. similar to author.following
-  export let profileStatus;
+  export let following;
   // TODO: : true (display) or false (pending)
+  // TODO: author.following -> following = [true, false, null (pending)]!! do not read from author.following anymore repass story tests
   // DOC: the rule is that we pass UPDATES, so no passing updates deep inside references, we detach the moving part to the top level, and then we renounce using the copy in the original object (or we keep that synchronized)
   export let favoriteStatus;
   export let article;
@@ -12,8 +13,9 @@
   export let onToggleFavorite;
   export let onDeleteArticle;
 
+  $: author = article.author;
   $: isNavigatingUserAlsoArticleAuthor = user && user.username === author.username;
-  $: followActionMessage = [author.following ? "Unfollow" : "Follow", author.username].join(" ");
+  $: followActionMessage = [following ? "Unfollow" : "Follow", author.username].join(" ");
   $: followClasses = [
     "btn btn-sm action-btn",
     author && author.following ? "btn-secondary" : "btn-outline-secondary"
@@ -22,11 +24,10 @@
     "btn btn-sm btn-outline-primary",
     article && article.favorited ? "btn-primary" : "btn-outline-primary"
   ].join(" ");
-  $: profileButtonDisabled = profileStatus == null;
-  $: likeButtonDisabled = Boolean(favoriteStatus);
+  $: profileButtonDisabled = following == null;
+  $: likeButtonDisabled = favoriteStatus == null;
   $: favoriteCallToAction =
     article && article.favorited ? "Unfavorite article" : "Favorite article";
-  $: author = article.author;
 </script>
 
 {#if isNavigatingUserAlsoArticleAuthor}

@@ -36,7 +36,7 @@
   // The content of the comment text area (controlled field)
   export let commentText;
   // Status for profile following requests
-  export let profileStatus;
+  export let following;
 
   const { fsmFactory, env, eventBus, commandHandlers, effectHandlers, initEvent } = _fsm;
 
@@ -67,6 +67,6 @@
       {article}
       {comments}
       {commentText}
-      {profileStatus} />
+      {following} />
   {/if}
 </Fsm>

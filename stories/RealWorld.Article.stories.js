@@ -74,36 +74,36 @@ const articleUnfollowedAuthorIsUser = {
 storiesOf('Article route', module)
   .add('all props set to null', () => ({
     Component: RealWorld,
-    props: { route: article, dispatch, user: null,  article: null, comments: null, commentText: null, profileStatus: null, favoriteStatus: null  },
+    props: { route: article, dispatch, user: null,  article: null, comments: null, commentText: null, following: null, favoriteStatus: null  },
     on: { },
   }))
   // Article author!=user x 1 comment (1 author) x empty comment txt x user not authed
   .add('user not authenticated, article with 1 comment from the article\'s author, empty comment field', () => ({
     Component: RealWorld,
-    props: { route: article, dispatch, user: null,  article: articleUnfollowedAuthorNotUser, comments: [commentByUnfollowedAuthorNotUser], commentText: null, profileStatus: true, favoriteStatus: null  },
+    props: { route: article, dispatch, user: null,  article: articleUnfollowedAuthorNotUser, comments: [commentByUnfollowedAuthorNotUser], commentText: null, following: articleUnfollowedAuthorNotUser.author.following, favoriteStatus: articleUnfollowedAuthorNotUser.favorited  },
     on: { },
   }))
   // Article author!=user x 2 comments (1 user, 1 author) x empty comment txt x user authed but not author
   .add('user not authenticated, article with 2 comment (article\'s author and current user), empty comment field', () => ({
     Component: RealWorld,
-    props: { route: article, dispatch, user: null,  article: articleUnfollowedAuthorNotUser, comments: commentsByUnfollowedAuthorAndUnfollowedUser, commentText: null, profileStatus: true, favoriteStatus: null  },
+    props: { route: article, dispatch, user: null,  article: articleUnfollowedAuthorNotUser, comments: commentsByUnfollowedAuthorAndUnfollowedUser, commentText: null, following: articleUnfollowedAuthorNotUser.author.following, favoriteStatus: articleUnfollowedAuthorNotUser.favorited  },
     on: { },
   }))
   // Article author=user x no comments x empty comment txt x user=author
   .add('user authenticated, is article\'s author, no comments, empty comment field', () => ({
     Component: RealWorld,
-    props: { route: article, dispatch, user: userFixture,  article: articleUnfollowedAuthorIsUser, comments: [], commentText: null, profileStatus: true, favoriteStatus: null  },
+    props: { route: article, dispatch, user: userFixture,  article: articleUnfollowedAuthorIsUser, comments: [], commentText: null, following: articleUnfollowedAuthorNotUser.author.following, favoriteStatus: articleUnfollowedAuthorNotUser.favorited  },
     on: { },
   }))
   // Article author=user x no comments x some comment txt x user=author
   .add('user authenticated, is article\'s author, no comments, non-empty comment field', () => ({
     Component: RealWorld,
-    props: { route: article, dispatch, user: userFixture,  article: articleUnfollowedAuthorIsUser, comments: [], commentText: "not empty", profileStatus: true, favoriteStatus: null  },
+    props: { route: article, dispatch, user: userFixture,  article: articleUnfollowedAuthorIsUser, comments: [], commentText: "not empty", following: articleUnfollowedAuthorNotUser.author.following, favoriteStatus: articleUnfollowedAuthorNotUser.favorited  },
     on: { },
   }))
   // Article author!=user x 2 comments (1 user, 1 author) x empty comment txt x user authed but not author x follow pending x like pending
   .add('user authenticated, article with 2 comment (article\'s author and current user), empty comment field, pending follow, pending like', () => ({
     Component: RealWorld,
-    props: { route: article, dispatch, user: userFixture,  article: articleUnfollowedAuthorNotUser, comments: commentsByUnfollowedAuthorAndUnfollowedUser, commentText: null, profileStatus: null, favoriteStatus: true  },
+    props: { route: article, dispatch, user: userFixture,  article: articleUnfollowedAuthorNotUser, comments: commentsByUnfollowedAuthorAndUnfollowedUser, commentText: null, following: null, favoriteStatus: null  },
     on: { },
   }))

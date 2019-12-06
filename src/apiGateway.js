@@ -101,6 +101,14 @@ const apiGateway = (fetch, sessionRepository) => {
       })}`
     );
 
+  const fetchComments = ({ slug }) => get(`/articles/${slug}/comments`);
+  const createComment = ({ slug, comment }) =>
+    post(`/articles/${slug}/comments`, { comment: { body: comment } });
+  const deleteComment = ({ slug, id }) =>
+    del(`/articles/${slug}/comments/${id}`);
+
+  const deleteArticle = ({ slug }) => del(`/articles/${slug}`);
+
   return {
     fetchGlobalFeed,
     fetchUserFeed,
@@ -119,7 +127,11 @@ const apiGateway = (fetch, sessionRepository) => {
     follow,
     unfollow,
     fetchAuthorFeed,
-    fetchFavoritedFeed
+    fetchFavoritedFeed,
+    fetchComments,
+    createComment,
+    deleteComment,
+    deleteArticle
   };
 };
 

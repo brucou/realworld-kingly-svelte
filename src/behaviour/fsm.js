@@ -7,11 +7,12 @@ import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
 import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings";
 import { initialProfileRouteState, profileStates, profileTransitions } from "./profile";
+import { articleStates, initialArticleRouteState } from "./article"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;
 
-const { home, allRoutes, signUp, signIn, editor, settings, profile } = routes;
+const { home, allRoutes, signUp, signIn, editor, settings, profile, article } = routes;
 
 const INIT = "start";
 const initialControlState = INIT;
@@ -22,7 +23,8 @@ const initialExtendedState = {
   [signUp]: initialSignUpRouteState,
   [editor]: initialEditorRouteState,
   [settings]: initialSettingsRouteState,
-  [profile]: initialProfileRouteState
+  [profile]: initialProfileRouteState,
+  [article]: initialArticleRouteState,
 };
 
 const states = {
@@ -33,7 +35,8 @@ const states = {
   signIn: signInStates,
   editor: editorStates,
   settings: settingsStates,
-  profile: profileStates
+  profile: profileStates,
+  article: articleStates,
 };
 
 // Guards
@@ -56,6 +59,7 @@ export const isSettingsRoute = isRoute(settings);
 // NOTE: here we assume username can be any sequence of characters, but not an empty one
 // That may be a bit weak, but we have no specifications for usernames so we keep it broad
 export const isProfileRoute = isRoute("/@.+");
+export const isArticleRoute = isRoute(`${article}/.+`);
 
 /** @type {Array<Transition>} */
 const transitions = [
@@ -69,7 +73,8 @@ const transitions = [
       { predicate: isSignInRoute, to: "signIn", action: ACTION_IDENTITY },
       { predicate: isEditorRoute, to: "editor", action: ACTION_IDENTITY },
       { predicate: isSettingsRoute, to: "settings", action: ACTION_IDENTITY },
-      { predicate: isProfileRoute, to: "profile", action: ACTION_IDENTITY }
+      { predicate: isProfileRoute, to: "profile", action: ACTION_IDENTITY },
+      { predicate: isArticleRoute, to: "article", action: ACTION_IDENTITY },
     ]
   },
   homeTransitions,
@@ -77,7 +82,8 @@ const transitions = [
   signInTransitions,
   editorTransitions,
   settingsTransitions,
-  profileTransitions
+  profileTransitions,
+  articleTransitions,
 ].flat();
 
 /**

@@ -42,7 +42,7 @@
   // The content of the comment text area (controlled field)
   export let commentText;
   // Status for favoriting and following requests
-  export let profileStatus;
+  export let following;
 
   const {
     home,
@@ -73,7 +73,7 @@
     [editor]: { inProgress, errors, title, description, body, tagList, currentTag },
     [settings]: { user, inProgress, errors },
     [userProfile]: { user, profile, articles, favoriteStatus, page, profileTab },
-    [articleRoute]: { user, article, comments, commentText, favoriteStatus, profileStatus }
+    [articleRoute]: { user, article, comments, commentText, favoriteStatus, following }
   };
   $: componentProps = componentRoutesProps[route];
 </script>

@@ -38,7 +38,11 @@ const {
   FETCH_PROFILE,
   FETCH_AUTHOR_FEED,
   FOLLOW_PROFILE,
-  UNFOLLOW_PROFILE
+  UNFOLLOW_PROFILE,
+  FETCH_COMMENTS,
+  DELETE_COMMENT,
+  POST_COMMENT,
+  DELETE_ARTICLE,
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -65,10 +69,11 @@ const {
   FETCH_PROFILE_NOK,
   TOGGLE_FOLLOW_OK,
   TOGGLE_FOLLOW_NOK,
-  CLICKED_DELETE_ARTICLE,
-  CLICKED_CREATE_COMMENT,
-  CLICKED_DELETE_COMMENT,
-  UPDATED_COMMENT
+  FETCH_COMMENTS_OK,
+  DELETE_COMMENTS_OK,
+  POST_COMMENTS_OK,
+  DELETE_ARTICLE_OK,
+  API_REQUEST_FAILED
 } = events;
 const env = { debug: { console, checkContracts: fsmContracts } };
 
@@ -98,7 +103,11 @@ const {
   follow,
   unfollow,
   fetchAuthorFeed,
-  fetchFavoritedFeed
+  fetchFavoritedFeed,
+  fetchComments,
+  createComment,
+  deleteComment,
+  deleteArticle
 } = apiGatewayFactory(fetch, sessionRepository);
 
 // We set in place route handling
@@ -236,13 +245,8 @@ const commandHandlers = {
     const { fetchArticle } = effectHandlers;
 
     fetchArticle({ slug })
-      .then(({ article }) => {
-        const { title, description, body, tagList } = article;
-        dispatch({ [FETCHED_ARTICLE]: { title, description, body, tagList } });
-      })
-      .catch(err => {
-        dispatch({ [FAILED_FETCH_ARTICLE]: err });
-      });
+      .then(({ article }) =>         dispatch({ [FETCHED_ARTICLE]: article }))
+      .catch(err =>        dispatch({ [FAILED_FETCH_ARTICLE]: err }));
   },
   [PUBLISH_ARTICLE]: (dispatch, params, effectHandlers) => {
     const { title, description, body, tagList } = params;
@@ -332,8 +336,39 @@ const commandHandlers = {
     unfollow({ username })
       .then(({ profile }) => dispatch({ [TOGGLE_FOLLOW_OK]: profile }))
       .catch(err => dispatch({ [TOGGLE_FOLLOW_NOK]: err }));
-  }
-  // TODO article
+  },
+  [FETCH_COMMENTS]: (dispatch, params, effectHandlers) => {
+    const { fetchComments } = effectHandlers;
+    const slug = params;
+
+    fetchComments({ slug })
+      .then(({ comments }) => dispatch({ [FETCH_COMMENTS_OK]: comments }))
+      .catch(err => dispatch({ [API_REQUEST_FAILED]: {FETCH_COMMENTS: err} }));
+  },
+  [DELETE_COMMENT]: (dispatch, params, effectHandlers) => {
+    const { deleteComment } = effectHandlers;
+    const {slug, id} = params;
+
+    deleteComment({ slug, id })
+      .then(({ profile }) => dispatch({ [DELETE_COMMENTS_OK]: id }))
+      .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
+  },
+  [POST_COMMENT]: (dispatch, params, effectHandlers) => {
+    const { createComment } = effectHandlers;
+    const {slug, comment} = params;
+
+    createComment({ slug, comment})
+      .then(({ comment }) => dispatch({ [POST_COMMENTS_OK]: comment }))
+      .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
+  },
+  [DELETE_ARTICLE]: (dispatch, params, effectHandlers) => {
+    const { deleteArticle } = effectHandlers;
+    const slug = params;
+
+    deleteArticle({ slug })
+      .then(({ profile }) => dispatch({ [DELETE_ARTICLE_OK]: profile }))
+      .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
+  },
 };
 
 const effectHandlers = {
@@ -358,7 +393,11 @@ const effectHandlers = {
   follow,
   unfollow,
   fetchAuthorFeed,
-  fetchFavoritedFeed
+  fetchFavoritedFeed,
+  fetchComments,
+  createComment,
+  deleteComment,
+  deleteArticle,
 };
 
 const app = new App({
@@ -392,7 +431,7 @@ const app = new App({
     article: null,
     comments: null,
     commentText: null,
-    profileStatus: null
+    following: null
   }
 });
 

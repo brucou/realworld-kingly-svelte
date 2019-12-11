@@ -1,6 +1,8 @@
 import QUnit from "qunit"
 import { fsmContracts } from "kingly"
-import { commands, events, FAVORITE_PROFILE_PAGE, loadingStates, routes, USER_PROFILE_PAGE } from "../src/constants"
+import {
+  articleError, commands, events, FAVORITE_PROFILE_PAGE, loadingStates, routes, USER_PROFILE_PAGE
+} from "../src/constants"
 import { randomUserProfileFixture, userFixture, } from "./fixtures/user"
 import { runUserStories } from "./common"
 import { articlesErrorFixture, articlesFixture, articlesPage1Fixture } from "./fixtures/articles"
@@ -9,9 +11,6 @@ import {
 } from "./fixtures/slugs"
 
 QUnit.module("Testing article route fsm", {});
-
-// TODO: rewrite tests for new machine!
-// TODO: update the docs too!
 
 const {
   ROUTE_CHANGED,
@@ -27,32 +26,40 @@ const {
   FETCHED_ARTICLE,
   UPDATED_COMMENT,
   FETCH_COMMENTS_OK,
-  DELETE_COMMENTS_OK,
-  POST_COMMENTS_OK,
+  DELETE_COMMENT_OK,
+  POST_COMMENT_OK,
   DELETE_ARTICLE_OK,
   API_REQUEST_FAILED,
   CLICKED_CREATE_COMMENT,
   CLICKED_DELETE_COMMENT,
-  CLICKED_DELETE_ARTICLE
+  CLICKED_DELETE_ARTICLE,
+  FAILED_FETCH_ARTICLE
 } = events;
 const {
   RENDER_ARTICLE,
+  RENDER_HOME,
   FETCH_AUTHENTICATION,
   REDIRECT,
+  FETCH_ARTICLE,
+  FETCH_COMMENTS,
   FAVORITE_ARTICLE,
   UNFAVORITE_ARTICLE,
   FOLLOW_PROFILE,
   UNFOLLOW_PROFILE,
+  POST_COMMENT,
+  DELETE_COMMENT,
+  DELETE_ARTICLE
 } = commands;
 
-const { signUp, article } = routes;
+const { article, home, signUp } = routes;
 const profileError = new Error(`profile error`);
 const articlesError = new Error(`articles error`);
 const userProfileFixture = {
   username: 'sanders',
   bio: `bioinformatics`,
   image: null,
-  following: false
+  following: false,
+  token: "jwt.token.there",
 };
 const pendingUserProfileFixture= {
   username: 'sanders',
@@ -61,7 +68,7 @@ const pendingUserProfileFixture= {
   following: false,
   pending: true
 };
-const followedProfileFixture = {
+const followedAuthorProfileFixture = {
   username: 'sanders',
   bio: `bioinformatics`,
   image: null,
@@ -84,8 +91,13 @@ const ownUserProfileFixture = {
   image: userFixture.image,
   following: false
 };
+const ownUserProfileFollowedFixture = {
+  username: userFixture.username,
+  bio: userFixture.bio,
+  image: userFixture.image,
+  following: true
+};
 const UNAUTH_USER = null;
-const [TAGS_ARE_LOADING, ARTICLES_ARE_LOADING] = loadingStates;
 const unfollowedUnlikedArticleFixture={
   "slug": "how-to-train-your-dragon",
   "title": "How to train your dragon",
@@ -96,12 +108,31 @@ const unfollowedUnlikedArticleFixture={
   "updatedAt": "2019-02-18T03:48:35.824Z",
   "favorited": false,
   "favoritesCount": 0,
-  "author": {
-    "username": "jake",
-    "bio": "I work at statefarm",
-    "image": "https://i.stack.imgur.com/xHWG8.jpg",
-    "following": false
-  }
+  "author": ownUserProfileFixture
+};
+const followedUnlikedArticleFixture={
+  "slug": "how-to-train-your-dragon",
+  "title": "How to train your dragon",
+  "description": "Ever wonder how?",
+  "body": "# Chapter \nIt takes a Jacobian",
+  "tagList": ["dragons", "training"],
+  "createdAt": "2019-02-18T03:22:56.637Z",
+  "updatedAt": "2019-02-18T03:48:35.824Z",
+  "favorited": false,
+  "favoritesCount": 0,
+  "author": ownUserProfileFollowedFixture
+};
+const unfollowedLikedArticleFixture={
+  "slug": "how-to-train-your-dragon",
+  "title": "How to train your dragon",
+  "description": "Ever wonder how?",
+  "body": "# Chapter \nIt takes a Jacobian",
+  "tagList": ["dragons", "training"],
+  "createdAt": "2019-02-18T03:22:56.637Z",
+  "updatedAt": "2019-02-18T03:48:35.824Z",
+  "favorited": true,
+  "favoritesCount": 0,
+  "author": ownUserProfileFixture
 };
 const unlikedSlugFixture=unfollowedUnlikedArticleFixture.slug;
 const articleRouteFixture = `/article/${unlikedSlugFixture}`
@@ -135,21 +166,22 @@ const commentsFixture=  [
   commentByUnfollowedAuthorNotUser,
 ];
 const updatedCommentFixture = 'something';
+const createdCommentFixture = {
+  "id": 3,
+  "createdAt": "2019-04-18T03:22:56.637Z",
+  "updatedAt": "2019-04-18T03:22:56.637Z",
+  "body": "first I was afraid",
+  "author": userProfileFixture
+};
+const updatedCommentsFixture= [
+  commentsFixture,
+  createdCommentFixture
+].flat();
+const deletedCommentsFixture= [
+  commentByUnfollowedAuthorNotUser,
+];
 
 // Test plan
-// .Authenticated user
-// |authenticated, like/unlike article| fetched article, like article, like successful|
-// |authenticated, follow/unfollow profile| fetched article, follow profile, follow successful|
-// |authenticated, post comment| fetched article, post comment, post successful|
-// |authenticated, delete comment| fetched article, delete comment, delete successful|
-// |authenticated, delete article| fetched article, delete article, delete successful, is redirected to *Home* route|
-// Edge cases
-// |not authenticated, article does not exist| article fetch fails|
-// |authenticated, like/unlike article| fetched article, like article, like unsuccessful|
-// |authenticated, follow/unfollow profile| fetched article, follow profile, follow unsuccessful|
-// |authenticated, post comment| fetched article, post comment, post unsuccessful|
-// |authenticated, delete comment| fetched article, delete comment, delete unsuccessful|
-// |authenticated, delete article| fetched article, delete article, delete unsuccessful|
 
 // Main cases
 // .Unauthenticated user
@@ -176,8 +208,10 @@ const UNAUTH_USER_VIEWS_LIKES_ARTICLE_COMMANDS = [
         "comments": [],
         "commentText": "",
         "favoriteStatus": null,
-        "profileStatus": null
+        "following": null
       } },
+    { [FETCH_ARTICLE]: unlikedSlugFixture },
+    { [FETCH_COMMENTS]: unlikedSlugFixture },
   ],
   [
     { [RENDER_ARTICLE]: {
@@ -186,8 +220,8 @@ const UNAUTH_USER_VIEWS_LIKES_ARTICLE_COMMANDS = [
         "article": unfollowedUnlikedArticleFixture,
         "comments": [],
         "commentText": "",
-        "favoriteStatus": null,
-        "profileStatus": null
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
       } },
   ],
   [
@@ -197,8 +231,8 @@ const UNAUTH_USER_VIEWS_LIKES_ARTICLE_COMMANDS = [
         "article": unfollowedUnlikedArticleFixture,
         "comments": commentsFixture,
         "commentText": "",
-        "favoriteStatus": null,
-        "profileStatus": null
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
       } },
   ],
   [
@@ -208,8 +242,8 @@ const UNAUTH_USER_VIEWS_LIKES_ARTICLE_COMMANDS = [
         "article": unfollowedUnlikedArticleFixture,
         "comments": commentsFixture,
         "commentText": updatedCommentFixture,
-        "favoriteStatus": null,
-        "profileStatus": null
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
       } },
   ],
   [
@@ -243,8 +277,10 @@ const UNAUTH_USER_VIEWS_FOLLOWS_PROFILE_COMMANDS = [
         "comments": [],
         "commentText": "",
         "favoriteStatus": null,
-        "profileStatus": null
+        "following": null
       } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
   ],
   [
     { [RENDER_ARTICLE]: {
@@ -253,8 +289,8 @@ const UNAUTH_USER_VIEWS_FOLLOWS_PROFILE_COMMANDS = [
         "article": unfollowedUnlikedArticleFixture,
         "comments": [],
         "commentText": "",
-        "favoriteStatus": null,
-        "profileStatus": null
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
       } },
   ],
   [
@@ -264,8 +300,8 @@ const UNAUTH_USER_VIEWS_FOLLOWS_PROFILE_COMMANDS = [
         "article": unfollowedUnlikedArticleFixture,
         "comments": commentsFixture,
         "commentText": "",
-        "favoriteStatus": null,
-        "profileStatus": null
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
       } },
   ],
   [
@@ -274,6 +310,927 @@ const UNAUTH_USER_VIEWS_FOLLOWS_PROFILE_COMMANDS = [
   [
     {[REDIRECT]: signUp},
     {[FETCH_AUTHENTICATION]: void 0},
+  ],
+];
+
+// .Authenticated user
+// |authenticated, like/unlike article| fetched article, like article, like successful|
+const AUTH_USER_LIKES_ARTICLE = `Authenticated user views an article, and likes it`
+const AUTH_USER_LIKES_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [TOGGLED_FAVORITE]: {slug: unlikedSlugFixture, isFavorited: false} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [FAVORITE_OK]: {article: unfollowedLikedArticleFixture, slug:unlikedSlugFixture} },
+];
+const AUTH_USER_LIKES_ARTICLE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+    {[FAVORITE_ARTICLE]: {slug: unlikedSlugFixture}}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedLikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedLikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+];
+
+// |authenticated, like/unlike article| fetched article, unlike article, unlike successful|
+const AUTH_USER_UNLIKES_ARTICLE = `Authenticated user views an article, and unlikes it`
+const AUTH_USER_UNLIKES_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: unfollowedLikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [TOGGLED_FAVORITE]: {slug: unlikedSlugFixture, isFavorited: true} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [UNFAVORITE_OK]: {article: unfollowedUnlikedArticleFixture, slug:unlikedSlugFixture} },
+];
+const AUTH_USER_UNLIKES_ARTICLE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedLikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedLikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedLikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedLikedArticleFixture.favorited,
+        "following": unfollowedLikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedLikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedLikedArticleFixture.favorited,
+        "following": unfollowedLikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedLikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": unfollowedLikedArticleFixture.author.following
+      } },
+    {[UNFAVORITE_ARTICLE]: {slug: unlikedSlugFixture}}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedLikedArticleFixture.author.following
+      } },
+  ],
+];
+
+// |authenticated, follow/unfollow profile| fetched article, follow profile, follow successful|
+const AUTH_USER_FOLLOWS_PROFILE = `Authenticated user views an article, and follows the article's author`
+const AUTH_USER_FOLLOWS_PROFILE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [TOGGLED_FOLLOW]:  {username: unfollowedUnlikedArticleFixture.author.username} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [TOGGLE_FOLLOW_OK]: followedUnlikedArticleFixture.author },
+];
+const AUTH_USER_FOLLOWS_PROFILE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": null
+      } },
+    {[FOLLOW_PROFILE]: followedUnlikedArticleFixture.author.username}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": followedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": followedUnlikedArticleFixture.author.following
+      } },
+  ],
+];
+
+// |authenticated, follow/unfollow profile| fetched article, unfollow profile, unfollow successful|
+const AUTH_USER_UNFOLLOWS_PROFILE = `Authenticated user views an article, and unfollows the article's author`
+const AUTH_USER_UNFOLLOWS_PROFILE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: followedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [TOGGLED_FOLLOW]:  {username: followedUnlikedArticleFixture.author.username} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [TOGGLE_FOLLOW_OK]: unfollowedUnlikedArticleFixture.author },
+];
+const AUTH_USER_UNFOLLOWS_PROFILE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: followedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: followedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": followedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": followedUnlikedArticleFixture.favorited,
+        "following": followedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": followedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": followedUnlikedArticleFixture.favorited,
+        "following": followedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": followedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": followedUnlikedArticleFixture.favorited,
+        "following": null
+      } },
+    {[UNFOLLOW_PROFILE]: followedUnlikedArticleFixture.author.username}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+];
+
+// |authenticated, post comment| fetched article, post comment, post successful|
+const AUTH_USER_POSTS_COMMENT = `Authenticated user views an article, and posts a comment`;
+const AUTH_USER_POSTS_COMMENT_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [UPDATED_COMMENT]:  updatedCommentFixture},
+  { [CLICKED_CREATE_COMMENT]:  {slug: unfollowedUnlikedArticleFixture.slug, body: updatedCommentFixture} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [POST_COMMENT_OK]: createdCommentFixture },
+];
+const AUTH_USER_POSTS_COMMENT_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": updatedCommentFixture,
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following,
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    {[POST_COMMENT]: {slug: unfollowedUnlikedArticleFixture.slug, comment: updatedCommentFixture}}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": updatedCommentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+];
+
+// |authenticated, delete comment| fetched article, delete comment, delete successful|
+const AUTH_USER_DELETES_COMMENT = `Authenticated user views an article, and delete one of his comment`;
+const AUTH_USER_DELETES_COMMENT_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [CLICKED_DELETE_COMMENT]:  {slug: unfollowedUnlikedArticleFixture.slug, id: commentByUnfollowedUser.id } },
+  { [AUTH_CHECKED]: userFixture},
+  { [DELETE_COMMENT_OK]: commentByUnfollowedUser.id },
+];
+const AUTH_USER_DELETES_COMMENT_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    {[DELETE_COMMENT]: {slug: unfollowedUnlikedArticleFixture.slug, id: commentByUnfollowedUser.id}}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": deletedCommentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+];
+
+// |authenticated, delete article| fetched article, delete article, delete successful, is redirected to *Home* route|
+const AUTH_USER_DELETES_ARTICLE = `Authenticated user views an article, and deletes it`;
+const AUTH_USER_DELETES_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [CLICKED_DELETE_ARTICLE]:  unfollowedUnlikedArticleFixture},
+  { [AUTH_CHECKED]: userFixture},
+  { [DELETE_ARTICLE_OK]: void 0 },
+];
+const AUTH_USER_DELETES_ARTICLE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    {[DELETE_ARTICLE]: unfollowedUnlikedArticleFixture.slug}
+  ],
+  [
+    {[REDIRECT]: home},
+    {[FETCH_AUTHENTICATION]: void 0},
+    {[RENDER_HOME]: {
+        "activeFeed": null,
+        "articles": null,
+        "favoriteStatus": null,
+        "page": 0,
+        "route": home,
+        "selectedTag": null,
+        "tags": null,
+        "user": null
+      }}
+  ],
+];
+
+// Edge cases
+// |not authenticated, article does not exist| article fetch fails|
+const UNAUTH_USER_FAILS_TO_FETCH_ARTICLE = `Unauthenticated user fails to fetch an article`;
+const UNAUTH_USER_FAILS_TO_FETCH_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: UNAUTH_USER},
+  { [FAILED_FETCH_ARTICLE]: articlesError },
+];
+const UNAUTH_USER_FAILS_TO_FETCH_ARTICLE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": UNAUTH_USER,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+[
+  { [RENDER_ARTICLE]: {
+      "route": article,
+      "user": UNAUTH_USER,
+    "comments": [],
+    "commentText": "",
+    "favoriteStatus": null,
+    "following": null,
+    "article": articleError
+    } }
+    ],
+];
+
+// |authenticated, delete article| fetched article, delete article, delete unsuccessful|
+const AUTH_USER_FAILS_TO_DELETE_ARTICLE = `Unauthenticated user fails to delete an article`;
+const AUTH_USER_FAILS_TO_DELETE_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [CLICKED_DELETE_ARTICLE]:  unfollowedUnlikedArticleFixture},
+  { [AUTH_CHECKED]: userFixture},
+  { [API_REQUEST_FAILED]: new Error(`error`) },
+];
+const AUTH_USER_FAILS_TO_DELETE_ARTICLE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    {[DELETE_ARTICLE]: unfollowedUnlikedArticleFixture.slug}
+  ],
+  [
+  ],
+];
+
+// |authenticated, delete comment| fetched article, delete comment, delete unsuccessful|
+const AUTH_USER_FAILS_TO_DELETE_COMMENT = `Unauthenticated user fails to delete a comment`;
+const AUTH_USER_FAILS_TO_DELETE_COMMENT_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [CLICKED_DELETE_COMMENT]:  {slug: unfollowedUnlikedArticleFixture.slug, id: commentByUnfollowedUser.id } },
+  { [AUTH_CHECKED]: userFixture},
+  { [API_REQUEST_FAILED]: new Error(`error`) },
+];
+const AUTH_USER_FAILS_TO_DELETE_COMMENT_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    {[DELETE_COMMENT]: {slug: unfollowedUnlikedArticleFixture.slug, id: commentByUnfollowedUser.id}}
+  ],
+  [
+  ],
+];
+
+// |authenticated, post comment| fetched article, post comment, post unsuccessful|
+const AUTH_USER_FAILS_TO_POST_COMMENT = `Authenticated user views an article, and fails to post a comment`;
+const AUTH_USER_FAILS_TO_POST_COMMENT_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [UPDATED_COMMENT]:  updatedCommentFixture},
+  { [CLICKED_CREATE_COMMENT]:  {slug: unfollowedUnlikedArticleFixture.slug, body: updatedCommentFixture} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [API_REQUEST_FAILED]: new Error(`error`) },
+];
+const AUTH_USER_FAILS_TO_POST_COMMENT_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": updatedCommentFixture,
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following,
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    {[POST_COMMENT]: {slug: unfollowedUnlikedArticleFixture.slug, comment: updatedCommentFixture}}
+  ],
+  [
+  ],
+];
+
+// |authenticated, like/unlike article| fetched article, like article, like unsuccessful|
+const AUTH_USER_FAILS_TO_LIKE_ARTICLE = `Authenticated user views an article, and fails to like it`
+const AUTH_USER_FAILS_TO_LIKE_ARTICLE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [TOGGLED_FAVORITE]: {slug: unlikedSlugFixture, isFavorited: false} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [FAVORITE_NOK]: {err: new Error(`error`), slug:unlikedSlugFixture} },
+];
+const AUTH_USER_FAILS_TO_LIKE_ARTICLE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+    {[FAVORITE_ARTICLE]: {slug: unlikedSlugFixture}}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+];
+
+// |authenticated, follow/unfollow profile| fetched article, follow profile, follow unsuccessful|
+const AUTH_USER_FAILS_TO_FOLLOW_PROFILE = `Authenticated user views an article, and fails to follow the article's author`
+const AUTH_USER_FAILS_TO_FOLLOW_PROFILE_INPUTS = [
+  { [ROUTE_CHANGED]: { hash: articleRouteFixture } },
+  { [AUTH_CHECKED]: userProfileFixture},
+  { [FETCHED_ARTICLE]: unfollowedUnlikedArticleFixture },
+  { [FETCH_COMMENTS_OK]: commentsFixture },
+  { [TOGGLED_FOLLOW]:  {username: unfollowedUnlikedArticleFixture.author.username} },
+  { [AUTH_CHECKED]: userProfileFixture },
+  { [TOGGLE_FOLLOW_NOK]: new Error(`errror`)},
+];
+const AUTH_USER_FAILS_TO_FOLLOW_PROFILE_COMMANDS = [
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": null,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": null,
+        "following": null
+      } },
+    { [FETCH_ARTICLE]: unfollowedUnlikedArticleFixture.slug },
+    { [FETCH_COMMENTS]: unfollowedUnlikedArticleFixture.slug},
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": [],
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
+  ],
+  [
+    { [FETCH_AUTHENTICATION]: void 0 },
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": null
+      } },
+    {[FOLLOW_PROFILE]: followedUnlikedArticleFixture.author.username}
+  ],
+  [
+    { [RENDER_ARTICLE]: {
+        "route": article,
+        "user": userProfileFixture,
+        "article": unfollowedUnlikedArticleFixture,
+        "comments": commentsFixture,
+        "commentText": "",
+        "favoriteStatus": unfollowedUnlikedArticleFixture.favorited,
+        "following": unfollowedUnlikedArticleFixture.author.following
+      } },
   ],
 ];
 
@@ -287,13 +1244,74 @@ const userStories = [
     UNAUTH_USER_VIEWS_FOLLOWS_PROFILE,
     UNAUTH_USER_VIEWS_FOLLOWS_PROFILE_INPUTS,
     UNAUTH_USER_VIEWS_FOLLOWS_PROFILE_COMMANDS
+  ],
+  [
+    AUTH_USER_LIKES_ARTICLE,
+    AUTH_USER_LIKES_ARTICLE_INPUTS,
+    AUTH_USER_LIKES_ARTICLE_COMMANDS
+  ],
+  [
+    AUTH_USER_UNLIKES_ARTICLE,
+    AUTH_USER_UNLIKES_ARTICLE_INPUTS,
+    AUTH_USER_UNLIKES_ARTICLE_COMMANDS
+  ],
+  [
+    AUTH_USER_FOLLOWS_PROFILE,
+    AUTH_USER_FOLLOWS_PROFILE_INPUTS,
+    AUTH_USER_FOLLOWS_PROFILE_COMMANDS
+  ],
+  [
+    AUTH_USER_UNFOLLOWS_PROFILE,
+    AUTH_USER_UNFOLLOWS_PROFILE_INPUTS,
+    AUTH_USER_UNFOLLOWS_PROFILE_COMMANDS
+  ],
+  [
+    AUTH_USER_POSTS_COMMENT,
+    AUTH_USER_POSTS_COMMENT_INPUTS,
+    AUTH_USER_POSTS_COMMENT_COMMANDS
+  ],
+  [
+    AUTH_USER_DELETES_COMMENT,
+    AUTH_USER_DELETES_COMMENT_INPUTS,
+    AUTH_USER_DELETES_COMMENT_COMMANDS
+  ],
+  [
+    AUTH_USER_DELETES_ARTICLE,
+    AUTH_USER_DELETES_ARTICLE_INPUTS,
+    AUTH_USER_DELETES_ARTICLE_COMMANDS
+  ],
+  [
+    UNAUTH_USER_FAILS_TO_FETCH_ARTICLE,
+    UNAUTH_USER_FAILS_TO_FETCH_ARTICLE_INPUTS,
+    UNAUTH_USER_FAILS_TO_FETCH_ARTICLE_COMMANDS
+  ],
+  [
+    AUTH_USER_FAILS_TO_DELETE_ARTICLE,
+    AUTH_USER_FAILS_TO_DELETE_ARTICLE_INPUTS,
+    AUTH_USER_FAILS_TO_DELETE_ARTICLE_COMMANDS
+  ],
+  [
+    AUTH_USER_FAILS_TO_DELETE_COMMENT,
+    AUTH_USER_FAILS_TO_DELETE_COMMENT_INPUTS,
+    AUTH_USER_FAILS_TO_DELETE_COMMENT_COMMANDS
+  ],
+  [
+    AUTH_USER_FAILS_TO_POST_COMMENT,
+    AUTH_USER_FAILS_TO_POST_COMMENT_INPUTS,
+    AUTH_USER_FAILS_TO_POST_COMMENT_COMMANDS
+  ],
+  [
+    AUTH_USER_FAILS_TO_LIKE_ARTICLE,
+    AUTH_USER_FAILS_TO_LIKE_ARTICLE_INPUTS,
+    AUTH_USER_FAILS_TO_LIKE_ARTICLE_COMMANDS
+  ],
+  [
+    AUTH_USER_FAILS_TO_FOLLOW_PROFILE,
+    AUTH_USER_FAILS_TO_FOLLOW_PROFILE_INPUTS,
+    AUTH_USER_FAILS_TO_FOLLOW_PROFILE_COMMANDS
   ]
 ];
 
 const fsmSettings = { debug: { console, checkContracts: fsmContracts } };
 
 runUserStories(userStories, QUnit, fsmSettings);
-
-// TODO: repass the tests for create mew article, I modified the event shape for FETCHED_ARTICLE!!
-// and manybe I will also have to review the machine so the machine only keeps the four props it needs e.g. title, description, body, tagList
-// TODO: updated comment do the storybook test, I have no handler on the text area

@@ -39,13 +39,17 @@
   };
   const onCreateComment = ev => {
     e.preventDefault();
+    // NOTE: This breaks a bit the separation of concerns, as this is domain logic creeping
+    // into UI logic. But we'll live with it. Alternative is to guard against empty comments
+    // at the machine level.
+    if (!commentText) return
     dispatch({ [CLICKED_CREATE_COMMENT]: { slug: article.slug, body: commentText } });
   };
   const onDeleteComment = id => ev => {
     dispatch({ [CLICKED_DELETE_COMMENT]: { slug: article.slug, id } });
   };
   const onUpdatedComment = ev => {
-    dispatch({ [UPDATED_COMMENT]: ev.target.value });
+    dispatch({ [UPDATED_COMMENT]: ev.target.value || ""});
   };
 
   $: innerHTML = (article && marked(article.body, { sanitize: true })) || "";

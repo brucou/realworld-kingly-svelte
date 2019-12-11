@@ -224,7 +224,10 @@ const AUTH_USER_ON_EDITOR_NEW_ARTICLE_SEES_FORM_ADDS_TWICE_SAME_TAGS_AND_PUBLISH
     { [FETCH_AUTHENTICATION]: void 0 }
   ],
   [{ [PUBLISH_ARTICLE]: newArticleFixture },],
-  [{ [REDIRECT]: '/article/' + createdNewArticleFixture.slug },]
+  [
+    { [REDIRECT]: '/article/' + createdNewArticleFixture.slug },
+    { [FETCH_AUTHENTICATION]: void 0}
+  ]
 ]);
 
 // Authenticated user navigates to the editor route (edit article), sees the editor form with prefilled values, adds

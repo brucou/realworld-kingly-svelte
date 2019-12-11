@@ -70,8 +70,8 @@ const {
   TOGGLE_FOLLOW_OK,
   TOGGLE_FOLLOW_NOK,
   FETCH_COMMENTS_OK,
-  DELETE_COMMENTS_OK,
-  POST_COMMENTS_OK,
+  DELETE_COMMENT_OK,
+  POST_COMMENT_OK,
   DELETE_ARTICLE_OK,
   API_REQUEST_FAILED
 } = events;
@@ -350,7 +350,7 @@ const commandHandlers = {
     const {slug, id} = params;
 
     deleteComment({ slug, id })
-      .then(({ profile }) => dispatch({ [DELETE_COMMENTS_OK]: id }))
+      .then(({ profile }) => dispatch({ [DELETE_COMMENT_OK]: id }))
       .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
   },
   [POST_COMMENT]: (dispatch, params, effectHandlers) => {
@@ -358,7 +358,7 @@ const commandHandlers = {
     const {slug, comment} = params;
 
     createComment({ slug, comment})
-      .then(({ comment }) => dispatch({ [POST_COMMENTS_OK]: comment }))
+      .then(({ comment }) => dispatch({ [POST_COMMENT_OK]: comment }))
       .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
   },
   [DELETE_ARTICLE]: (dispatch, params, effectHandlers) => {
@@ -366,7 +366,7 @@ const commandHandlers = {
     const slug = params;
 
     deleteArticle({ slug })
-      .then(({ profile }) => dispatch({ [DELETE_ARTICLE_OK]: profile }))
+      .then(_ => dispatch({ [DELETE_ARTICLE_OK]: void 0 }))
       .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
   },
 };

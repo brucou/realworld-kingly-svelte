@@ -36,8 +36,9 @@
 import { isNot } from "../shared/helpers";
 import { fetchAuthentication, isAuthenticated, redirectToSignUp, updateAuth } from "./common"
 import { not } from "../shared/hof"
-import { articleUpdates } from "../constants"
+import { articleUpdates, events } from "../constants"
 
+const {AUTH_CHECKED} = events;
 /**
  * @param {{events: AuthFormEvents, actionFactories: AuthFormActionFactories, states: AuthFormStates,
  *   isAuthenticatedGuard: Guard}} def

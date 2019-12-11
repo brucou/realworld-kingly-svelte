@@ -1,10 +1,10 @@
 import { ACTION_IDENTITY, INIT_EVENT, NO_OUTPUT } from "kingly";
-import { articleUpdates, commands, events, loadingStates, routes, routeViewLens } from "../constants";
+import { articleError, articleUpdates, commands, events, routes, routeViewLens } from "../constants";
 import { allRoutesViewLens, fetchAuthentication, redirectToHome, updateAuth, updateURL } from "./common";
 import { not } from "../shared/hof";
 import { getAuthedApiPartialMachine } from "./abstracted"
 
-const { article, allRoutes } = routes;
+const { article } = routes;
 const articleRouteViewLens = routeViewLens(article);
 
 const {
@@ -22,8 +22,8 @@ const {
   FAILED_FETCH_ARTICLE,
   UPDATED_COMMENT,
   FETCH_COMMENTS_OK,
-  DELETE_COMMENTS_OK,
-  POST_COMMENTS_OK,
+  DELETE_COMMENT_OK,
+  POST_COMMENT_OK,
   DELETE_ARTICLE_OK,
   API_REQUEST_FAILED,
   CLICKED_CREATE_COMMENT,
@@ -51,7 +51,7 @@ export const initialArticleRouteState = {
   // true, false or null (pending or unknown)
   favoriteStatus: null,
   following: null,
-  comments: null,
+  comments: [],
   commentText: null,
   eventData: null
 };
@@ -144,13 +144,13 @@ export const articleTransitions = [
   },
   {
     from: "article-rendering",
-    event: POST_COMMENTS_OK,
+    event: POST_COMMENT_OK,
     to: "article-rendering",
     action: renderPostedComment
   },
   {
     from: "article-rendering",
-    event: DELETE_COMMENTS_OK,
+    event: DELETE_COMMENT_OK,
     to: "article-rendering",
     action: renderDeletedComment
   },
@@ -186,20 +186,20 @@ export const articleTransitions = [
     actions: { call: deleteArticleUpdateAuthAndRender }
   }),
   {
-    from: "can-like", event: AUTH_CHECKED, guards: [
+    from: "can-like", event: void 0, guards: [
       { predicate: isArticleLiked, to: "article-rendering", action: unlikeArticleAndRender },
       { predicate: not(isArticleLiked), to: "article-rendering", action: likeArticleAndRender },
     ]
   },
   {
-    from: "can-follow", event: AUTH_CHECKED, guards: [
+    from: "can-follow", event: void 0, guards: [
       { predicate: isProfileFollowed, to: "article-rendering", action: unfollowProfileAndRender },
       { predicate: not(isProfileFollowed), to: "article-rendering", action: followProfileAndRender },
     ]
   },
   { from: "article-rendering", event: DELETE_ARTICLE_OK, to: "routing", action: redirectToHome },
   { from: "article", event: ROUTE_CHANGED, to: "routing", action: updateURL }
-];
+].flat();
 
 // Guards
 
@@ -216,7 +216,7 @@ export function isProfileFollowed(extendedState, eventData, settings) {
 }
 
 // Action factories
-const articleCaptureRegexp = /^article\/(\w+)\/?$/;
+const articleCaptureRegexp = /^\/article\/(\S+)\/?$/;
 
 export function fetchArticleCommentsAndInitialRender(extendedState, eventData, settings) {
   const user = eventData;
@@ -238,7 +238,7 @@ export function fetchArticleCommentsAndInitialRender(extendedState, eventData, s
           route: article,
           user: user,
           article: null,
-          comments: null,
+          comments: [],
           commentText: "",
           following: null,
           favoriteStatus: null,
@@ -270,7 +270,9 @@ export function renderFetchedArticle(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER_ARTICLE,
-        params: { route: article, article, }
+        params: {
+          route: routes.article, article, following: article.author.following, favoriteStatus: article.favorited
+        }
       }
     ]
   };
@@ -278,7 +280,6 @@ export function renderFetchedArticle(extendedState, eventData, settings) {
 
 export function renderFailedFetchArticle(extendedState, eventData, settings) {
   const _ = eventData;
-  const articleError = "*Could not fetch article!!*"
 
   return {
     updates: articleUpdates([{ article: articleError }]),
@@ -322,11 +323,11 @@ export function renderToggledFollow(extendedState, eventData, settings) {
   // We nonetheless have to update the article, to keep trace of the old value, in order to revert
   // to it in case of failur of the following/unfollowing
   return {
-    updates: articleUpdates([{ following: profile.following }, { article: updatedArticle }]),
+    updates: articleUpdates([{ following: profile.following, article: updatedArticle }]),
     outputs: [
       {
         command: RENDER_ARTICLE,
-        params: { route: article, following: profile.following }
+        params: { route: routes.article, following: profile.following, article: updatedArticle }
       }
     ]
   };
@@ -343,7 +344,7 @@ export function renderFailedToggledFollow(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER_ARTICLE,
-        params: { route: article, following }
+        params: { route: routes.article, following }
       }
     ]
   };
@@ -362,7 +363,7 @@ export function renderFavoritedArticle(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER_ARTICLE,
-        params: { route: article, favoriteStatus: favorited }
+        params: { route: routes.article, favoriteStatus: favorited, article }
       }
     ]
   };
@@ -379,7 +380,7 @@ export function renderFailedFavoriteArticle(extendedState, eventData, settings) 
     outputs: [
       {
         command: RENDER_ARTICLE,
-        params: { route: article, favoriteStatus: favorited }
+        params: { route: routes.article, favoriteStatus: favorited }
       }
     ]
   };
@@ -447,7 +448,7 @@ export function postCommentUpdateAuthAndRender(extendedState, eventData, setting
       articleUpdates([{ commentText }])
     ),
     outputs: [
-      { command: POST_COMMENT, params: { slug, comment: body } },
+      { command: POST_COMMENT, params: { slug, comment: commentText } },
       // Nothing to render actually
     ]
   };
@@ -528,14 +529,14 @@ function followOrUnfollow(command) {
     return {
       updates: [].concat(
         updateAuth(extendedState, eventData, settings).updates,
-        articleUpdates([{ profileStatus: null }])
+        articleUpdates([{ following: null }])
       ),
       outputs: [
         { command: command, params: article.author.username },
         {
           command: RENDER_ARTICLE,
           params: {
-            route: article, profileStatus: null, user
+            route: routes.article, following: null, user
           }
         }
       ]

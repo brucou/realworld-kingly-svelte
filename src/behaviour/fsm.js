@@ -7,7 +7,7 @@ import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
 import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings";
 import { initialProfileRouteState, profileStates, profileTransitions } from "./profile";
-import { articleStates, initialArticleRouteState } from "./article"
+import { articleStates, articleTransitions, initialArticleRouteState } from "./article"
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;

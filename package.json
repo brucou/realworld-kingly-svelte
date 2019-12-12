@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "emitonoff": "^0.1.0",
-    "kingly": "^0.22.0",
+    "kingly": "^0.23.1",
     "marked": "0.5.1",
     "ramda.concat": "^0.26.1",
     "ramda.mergedeepwith": "^0.26.1"

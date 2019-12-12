@@ -38,7 +38,7 @@
     dispatch({ [TOGGLED_FOLLOW]: { username: article.author.username } });
   };
   const onCreateComment = ev => {
-    e.preventDefault();
+    ev.preventDefault();
     // NOTE: This breaks a bit the separation of concerns, as this is domain logic creeping
     // into UI logic. But we'll live with it. Alternative is to guard against empty comments
     // at the machine level.
@@ -119,6 +119,7 @@
             {comments}
             {commentText}
             {onCreateComment}
+            {onUpdatedComment}
             {onDeleteComment} />
         </div>
       {/if}

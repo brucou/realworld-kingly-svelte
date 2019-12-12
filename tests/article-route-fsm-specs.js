@@ -1,14 +1,8 @@
 import QUnit from "qunit"
 import { fsmContracts } from "kingly"
-import {
-  articleError, commands, events, FAVORITE_PROFILE_PAGE, loadingStates, routes, USER_PROFILE_PAGE
-} from "../src/constants"
-import { randomUserProfileFixture, userFixture, } from "./fixtures/user"
+import { articleError, commands, events, routes, } from "../src/constants"
+import { userFixture, } from "./fixtures/user"
 import { runUserStories } from "./common"
-import { articlesErrorFixture, articlesFixture, articlesPage1Fixture } from "./fixtures/articles"
-import {
-  favoritedSlugFixture, unfavoritedSlugFixture, updatedLikedArticleFixture, updatedLikedArticlesFixture
-} from "./fixtures/slugs"
 
 QUnit.module("Testing article route fsm", {});
 
@@ -52,7 +46,6 @@ const {
 } = commands;
 
 const { article, home, signUp } = routes;
-const profileError = new Error(`profile error`);
 const articlesError = new Error(`articles error`);
 const userProfileFixture = {
   username: 'sanders',
@@ -61,30 +54,6 @@ const userProfileFixture = {
   following: false,
   token: "jwt.token.there",
 };
-const pendingUserProfileFixture= {
-  username: 'sanders',
-  bio: `bioinformatics`,
-  image: null,
-  following: false,
-  pending: true
-};
-const followedAuthorProfileFixture = {
-  username: 'sanders',
-  bio: `bioinformatics`,
-  image: null,
-  following: true
-};
-const pendingFollowedProfileFixture= {
-  username: 'sanders',
-  bio: `bioinformatics`,
-  image: null,
-  following: true,
-  pending: true
-};
-const OWN_PROFILE_MY_ARTICLES = `/@` + userFixture.username;
-const PROFILE_MY_ARTICLES = `/@` + userProfileFixture.username;
-const OWN_PROFILE_FAVORITED_ARTICLES = OWN_PROFILE_MY_ARTICLES + '/favorites';
-const PROFILE_FAVORITED_ARTICLES = PROFILE_MY_ARTICLES + '/favorites';
 const ownUserProfileFixture = {
   username: userFixture.username,
   bio: userFixture.bio,

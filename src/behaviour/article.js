@@ -359,7 +359,7 @@ export function renderFavoritedArticle(extendedState, eventData, settings) {
   // Note that we do not render the new article, we only pass what has changed, and that is
   // the favorite status.
   return {
-    updates: articleUpdates([{ favoriteStatus: favorited }], { article }),
+    updates: articleUpdates([{ favoriteStatus: favorited, article}]),
     outputs: [
       {
         command: RENDER_ARTICLE,

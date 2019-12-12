@@ -79,7 +79,7 @@ const apiGateway = (fetch, sessionRepository) => {
   const fetchArticle = ({ slug }) => get(`/articles/${slug}`);
   const saveArticle = ({ ...article }) => post("/articles", { article });
   const updateArticle = ({ slug, tagList, title, body, description }) =>
-    put("/articles/${slug}", { tagList, title, body, description });
+    put(`/articles/${slug}`, { tagList, title, body, description });
 
   const updateSettings = ({ user }) => put(`/user`, { user });
 

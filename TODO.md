@@ -1,6 +1,8 @@
 # TODO
-- TEEMP: no icons? icons are there in dev, just not in storybook
-- TEEMP: publishing does not work in the editor route? check the API call is correct and review tests
+- TEMP: bug when modifying an existing article?
+  - bug was mistake in updating article, but works otherwise, so do I still need favoriteStatus for article route? NO!
+  - refactor later - that will change the tests but only for article route
+  - also I hesistate to put the buried dependencies out of the deep objects
 - publish integration with vue, react, svelte, lit first
   - then do ember and angular! 
 - DOC: find a nomenclatur for events, should refer to the UI domain, 

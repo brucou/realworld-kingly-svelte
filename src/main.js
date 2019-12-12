@@ -1,6 +1,5 @@
 import App from "./App.svelte";
 import emitonoff from "emitonoff";
-import { fsmContracts } from "kingly";
 import sessionRepositoryFactory from "./sessionRepository";
 import apiGatewayFactory from "./apiGateway";
 import apiRouterFactory from "./apiRouter";
@@ -75,7 +74,7 @@ const {
   DELETE_ARTICLE_OK,
   API_REQUEST_FAILED
 } = events;
-const env = { debug: { console, checkContracts: fsmContracts } };
+const env = { debug: { console } };
 
 // Event emitter
 const eventBus = eventEmitterFactory(emitonoff);

@@ -617,16 +617,13 @@ export function resetPageAndSetTag(extendedState, eventData, settings) {
   };
 }
 
-// TODO: think if I have to update auth too in this function
-// Edge case: could still be authed but under a different user... edgy but possible
-// DOC: find the issue with tests? Can I generate those failing tests automatically?
 export function unlikeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState);
   const { slug, isFavorited } = favoriteStatus;
 
   return {
-    updates: [],
+    updates: updateAuth(extendedState, eventData, settings).updates,
     outputs: [
       { command: RENDER_HOME, params: { favoriteStatus: slug, user } },
       { command: UNFAVORITE_ARTICLE, params: { slug } }
@@ -634,14 +631,13 @@ export function unlikeArticleAndRender(extendedState, eventData, settings) {
   };
 }
 
-// TODO: think if I have to update auth too in this function
 export function likeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState);
   const { slug, isFavorited } = favoriteStatus;
 
   return {
-    updates: [],
+    updates: updateAuth(extendedState, eventData, settings).updates,
     outputs: [
       { command: RENDER_HOME, params: { favoriteStatus: slug, user } },
       { command: FAVORITE_ARTICLE, params: { slug } }

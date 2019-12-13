@@ -23,9 +23,6 @@ export const signUpStates = {
 
 export const initialSignUpRouteState = { email: "", password: "", username: "", errors: null };
 
-// TODO: try to see if I can use event data instead of state for the user and if yes remove it from extended state
-// the user state source of truth is not in the machine, so don't duplicate!! this risks desynchronization
-
 // Transitions
 
 export const signUpTransitions = [

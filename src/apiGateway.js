@@ -1,4 +1,4 @@
-// TODO: analyze size impact of ramda functions... better to get all ramda then rollup tree-shaking?
+// NOTE: bundle size optimization by replacing ramda.concat with Array.prototype.concat
 import mergeDeepWith from "ramda.mergedeepwith";
 import concat from "ramda.concat";
 
@@ -59,7 +59,6 @@ const apiGateway = (fetch, sessionRepository) => {
 
   const fetchUserFeed = ({ page }) => get(`/articles/feed?${pagination({ page, limit: 10 })}`);
 
-  // TODO: refactor: move it to a shared.js. This is not part of the Conduit API...
   const { load, clear, save, onChange } = sessionRepository;
   const fetchAuthentication = () => {
     console.debug("fetchAuthentication> user", load());

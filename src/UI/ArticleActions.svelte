@@ -2,11 +2,10 @@
   import { editorLink } from "../links";
 
   export let user;
-  // TODO: true (followed), false (not followed), or null (pending) i.e. similar to author.following
   export let following;
-  // TODO: : true (display) or false (pending)
-  // TODO: author.following -> following = [true, false, null (pending)]!! do not read from author.following anymore repass story tests
-  // DOC: the rule is that we pass UPDATES, so no passing updates deep inside references, we detach the moving part to the top level, and then we renounce using the copy in the original object (or we keep that synchronized)
+  // DOC: we have one local copy of the remote data (in article) returned by the API
+  // then we have a local `favoriteStatus` which is temporary desynchronized from remote
+  // -- it is UI state. So we need a separate `favoriteStatus` field to keep track of UI state.
   export let favoriteStatus;
   export let article;
   export let onToggleFollowAuthor;

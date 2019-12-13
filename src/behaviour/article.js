@@ -553,10 +553,7 @@ export function followProfileAndRender(extendedState, eventData, settings) {
 }
 
 
-// TODO: check user profile route and the rest of routes that it sets up the right original state on entry
-// TODO: the common state part should be updated ANYTIME they change?
-// TODO: ok for url (link click or redirect)? ok for user (at every auth checked?)?
-// TODO: in TOGGLED_FOLLOW, pass the following value in article.author.following!!
+// TODO: the common state part should be updated ANYTIME they change? user (at every auth checked?)?
 // TODO: it could be that we don't need commentText is state of the machine, it is only statee of the screen!!
 // check it and do it and DOC it, that can justify why the machine has separate state from the UI and we do not do a
 // moore machine but a mealy transducer

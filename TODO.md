@@ -29,7 +29,7 @@
   - tags are only fetched once in the home route
   - every fetch is matched with a corresponding click event
  - basically this is
-   - .*[ROUTE_CHANGED=home].* => ...
+   - .*[a=home].* => ...
  - No I need something more general, this is just repeating the specs i.e. the machine
    - CLICK_PAGE => null | check auth | render (full global feed | filter global feed) with new page
    - CLICK_GLOBAL_FEED => not check auth && (null | render global feed with page 0)

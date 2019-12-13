@@ -1,6 +1,6 @@
 // TODO: analyze size impact of ramda functions... better to get all ramda then rollup tree-shaking?
 import mergeDeepWith from "ramda.mergedeepwith";
-import concat from "ramda.concat";
+const concat = Array.prototype.concat;
 
 const API_ROOT = "https://conduit.productionready.io/api";
 

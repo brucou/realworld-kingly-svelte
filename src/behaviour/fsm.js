@@ -7,7 +7,7 @@ import { signInStates, signInTransitions } from "./signIn";
 import { editorStates, editorTransitions, initialEditorRouteState } from "./editor";
 import { initialSettingsRouteState, settingsStates, settingsTransitions } from "./settings";
 import { initialProfileRouteState, profileStates, profileTransitions } from "./profile";
-import { articleStates, articleTransitions, initialArticleRouteState } from "./article"
+import { articleStates, articleTransitions, initialArticleRouteState } from "./article";
 
 /** @type Array<HOME_ROUTE_EVENTS> */
 const { ROUTE_CHANGED } = events;
@@ -24,7 +24,7 @@ const initialExtendedState = {
   [editor]: initialEditorRouteState,
   [settings]: initialSettingsRouteState,
   [profile]: initialProfileRouteState,
-  [article]: initialArticleRouteState,
+  [article]: initialArticleRouteState
 };
 
 const states = {
@@ -36,7 +36,7 @@ const states = {
   editor: editorStates,
   settings: settingsStates,
   profile: profileStates,
-  article: articleStates,
+  article: articleStates
 };
 
 // Guards
@@ -74,7 +74,7 @@ const transitions = [
       { predicate: isEditorRoute, to: "editor", action: ACTION_IDENTITY },
       { predicate: isSettingsRoute, to: "settings", action: ACTION_IDENTITY },
       { predicate: isProfileRoute, to: "profile", action: ACTION_IDENTITY },
-      { predicate: isArticleRoute, to: "article", action: ACTION_IDENTITY },
+      { predicate: isArticleRoute, to: "article", action: ACTION_IDENTITY }
     ]
   },
   homeTransitions,
@@ -83,7 +83,7 @@ const transitions = [
   editorTransitions,
   settingsTransitions,
   profileTransitions,
-  articleTransitions,
+  articleTransitions
 ].flat();
 
 /**

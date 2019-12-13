@@ -1,6 +1,5 @@
 <script>
   import Banner from "./Banner.svelte";
-  import Header from "./Header.svelte";
   import ArticleList from "./ArticleList.svelte";
   import Tags from "./Tags.svelte";
   import GlobalFeedTab from "./GlobalFeedTab.svelte";

@@ -41,7 +41,7 @@ const {
   FETCH_COMMENTS,
   DELETE_COMMENT,
   POST_COMMENT,
-  DELETE_ARTICLE,
+  DELETE_ARTICLE
 } = commands;
 const {
   ROUTE_CHANGED,
@@ -244,8 +244,8 @@ const commandHandlers = {
     const { fetchArticle } = effectHandlers;
 
     fetchArticle({ slug })
-      .then(({ article }) =>         dispatch({ [FETCHED_ARTICLE]: article }))
-      .catch(err =>        dispatch({ [FAILED_FETCH_ARTICLE]: err }));
+      .then(({ article }) => dispatch({ [FETCHED_ARTICLE]: article }))
+      .catch(err => dispatch({ [FAILED_FETCH_ARTICLE]: err }));
   },
   [PUBLISH_ARTICLE]: (dispatch, params, effectHandlers) => {
     const { title, description, body, tagList } = params;
@@ -342,11 +342,11 @@ const commandHandlers = {
 
     fetchComments({ slug })
       .then(({ comments }) => dispatch({ [FETCH_COMMENTS_OK]: comments }))
-      .catch(err => dispatch({ [API_REQUEST_FAILED]: {FETCH_COMMENTS: err} }));
+      .catch(err => dispatch({ [API_REQUEST_FAILED]: { FETCH_COMMENTS: err } }));
   },
   [DELETE_COMMENT]: (dispatch, params, effectHandlers) => {
     const { deleteComment } = effectHandlers;
-    const {slug, id} = params;
+    const { slug, id } = params;
 
     deleteComment({ slug, id })
       .then(({ profile }) => dispatch({ [DELETE_COMMENT_OK]: id }))
@@ -354,9 +354,9 @@ const commandHandlers = {
   },
   [POST_COMMENT]: (dispatch, params, effectHandlers) => {
     const { createComment } = effectHandlers;
-    const {slug, comment} = params;
+    const { slug, comment } = params;
 
-    createComment({ slug, comment})
+    createComment({ slug, comment })
       .then(({ comment }) => dispatch({ [POST_COMMENT_OK]: comment }))
       .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
   },
@@ -367,7 +367,7 @@ const commandHandlers = {
     deleteArticle({ slug })
       .then(_ => dispatch({ [DELETE_ARTICLE_OK]: void 0 }))
       .catch(err => dispatch({ [API_REQUEST_FAILED]: err }));
-  },
+  }
 };
 
 const effectHandlers = {
@@ -396,7 +396,7 @@ const effectHandlers = {
   fetchComments,
   createComment,
   deleteComment,
-  deleteArticle,
+  deleteArticle
 };
 
 const app = new App({

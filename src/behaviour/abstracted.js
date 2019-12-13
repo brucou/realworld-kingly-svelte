@@ -34,11 +34,11 @@
  */
 
 import { isNot } from "../shared/helpers";
-import { fetchAuthentication, isAuthenticated, redirectToSignUp, updateAuth } from "./common"
-import { not } from "../shared/hof"
-import { articleUpdates, events } from "../constants"
+import { fetchAuthentication, isAuthenticated, redirectToSignUp, updateAuth } from "./common";
+import { not } from "../shared/hof";
+import { articleUpdates, events } from "../constants";
 
-const {AUTH_CHECKED} = events;
+const { AUTH_CHECKED } = events;
 /**
  * @param {{events: AuthFormEvents, actionFactories: AuthFormActionFactories, states: AuthFormStates,
  *   isAuthenticatedGuard: Guard}} def
@@ -93,21 +93,27 @@ export function getAuthenticatedFormPageTransitions(def) {
   ];
 }
 
-function fetchAuthAndSaveEventData(extendedState, eventData, settings){
+function fetchAuthAndSaveEventData(extendedState, eventData, settings) {
   return {
-    updates: articleUpdates(      [{eventData}]    ),
+    updates: articleUpdates([{ eventData }]),
     outputs: fetchAuthentication(extendedState, eventData, settings).outputs
-  }
+  };
 }
 
-export function getAuthedApiPartialMachine({ states: { fetching, next }, events: { trigger }, actions: { call } }) {
-    return [
-      { from: "article-rendering", event: trigger, to: fetching, action: fetchAuthAndSaveEventData },
-      {
-        from: fetching, event: AUTH_CHECKED, guards: [
-          { to: next, action: call, predicate: isAuthenticated },
-          { to: "routing", action: redirectToSignUp, predicate: not(isAuthenticated) }
-        ]
-      },
-    ];
+export function getAuthedApiPartialMachine({
+  states: { fetching, next },
+  events: { trigger },
+  actions: { call }
+}) {
+  return [
+    { from: "article-rendering", event: trigger, to: fetching, action: fetchAuthAndSaveEventData },
+    {
+      from: fetching,
+      event: AUTH_CHECKED,
+      guards: [
+        { to: next, action: call, predicate: isAuthenticated },
+        { to: "routing", action: redirectToSignUp, predicate: not(isAuthenticated) }
+      ]
+    }
+  ];
 }

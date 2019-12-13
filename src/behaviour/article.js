@@ -1,8 +1,21 @@
 import { ACTION_IDENTITY, INIT_EVENT, NO_OUTPUT } from "kingly";
-import { articleError, articleUpdates, commands, events, routes, routeViewLens } from "../constants";
-import { allRoutesViewLens, fetchAuthentication, redirectToHome, updateAuth, updateURL } from "./common";
+import {
+  articleError,
+  articleUpdates,
+  commands,
+  events,
+  routes,
+  routeViewLens
+} from "../constants";
+import {
+  allRoutesViewLens,
+  fetchAuthentication,
+  redirectToHome,
+  updateAuth,
+  updateURL
+} from "./common";
 import { not } from "../shared/hof";
-import { getAuthedApiPartialMachine } from "./abstracted"
+import { getAuthedApiPartialMachine } from "./abstracted";
 
 const { article } = routes;
 const articleRouteViewLens = routeViewLens(article);
@@ -40,7 +53,7 @@ const {
   POST_COMMENT,
   DELETE_COMMENT,
   DELETE_ARTICLE,
-  FETCH_ARTICLE,
+  FETCH_ARTICLE
 } = commands;
 
 // Machine definition for route
@@ -186,15 +199,19 @@ export const articleTransitions = [
     actions: { call: deleteArticleUpdateAuthAndRender }
   }),
   {
-    from: "can-like", event: void 0, guards: [
+    from: "can-like",
+    event: void 0,
+    guards: [
       { predicate: isArticleLiked, to: "article-rendering", action: unlikeArticleAndRender },
-      { predicate: not(isArticleLiked), to: "article-rendering", action: likeArticleAndRender },
+      { predicate: not(isArticleLiked), to: "article-rendering", action: likeArticleAndRender }
     ]
   },
   {
-    from: "can-follow", event: void 0, guards: [
+    from: "can-follow",
+    event: void 0,
+    guards: [
       { predicate: isProfileFollowed, to: "article-rendering", action: unfollowProfileAndRender },
-      { predicate: not(isProfileFollowed), to: "article-rendering", action: followProfileAndRender },
+      { predicate: not(isProfileFollowed), to: "article-rendering", action: followProfileAndRender }
     ]
   },
   { from: "article-rendering", event: DELETE_ARTICLE_OK, to: "routing", action: redirectToHome },
@@ -241,7 +258,7 @@ export function fetchArticleCommentsAndInitialRender(extendedState, eventData, s
           comments: [],
           commentText: "",
           following: null,
-          favoriteStatus: null,
+          favoriteStatus: null
         }
       }
     ]
@@ -256,7 +273,7 @@ export function renderUpdatedComment(extendedState, eventData, settings) {
     outputs: [
       {
         command: RENDER_ARTICLE,
-        params: { route: article, commentText, }
+        params: { route: article, commentText }
       }
     ]
   };
@@ -271,7 +288,10 @@ export function renderFetchedArticle(extendedState, eventData, settings) {
       {
         command: RENDER_ARTICLE,
         params: {
-          route: routes.article, article, following: article.author.following, favoriteStatus: article.favorited
+          route: routes.article,
+          article,
+          following: article.author.following,
+          favoriteStatus: article.favorited
         }
       }
     ]
@@ -359,7 +379,7 @@ export function renderFavoritedArticle(extendedState, eventData, settings) {
   // Note that we do not render the new article, we only pass what has changed, and that is
   // the favorite status.
   return {
-    updates: articleUpdates([{ favoriteStatus: favorited, article}]),
+    updates: articleUpdates([{ favoriteStatus: favorited, article }]),
     outputs: [
       {
         command: RENDER_ARTICLE,
@@ -388,12 +408,12 @@ export function renderFailedFavoriteArticle(extendedState, eventData, settings) 
 
 export function renderUnfavoritedArticle(extendedState, eventData, settings) {
   // Same behaviour, the value which varies is returned in eventData!
-  return renderFavoritedArticle(extendedState, eventData, settings)
+  return renderFavoritedArticle(extendedState, eventData, settings);
 }
 
 export function renderFailedUnfavoriteArticle(extendedState, eventData, settings) {
   // Same behaviour, the value to revert to is in extended state!
-  return renderFailedFavoriteArticle(extendedState, eventData, settings)
+  return renderFailedFavoriteArticle(extendedState, eventData, settings);
 }
 
 export function renderPostedComment(extendedState, eventData, settings) {
@@ -448,19 +468,21 @@ export function postCommentUpdateAuthAndRender(extendedState, eventData, setting
       articleUpdates([{ commentText }])
     ),
     outputs: [
-      { command: POST_COMMENT, params: { slug, comment: commentText } },
+      { command: POST_COMMENT, params: { slug, comment: commentText } }
       // Nothing to render actually
     ]
   };
 }
 
 export function deleteCommentUpdateAuthAndRender(extendedState, eventData, settings) {
-  const { eventData: { slug, id } } = articleRouteViewLens(extendedState);
+  const {
+    eventData: { slug, id }
+  } = articleRouteViewLens(extendedState);
 
   return {
     updates: updateAuth(extendedState, eventData, settings).updates,
     outputs: [
-      { command: DELETE_COMMENT, params: { slug, id } },
+      { command: DELETE_COMMENT, params: { slug, id } }
       // Nothing to render actually
     ]
   };
@@ -473,7 +495,7 @@ export function deleteArticleUpdateAuthAndRender(extendedState, eventData, setti
   return {
     updates: updateAuth(extendedState, eventData, settings).updates,
     outputs: [
-      { command: DELETE_ARTICLE, params: slug },
+      { command: DELETE_ARTICLE, params: slug }
       // Nothing to render actually. Well, I could render the possibly new user? mmm
     ]
   };
@@ -493,7 +515,9 @@ export function unlikeArticleAndRender(extendedState, eventData, settings) {
       {
         command: RENDER_ARTICLE,
         params: {
-          route: article, favoriteStatus: null, user
+          route: article,
+          favoriteStatus: null,
+          user
         }
       }
     ]
@@ -514,7 +538,9 @@ export function likeArticleAndRender(extendedState, eventData, settings) {
       {
         command: RENDER_ARTICLE,
         params: {
-          route: article, favoriteStatus: null, user
+          route: article,
+          favoriteStatus: null,
+          user
         }
       }
     ]
@@ -536,22 +562,23 @@ function followOrUnfollow(command) {
         {
           command: RENDER_ARTICLE,
           params: {
-            route: routes.article, following: null, user
+            route: routes.article,
+            following: null,
+            user
           }
         }
       ]
     };
-  }
+  };
 }
 
 export function unfollowProfileAndRender(extendedState, eventData, settings) {
-  return followOrUnfollow(UNFOLLOW_PROFILE)(extendedState, eventData, settings)
+  return followOrUnfollow(UNFOLLOW_PROFILE)(extendedState, eventData, settings);
 }
 
 export function followProfileAndRender(extendedState, eventData, settings) {
-  return followOrUnfollow(FOLLOW_PROFILE)(extendedState, eventData, settings)
+  return followOrUnfollow(FOLLOW_PROFILE)(extendedState, eventData, settings);
 }
-
 
 // TODO: check user profile route and the rest of routes that it sets up the right original state on entry
 // TODO: the common state part should be updated ANYTIME they change?

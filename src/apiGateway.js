@@ -104,8 +104,7 @@ const apiGateway = (fetch, sessionRepository) => {
   const fetchComments = ({ slug }) => get(`/articles/${slug}/comments`);
   const createComment = ({ slug, comment }) =>
     post(`/articles/${slug}/comments`, { comment: { body: comment } });
-  const deleteComment = ({ slug, id }) =>
-    del(`/articles/${slug}/comments/${id}`);
+  const deleteComment = ({ slug, id }) => del(`/articles/${slug}/comments/${id}`);
 
   const deleteArticle = ({ slug }) => del(`/articles/${slug}`);
 

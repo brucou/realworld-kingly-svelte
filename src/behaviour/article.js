@@ -1,4 +1,4 @@
-import { ACTION_IDENTITY, INIT_EVENT, NO_OUTPUT } from "kingly";
+import { INIT_EVENT } from "kingly";
 import { articleError, articleUpdates, commands, events, routes, routeViewLens } from "../constants";
 import { allRoutesViewLens, fetchAuthentication, redirectToHome, updateAuth, updateURL } from "./common";
 import { not } from "../shared/hof";
@@ -70,12 +70,7 @@ export const articleStates = {
 
 // Transitions
 export const articleTransitions = [
-  {
-    from: "article",
-    event: INIT_EVENT,
-    to: "fetching-auth-for-article",
-    action: fetchAuthentication
-  },
+  {    from: "article",    event: INIT_EVENT,    to: "fetching-auth-for-article",    action: fetchAuthentication  },
   {
     from: "fetching-auth-for-article",
     event: AUTH_CHECKED,

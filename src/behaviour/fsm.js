@@ -63,6 +63,7 @@ export const isArticleRoute = isRoute(`${article}/.+`);
 
 /** @type {Array<Transition>} */
 const transitions = [
+  // TODO: replace by fetch auth and update URL
   { from: INIT, event: ROUTE_CHANGED, to: "routing", action: updateURL },
   {
     from: "routing",

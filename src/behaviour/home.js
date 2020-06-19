@@ -1,4 +1,4 @@
-import { ACTION_IDENTITY, DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
+import { DEEP, historyState, INIT_EVENT, NO_OUTPUT } from "kingly";
 import {
   allRoutesViewLens,
   fetchAuthentication,
@@ -443,6 +443,7 @@ export function renderGlobalFeedArticlesFetchError(extendedState, eventData, set
 
 export function fetchAuthenticationAndUpdateFavoriteStatus(extendedState, eventData, settings) {
   const { slug } = eventData;
+
   return {
     updates: homeUpdates([
       {
@@ -620,7 +621,7 @@ export function resetPageAndSetTag(extendedState, eventData, settings) {
 export function unlikeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState);
-  const { slug, isFavorited } = favoriteStatus;
+  const { slug } = favoriteStatus;
 
   return {
     updates: updateAuth(extendedState, eventData, settings).updates,
@@ -634,7 +635,7 @@ export function unlikeArticleAndRender(extendedState, eventData, settings) {
 export function likeArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = homeRouteViewLens(extendedState);
-  const { slug, isFavorited } = favoriteStatus;
+  const { slug } = favoriteStatus;
 
   return {
     updates: updateAuth(extendedState, eventData, settings).updates,

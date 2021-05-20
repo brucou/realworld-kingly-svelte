@@ -1,4 +1,7 @@
-# ![RealWorld Example App](logo.png)
+# RealWorld Example App
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-black.svg)](https://sonarcloud.io/dashboard?id=humble-barnacle001_realworld-kingly-svelte)
+ 
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=humble-barnacle001_realworld-kingly-svelte&metric=bugs)](https://sonarcloud.io/dashboard?id=humble-barnacle001_realworld-kingly-svelte) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=humble-barnacle001_realworld-kingly-svelte&metric=ncloc)](https://sonarcloud.io/dashboard?id=humble-barnacle001_realworld-kingly-svelte) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=humble-barnacle001_realworld-kingly-svelte&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=humble-barnacle001_realworld-kingly-svelte) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=humble-barnacle001_realworld-kingly-svelte&metric=security_rating)](https://sonarcloud.io/dashboard?id=humble-barnacle001_realworld-kingly-svelte)
 
 > ### [Kingly] codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
 

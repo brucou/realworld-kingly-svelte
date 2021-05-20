@@ -1,0 +1,26 @@
+name: Update package-lock.json
+
+on:
+  push:
+    branches: [master]
+    paths: [package.json]
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Git repository for source branch
+      uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.1.5
+    - name: Create package-lock
+      run: |
+        npm install --package-lock-only
+        npm run audit
+    - name: Add & Commit
+      uses: EndBug/add-and-commit@v7.2.1
+      with:
+        add: package*.json
+        message: Update package-lock ${{ github.sha }}

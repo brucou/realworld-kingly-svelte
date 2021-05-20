@@ -19,3 +19,5 @@ jobs:
 #         keep_history: true
         build_dir: public/
         commit_message: By ${{ github.sha }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

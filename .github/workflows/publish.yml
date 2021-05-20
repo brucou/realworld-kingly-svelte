@@ -16,7 +16,7 @@ jobs:
     - name: Publish to GitHub pages
       uses: crazy-max/ghaction-github-pages@v2.4.1
       with:
-#         keep_history: true
+        keep_history: true
         build_dir: public/
         commit_message: By ${{ github.sha }}
       env:

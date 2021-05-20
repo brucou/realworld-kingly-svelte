@@ -490,7 +490,6 @@ export function fetchAuthenticationAndUpdateFavoriteStatusForProfile(
   };
 }
 
-// TODO: maybe refactor, same function!!
 export function unlikeAuthorArticleAndRender(extendedState, eventData, settings) {
   const user = eventData;
   const { favoriteStatus } = profileRouteViewLens(extendedState);
@@ -506,20 +505,9 @@ export function unlikeAuthorArticleAndRender(extendedState, eventData, settings)
 }
 
 export function likeAuthorArticleAndRender(extendedState, eventData, settings) {
-  const user = eventData;
-  const { favoriteStatus } = profileRouteViewLens(extendedState);
-  const { slug } = favoriteStatus;
-
-  return {
-    updates: updateAuth(extendedState, eventData, settings).updates,
-    outputs: [
-      { command: RENDER_PROFILE, params: { favoriteStatus: slug, user } },
-      { command: FAVORITE_ARTICLE, params: { slug } }
-    ]
-  };
+  return unlikeAuthorArticleAndRender(extendedState, eventData, settings);
 }
 
-// TODO: this is the same function as renderUnliked !!!
 export function renderLiked(extendedState, eventData, settings) {
   const { articles } = profileRouteViewLens(extendedState);
   const { article: updatedArticle } = eventData;
@@ -548,23 +536,7 @@ export function renderLikeFailed(extendedState, eventData, settings) {
 }
 
 export function renderUnliked(extendedState, eventData, settings) {
-  const { articles } = profileRouteViewLens(extendedState);
-  const { article: updatedArticle } = eventData;
-  const updatedArticleSlug = updatedArticle.slug;
-
-  const updatedArticles = {
-    articles: articles.articles.map(article => {
-      return article.slug === updatedArticleSlug ? updatedArticle : article;
-    }),
-    articlesCount: articles.articlesCount
-  };
-
-  return {
-    updates: profileUpdates([{ articles: updatedArticles }]),
-    outputs: [
-      { command: RENDER_PROFILE, params: { favoriteStatus: null, articles: updatedArticles } }
-    ]
-  };
+ return renderLiked(extendedState, eventData, settings);
 }
 
 export function renderUnlikeFailed(extendedState, eventData, settings) {

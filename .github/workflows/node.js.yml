@@ -1,0 +1,22 @@
+name: Publish to GitHub pages
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+    - name: Publish to GitHub pages
+      uses: crazy-max/ghaction-github-pages@v2.4.1
+      with:
+#         keep_history: true
+        build_dir: build/
+        commit_message: By ${{ github.sha }}

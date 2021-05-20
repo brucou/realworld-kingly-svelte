@@ -329,7 +329,7 @@ export const articlesFilteredFixture = {
     "author": {
       "username": "tshepo",
       "bio": "I am too awesome, man, too awesome baby",
-      "image": "http://res.cloudinary.com/htdnfcfy5/image/upload/v1519328877/thugg_and_lilly.jpg",
+      "image": "//res.cloudinary.com/htdnfcfy5/image/upload/v1519328877/thugg_and_lilly.jpg",
       "following": false
     },
     "favorited": false,

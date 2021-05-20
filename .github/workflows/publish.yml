@@ -17,5 +17,5 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v2.4.1
       with:
 #         keep_history: true
-        build_dir: build/
+        build_dir: public/
         commit_message: By ${{ github.sha }}

@@ -2,7 +2,7 @@
 import mergeDeepWith from "ramda.mergedeepwith";
 import concat from "ramda.concat";
 
-const API_ROOT = "https://conduit.productionready.io/api";
+const API_ROOT = "https://api.realworld.io/api";
 
 const authHeader = sessionRepository => {
   const session = sessionRepository.load();
